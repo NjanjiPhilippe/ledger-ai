@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ledgerai-postgres
+    environment:
+      POSTGRES_DB: ledgerai
+      POSTGRES_USER: ledgerai
+      POSTGRES_PASSWORD: ledgerai
+    ports:
+      - "5432:5432"
+    volumes:
+      - ledgerai-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledgerai -d ledgerai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: ledgerai-keycloak
+    command: start-dev --import-realm
+    volumes:
+      - ./keycloak/ledgerai-realm.json:/opt/keycloak/data/import/ledgerai-realm.json
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # start-dev is fine for local only - never use this image/command in prod.
+    ports:
+      - "8180:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  ledgerai-postgres-data:

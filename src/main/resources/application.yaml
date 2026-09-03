@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: ledgerai
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Liquibase owns the schema. Hibernate must only validate the schema match.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  # FIXED: Moved out of the 'jpa:' block to the root 'spring:' level
+  liquibase:
+    enabled: true
+    change-log: classpath:db/master.yml
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info
+    endpoint:
+      health:
+        show-details: never

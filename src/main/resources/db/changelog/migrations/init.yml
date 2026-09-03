@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: migration-pipeline
+      comment: "V1: baseline migration. Intentionally minimal to prove the Flyway pipeline works."
+      changes:
+        - sql:
+            sql: "select 1;"
+
+  - changeSet:
+      id: 2
+      author: migration-pipeline
+      comment: "V2: app-specific extension data for a Keycloak-authenticated user."
+      changes:
+        - createTable:
+            tableName: app_user_profile
+            columns:
+              - column:
+                  name: keycloak_subject_id
+                  type: varchar(36)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_app_user_profile
+              - column:
+                  name: display_name
+                  type: varchar(255)
+              - column:
+                  name: company_id
+                  type: varchar(64)
+              - column:
+                  name: role_in_company
+                  type: varchar(64)
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: ix_app_user_profile_company_id
+            tableName: app_user_profile
+            columns:
+              - column:
+                  name: company_id

@@ -1,0 +1,21 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ledgerai
+    username: ledgerai
+    password: ledgerai
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/ledgerai
+
+logging:
+  level:
+    com.np3.ledgerai: DEBUG
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE

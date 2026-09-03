@@ -1,0 +1,136 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260903-01-create-account-table
+      author: np3
+      changes:
+        - createTable:
+            tableName: account
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_code
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_account_tenant
+            tableName: account
+            columns:
+              - column:
+                  name: tenant_id
+
+  - changeSet:
+      id: 20260903-02-create-journal-entry-table
+      author: np3
+      changes:
+        - createTable:
+            tableName: journal_entry
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: posted_at
+                  type: timestamp with time zone
+        - createIndex:
+            indexName: idx_journal_entry_tenant
+            tableName: journal_entry
+            columns:
+              - column:
+                  name: tenant_id
+
+  - changeSet:
+      id: 20260903-03-create-journal-entry-line-table
+      author: np3
+      changes:
+        - createTable:
+            tableName: journal_entry_line
+            columns:
+              - column:
+                  name: journal_entry_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_line_journal_entry
+                    references: journal_entry(id)
+              - column:
+                  name: line_order
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_line_account
+                    references: account(id)
+              - column:
+                  name: amount
+                  type: numeric(19,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_code
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entry_type
+                  type: varchar(10)
+                  constraints:
+                    nullable: false

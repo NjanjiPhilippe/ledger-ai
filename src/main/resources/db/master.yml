@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/migrations/init.yml
+  - include:
+      file: db/changelog/migrations/account_init.yaml
