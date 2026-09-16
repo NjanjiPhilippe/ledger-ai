@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -13,9 +14,10 @@ public class SecurityContextCurrentUserProvider implements CurrentUserProvider {
 
     @Override
     public UserId currentUserId() {
-        Jwt jwt = (Jwt) SecurityContextHolder.getContext()
-                .getAuthentication()
+        Jwt jwt = (Jwt) Objects.requireNonNull(SecurityContextHolder.getContext()
+                        .getAuthentication())
                 .getPrincipal();
-        return UserId.of(UUID.fromString(jwt.getSubject()));
+        assert jwt != null;
+        return UserId.of(UUID.fromString(Objects.requireNonNull(jwt.getSubject())));
     }
 }
