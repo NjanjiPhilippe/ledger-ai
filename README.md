@@ -12,10 +12,10 @@ The backend is being built as a hands-on exercise to internalize every architect
 
 LedgerAI backend follows **Hexagonal Architecture (Ports & Adapters)** combined with **CQRS** and **event-driven balance projections**:
 
-- **Domain layer** — value objects, aggregates, and business rules for accounts and journal entries, independent of any framework or infrastructure concern.
-- **Application layer** — use cases and ports (interfaces) that define what the system does, without knowing how.
-- **Infrastructure layer** — JPA-backed adapters implementing the domain ports, tenant-scoped repositories, and database migrations.
-- **CQRS** — command and query responsibilities are separated, with balance projections updated via domain events rather than computed on read.
+- **Domain layer** : value objects, aggregates, and business rules for accounts and journal entries, independent of any framework or infrastructure concern.
+- **Application layer** : use cases and ports (interfaces) that define what the system does, without knowing how.
+- **Infrastructure layer** :JPA-backed adapters implementing the domain ports, tenant-scoped repositories, and database migrations.
+- **CQRS** : command and query responsibilities are separated, with balance projections updated via domain events rather than computed on read.
 
 ### Data model highlights
 
@@ -26,13 +26,13 @@ LedgerAI backend follows **Hexagonal Architecture (Ports & Adapters)** combined 
 
 ## Features
 
-- **Double-entry accounting core** — accounts and journal entries with enforced balancing rules.
+- **Double-entry accounting core** : accounts and journal entries with enforced balancing rules.
 - **Financial reporting**
   - Trial balance
   - Balance sheet
   - Income statement
   - Financial snapshot composer for point-in-time reporting
-- **AI Advisor layer** — a pluggable advisory module with swappable AI providers (OpenAI and Anthropic) selected via `@ConditionalOnProperty`, allowing the backend to generate financial insights on top of the ledger data.
+- **AI Advisor layer** : a pluggable advisory module with swappable AI providers (OpenAI and Anthropic) selected via `@ConditionalOnProperty`, allowing the backend to generate financial insights on top of the ledger data.
 
 ## Tech Stack
 
