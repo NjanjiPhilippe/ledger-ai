@@ -28,6 +28,7 @@ public class PostJournalEntryUseCase {
         this.journalEntryRepository = journalEntryRepository;
         this.tenantContext = tenantContext;
         this.clock = clock;
+        this.eventPublisher = eventPublisher;
     }
     @PreAuthorize("hasRole('ACCOUNTANT')")
     @Transactional

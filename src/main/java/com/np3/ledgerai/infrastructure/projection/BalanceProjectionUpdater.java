@@ -2,6 +2,7 @@ package com.np3.ledgerai.infrastructure.projection;
 
 import com.np3.ledgerai.application.journalEntry.command.JournalEntryPostedEvent;
 import com.np3.ledgerai.infrastructure.persistence.Entity.BalanceProjectionEntity;
+import com.np3.ledgerai.infrastructure.persistence.repository.BalanceProjectionJpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;

@@ -1,5 +1,6 @@
 package com.np3.ledgerai.web.controller;
 
+import com.np3.ledgerai.application.account.command.UpdateAccountCommand;
 import com.np3.ledgerai.application.account.command.useCase.CreateAccountUseCase;
 import com.np3.ledgerai.application.account.query.GetAccountBalanceQuery;
 import com.np3.ledgerai.application.account.query.GetAccountQuery;
