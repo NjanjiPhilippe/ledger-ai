@@ -1,10 +1,10 @@
-package com.np3.ledgerai.application.account;
+package com.np3.ledgerai.application.account.command.useCase;
 
+import com.np3.ledgerai.application.account.command.UpdateAccountCommand;
 import com.np3.ledgerai.domain.exception.AccountNotFoundException;
 import com.np3.ledgerai.domain.model.Account;
 import com.np3.ledgerai.domain.port.AccountRepository;
 import com.np3.ledgerai.domain.port.TenantContext;
-import com.np3.ledgerai.web.dto.account.UpdateAccountCommand;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

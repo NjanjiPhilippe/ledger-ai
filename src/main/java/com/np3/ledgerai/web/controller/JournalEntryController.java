@@ -1,10 +1,10 @@
 package com.np3.ledgerai.web.controller;
 
-import com.np3.ledgerai.application.journalEntry.GetJournalEntryQuery;
-import com.np3.ledgerai.application.journalEntry.PostJournalEntryUseCase;
-import com.np3.ledgerai.application.journalEntry.RecordJournalEntryUseCase;
-import com.np3.ledgerai.application.journalEntry.ReverseJournalEntryUseCase;
-import com.np3.ledgerai.application.journalEntry.SearchJournalEntriesQuery;
+import com.np3.ledgerai.application.journalEntry.query.GetJournalEntryQuery;
+import com.np3.ledgerai.application.journalEntry.command.useCase.PostJournalEntryUseCase;
+import com.np3.ledgerai.application.journalEntry.command.useCase.RecordJournalEntryUseCase;
+import com.np3.ledgerai.application.journalEntry.command.useCase.ReverseJournalEntryUseCase;
+import com.np3.ledgerai.application.journalEntry.query.SearchJournalEntriesQuery;
 import com.np3.ledgerai.domain.model.JournalEntryStatus;
 import com.np3.ledgerai.domain.port.criteria.JournalEntrySearchCriteria;
 import com.np3.ledgerai.domain.port.criteria.PageRequest;

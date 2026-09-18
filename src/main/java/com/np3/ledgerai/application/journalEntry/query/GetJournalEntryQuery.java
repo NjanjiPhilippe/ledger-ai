@@ -1,4 +1,4 @@
-package com.np3.ledgerai.application.journalEntry;
+package com.np3.ledgerai.application.journalEntry.query;
 
 import com.np3.ledgerai.domain.model.JournalEntry;
 import com.np3.ledgerai.domain.port.JournalEntryRepository;

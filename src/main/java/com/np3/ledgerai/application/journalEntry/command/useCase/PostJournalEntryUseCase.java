@@ -1,10 +1,13 @@
-package com.np3.ledgerai.application.journalEntry;
+package com.np3.ledgerai.application.journalEntry.command.useCase;
 
+import com.np3.ledgerai.application.journalEntry.command.JournalEntryPostedEvent;
 import com.np3.ledgerai.domain.exception.JournalEntryNotFoundException;
 import com.np3.ledgerai.domain.model.JournalEntry;
+import com.np3.ledgerai.domain.model.JournalEntryPosted;
 import com.np3.ledgerai.domain.port.JournalEntryRepository;
 import com.np3.ledgerai.domain.port.TenantContext;
 import com.np3.ledgerai.domain.valueobject.JournalEntryId;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +21,10 @@ public class PostJournalEntryUseCase {
     private final JournalEntryRepository journalEntryRepository;
     private final TenantContext tenantContext;
     private final Clock clock;
+    private final ApplicationEventPublisher eventPublisher;
 
     public PostJournalEntryUseCase(JournalEntryRepository journalEntryRepository, TenantContext tenantContext,
-                                   Clock clock) {
+                                   Clock clock, ApplicationEventPublisher eventPublisher) {
         this.journalEntryRepository = journalEntryRepository;
         this.tenantContext = tenantContext;
         this.clock = clock;
@@ -31,8 +35,11 @@ public class PostJournalEntryUseCase {
         JournalEntry journalEntry = journalEntryRepository.findById(tenantContext.currentTenantId(), id)
                 .orElseThrow(() -> new JournalEntryNotFoundException(id));
 
-        journalEntry.post(Instant.now(clock));
+        JournalEntryPosted event = journalEntry.post(Instant.now(clock));
+        JournalEntry saved = journalEntryRepository.save(journalEntry);
 
-        return journalEntryRepository.save(journalEntry);
+        eventPublisher.publishEvent(new JournalEntryPostedEvent(saved.tenantId(), event));
+
+        return saved;
     }
 }

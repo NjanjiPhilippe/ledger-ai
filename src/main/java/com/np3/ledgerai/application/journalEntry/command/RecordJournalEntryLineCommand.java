@@ -1,4 +1,4 @@
-package com.np3.ledgerai.application.journalEntry;
+package com.np3.ledgerai.application.journalEntry.command;
 
 import com.np3.ledgerai.domain.valueobject.AccountId;
 import com.np3.ledgerai.domain.valueobject.EntryType;

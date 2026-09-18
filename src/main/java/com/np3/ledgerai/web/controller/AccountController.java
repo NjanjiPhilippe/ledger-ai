@@ -1,10 +1,10 @@
 package com.np3.ledgerai.web.controller;
 
-import com.np3.ledgerai.application.account.CreateAccountUseCase;
-import com.np3.ledgerai.application.account.GetAccountBalanceQuery;
-import com.np3.ledgerai.application.account.GetAccountQuery;
-import com.np3.ledgerai.application.account.SearchAccountsQuery;
-import com.np3.ledgerai.application.account.UpdateAccountUseCase;
+import com.np3.ledgerai.application.account.command.useCase.CreateAccountUseCase;
+import com.np3.ledgerai.application.account.query.GetAccountBalanceQuery;
+import com.np3.ledgerai.application.account.query.GetAccountQuery;
+import com.np3.ledgerai.application.account.query.SearchAccountsQuery;
+import com.np3.ledgerai.application.account.command.useCase.UpdateAccountUseCase;
 import com.np3.ledgerai.domain.port.criteria.AccountSearchCriteria;
 import com.np3.ledgerai.domain.port.criteria.PageRequest;
 import com.np3.ledgerai.domain.valueobject.AccountId;
@@ -13,7 +13,6 @@ import com.np3.ledgerai.web.dto.PagedResponse;
 import com.np3.ledgerai.web.dto.account.AccountResponse;
 import com.np3.ledgerai.web.dto.account.BalanceResponse;
 import com.np3.ledgerai.web.dto.account.CreateAccountRequest;
-import com.np3.ledgerai.web.dto.account.UpdateAccountCommand;
 import com.np3.ledgerai.web.dto.account.UpdateAccountRequest;
 import com.np3.ledgerai.web.mapper.AccountWebMapper;
 import lombok.RequiredArgsConstructor;

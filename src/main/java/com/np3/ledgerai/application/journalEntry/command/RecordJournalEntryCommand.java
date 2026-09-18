@@ -1,4 +1,4 @@
-package com.np3.ledgerai.application.journalEntry;
+package com.np3.ledgerai.application.journalEntry.command;
 
 import java.util.Currency;
 import java.util.List;

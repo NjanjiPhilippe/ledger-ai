@@ -1,4 +1,4 @@
-package com.np3.ledgerai.web.dto.account;
+package com.np3.ledgerai.application.account.command;
 
 import com.np3.ledgerai.domain.valueobject.AccountId;
 

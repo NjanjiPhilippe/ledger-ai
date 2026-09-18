@@ -1,4 +1,4 @@
-package com.np3.ledgerai.application.account;
+package com.np3.ledgerai.application.account.query;
 
 import com.np3.ledgerai.domain.model.Account;
 import com.np3.ledgerai.domain.port.AccountRepository;

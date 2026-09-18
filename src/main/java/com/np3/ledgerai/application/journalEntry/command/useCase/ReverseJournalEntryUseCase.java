@@ -1,4 +1,4 @@
-package com.np3.ledgerai.application.journalEntry;
+package com.np3.ledgerai.application.journalEntry.command.useCase;
 
 import com.np3.ledgerai.domain.exception.JournalEntryNotFoundException;
 import com.np3.ledgerai.domain.model.JournalEntry;
