@@ -1,10 +1,13 @@
 package com.np3.ledgerai.domain.port;
 
 import com.np3.ledgerai.domain.model.JournalEntry;
+import com.np3.ledgerai.domain.port.criteria.JournalEntrySearchCriteria;
+import com.np3.ledgerai.domain.port.criteria.PageRequest;
+import com.np3.ledgerai.domain.port.criteria.PageResult;
+import com.np3.ledgerai.domain.valueobject.AccountId;
 import com.np3.ledgerai.domain.valueobject.JournalEntryId;
 import com.np3.ledgerai.domain.valueobject.TenantId;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface JournalEntryRepository {
@@ -13,5 +16,7 @@ public interface JournalEntryRepository {
 
     Optional<JournalEntry> findById(TenantId tenantId, JournalEntryId id);
 
-    List<JournalEntry> findAllByTenant(TenantId tenantId);
+    PageResult<JournalEntry> search(TenantId tenantId, JournalEntrySearchCriteria criteria, PageRequest pageRequest);
+
+    DebitCreditTotals sumPostedLinesForAccount(TenantId tenantId, AccountId accountId);
 }

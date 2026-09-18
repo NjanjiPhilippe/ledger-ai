@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260907-01-add-reversal-of-id-to-journal-entry
+      author: np3
+      changes:
+        - addColumn:
+            tableName: journal_entry
+            columns:
+              - column:
+                  name: reversal_of_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_journal_entry_reversal_of
+                    references: journal_entry(id)

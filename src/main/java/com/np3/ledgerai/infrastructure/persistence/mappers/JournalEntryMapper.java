@@ -12,6 +12,7 @@ import com.np3.ledgerai.infrastructure.persistence.Entity.JournalEntryLineEmbedd
 
 import java.util.Currency;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class JournalEntryMapper {
@@ -23,6 +24,10 @@ public final class JournalEntryMapper {
                 .map(JournalEntryMapper::toDomainLine)
                 .collect(Collectors.toList());
 
+        JournalEntryId reversalOfId = entity.getReversalOfId() == null
+                ? null
+                : JournalEntryId.of(entity.getReversalOfId());
+
         return JournalEntry.reconstitute(
                 JournalEntryId.of(entity.getId()),
                 TenantId.of(entity.getTenantId()),
@@ -30,6 +35,7 @@ public final class JournalEntryMapper {
                 entity.getDescription(),
                 entity.getCreatedAt(),
                 UserId.of(entity.getCreatedBy()),
+                reversalOfId,
                 entity.getStatus(),
                 entity.getPostedAt());
     }
@@ -39,6 +45,8 @@ public final class JournalEntryMapper {
                 .map(JournalEntryMapper::toEmbeddableLine)
                 .collect(Collectors.toList());
 
+        UUID reversalOfId = journalEntry.reversalOfId() == null ? null : journalEntry.reversalOfId().value();
+
         return new JournalEntryEntity(
                 journalEntry.id().value(),
                 journalEntry.tenantId().value(),
@@ -47,7 +55,8 @@ public final class JournalEntryMapper {
                 journalEntry.createdAt(),
                 journalEntry.createdBy().value(),
                 journalEntry.status(),
-                journalEntry.postedAt());
+                journalEntry.postedAt(),
+                reversalOfId);
     }
 
     private static TransactionLine toDomainLine(JournalEntryLineEmbeddable line) {

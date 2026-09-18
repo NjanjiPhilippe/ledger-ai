@@ -1,4 +1,4 @@
-package com.np3.ledgerai.web.dto;
+package com.np3.ledgerai.web.dto.account;
 
 import com.np3.ledgerai.domain.valueobject.AccountType;
 

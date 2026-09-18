@@ -75,6 +75,10 @@ public final class Account {
         return active;
     }
 
+    public void reactivate() {
+        this.active = true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

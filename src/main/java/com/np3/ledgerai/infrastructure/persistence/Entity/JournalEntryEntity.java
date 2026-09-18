@@ -1,5 +1,6 @@
 package com.np3.ledgerai.infrastructure.persistence.Entity;
 
+import com.np3.ledgerai.domain.model.JournalEntryStatus;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -49,8 +50,11 @@ public class JournalEntryEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private com.np3.ledgerai.domain.model.JournalEntryStatus status;
+    private JournalEntryStatus status;
 
     @Column(name = "posted_at")
     private Instant postedAt;
+
+    @Column(name = "reversal_of_id")
+    private UUID reversalOfId;
 }

@@ -1,4 +1,4 @@
-package com.np3.ledgerai.web.dto;
+package com.np3.ledgerai.web.dto.journalEntry;
 
 import java.util.List;
 

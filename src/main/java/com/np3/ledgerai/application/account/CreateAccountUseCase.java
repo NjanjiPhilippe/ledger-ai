@@ -3,6 +3,7 @@ package com.np3.ledgerai.application.account;
 import com.np3.ledgerai.domain.model.Account;
 import com.np3.ledgerai.domain.port.AccountRepository;
 import com.np3.ledgerai.domain.port.TenantContext;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class CreateAccountUseCase {
         this.tenantContext = tenantContext;
     }
 
+    @PreAuthorize("hasRole('ACCOUNTANT')")
     @Transactional
     public Account execute(CreateAccountCommand command) {
         Account account = Account.open(

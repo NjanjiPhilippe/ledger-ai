@@ -20,22 +20,38 @@ public final class JournalEntry {
     private final String description;
     private final Instant createdAt;
     private final UserId createdBy;
+    private final JournalEntryId reversalOfId;
     private JournalEntryStatus status;
     private Instant postedAt;
 
     private JournalEntry(JournalEntryId id, TenantId tenantId, List<TransactionLine> lines, String description,
-                         Instant createdAt, UserId createdBy, JournalEntryStatus status, Instant postedAt) {
+                         Instant createdAt, UserId createdBy, JournalEntryId reversalOfId,
+                         JournalEntryStatus status, Instant postedAt) {
         this.id = id;
         this.tenantId = tenantId;
         this.lines = List.copyOf(lines);
         this.description = description;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
+        this.reversalOfId = reversalOfId;
         this.status = status;
         this.postedAt = postedAt;
     }
+
     public static JournalEntry draft(TenantId tenantId, List<TransactionLine> lines, String description,
                                      Instant createdAt, UserId createdBy) {
+        return draftInternal(tenantId, lines, description, createdAt, createdBy, null);
+    }
+
+    public static JournalEntry draftReversal(TenantId tenantId, JournalEntryId reversalOfId,
+                                             List<TransactionLine> lines, String description,
+                                             Instant createdAt, UserId createdBy) {
+        Objects.requireNonNull(reversalOfId, "reversalOfId");
+        return draftInternal(tenantId, lines, description, createdAt, createdBy, reversalOfId);
+    }
+
+    private static JournalEntry draftInternal(TenantId tenantId, List<TransactionLine> lines, String description,
+                                              Instant createdAt, UserId createdBy, JournalEntryId reversalOfId) {
         Objects.requireNonNull(tenantId, "tenantId");
         Objects.requireNonNull(lines, "lines");
         Objects.requireNonNull(createdAt, "createdAt");
@@ -70,13 +86,15 @@ public final class JournalEntry {
         }
 
         return new JournalEntry(JournalEntryId.generate(), tenantId, lines, description, createdAt, createdBy,
-                JournalEntryStatus.DRAFT, null);
+                reversalOfId, JournalEntryStatus.DRAFT, null);
     }
 
     public static JournalEntry reconstitute(JournalEntryId id, TenantId tenantId, List<TransactionLine> lines,
                                             String description, Instant createdAt, UserId createdBy,
-                                            JournalEntryStatus status, Instant postedAt) {
-        return new JournalEntry(id, tenantId, lines, description, createdAt, createdBy, status, postedAt);
+                                            JournalEntryId reversalOfId, JournalEntryStatus status,
+                                            Instant postedAt) {
+        return new JournalEntry(id, tenantId, lines, description, createdAt, createdBy, reversalOfId, status,
+                postedAt);
     }
 
     public JournalEntryPosted post(Instant postedAt) {
@@ -87,6 +105,14 @@ public final class JournalEntry {
         this.status = JournalEntryStatus.POSTED;
         this.postedAt = postedAt;
         return new JournalEntryPosted(id, lines, postedAt);
+    }
+
+    public void markReversed() {
+        if (this.status != JournalEntryStatus.POSTED) {
+            throw new InvalidStateTransitionException(
+                    "Cannot reverse a journal entry that is not in Posted status (current status: " + this.status + ")");
+        }
+        this.status = JournalEntryStatus.REVERSED;
     }
 
     public JournalEntryId id() {
@@ -111,6 +137,14 @@ public final class JournalEntry {
 
     public UserId createdBy() {
         return createdBy;
+    }
+
+    public JournalEntryId reversalOfId() {
+        return reversalOfId;
+    }
+
+    public boolean isReversal() {
+        return reversalOfId != null;
     }
 
     public JournalEntryStatus status() {
