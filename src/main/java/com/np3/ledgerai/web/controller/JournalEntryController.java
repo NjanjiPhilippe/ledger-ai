@@ -13,6 +13,7 @@ import com.np3.ledgerai.web.dto.PagedResponse;
 import com.np3.ledgerai.web.dto.journalEntry.JournalEntryResponse;
 import com.np3.ledgerai.web.dto.journalEntry.RecordJournalEntryRequest;
 import com.np3.ledgerai.web.mapper.JournalEntryWebMapper;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,7 @@ public class JournalEntryController {
     }
 
     @PostMapping
-    public ResponseEntity<JournalEntryResponse> record(@RequestBody RecordJournalEntryRequest request) {
+    public ResponseEntity<JournalEntryResponse> record(@Valid @RequestBody RecordJournalEntryRequest request) {
         var journalEntry = recordJournalEntryUseCase.execute(JournalEntryWebMapper.toCommand(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(JournalEntryWebMapper.toResponse(journalEntry));
     }

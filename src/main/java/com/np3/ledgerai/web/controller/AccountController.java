@@ -16,6 +16,7 @@ import com.np3.ledgerai.web.dto.account.BalanceResponse;
 import com.np3.ledgerai.web.dto.account.CreateAccountRequest;
 import com.np3.ledgerai.web.dto.account.UpdateAccountRequest;
 import com.np3.ledgerai.web.mapper.AccountWebMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +44,13 @@ public class AccountController {
 
 
     @PostMapping
-    public ResponseEntity<AccountResponse> create(@RequestBody CreateAccountRequest request) {
+    public ResponseEntity<AccountResponse> create(@Valid @RequestBody CreateAccountRequest request) {
         var account = createAccountUseCase.execute(AccountWebMapper.toCommand(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(AccountWebMapper.toResponse(account));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountResponse> update(@PathVariable UUID id, @RequestBody UpdateAccountRequest request) {
+    public ResponseEntity<AccountResponse> update(@PathVariable UUID id, @Valid @RequestBody UpdateAccountRequest request) {
         var command = new UpdateAccountCommand(AccountId.of(id), request.name(), request.active());
         var account = updateAccountUseCase.execute(command);
         return ResponseEntity.ok(AccountWebMapper.toResponse(account));
