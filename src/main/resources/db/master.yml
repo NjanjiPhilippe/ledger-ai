@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/migrations/account_init.yaml
   - include:
       file: db/changelog/migrations/add_reversal_of_id.yml
+  - include:
+      file: db/changelog/migrations/balance_projection.yml

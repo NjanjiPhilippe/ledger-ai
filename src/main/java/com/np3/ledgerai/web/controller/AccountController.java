@@ -1,10 +1,11 @@
 package com.np3.ledgerai.web.controller;
 
-import com.np3.ledgerai.application.account.CreateAccountUseCase;
-import com.np3.ledgerai.application.account.GetAccountBalanceQuery;
-import com.np3.ledgerai.application.account.GetAccountQuery;
-import com.np3.ledgerai.application.account.SearchAccountsQuery;
-import com.np3.ledgerai.application.account.UpdateAccountUseCase;
+import com.np3.ledgerai.application.account.command.UpdateAccountCommand;
+import com.np3.ledgerai.application.account.command.useCase.CreateAccountUseCase;
+import com.np3.ledgerai.application.account.query.GetAccountBalanceQuery;
+import com.np3.ledgerai.application.account.query.GetAccountQuery;
+import com.np3.ledgerai.application.account.query.SearchAccountsQuery;
+import com.np3.ledgerai.application.account.command.useCase.UpdateAccountUseCase;
 import com.np3.ledgerai.domain.port.criteria.AccountSearchCriteria;
 import com.np3.ledgerai.domain.port.criteria.PageRequest;
 import com.np3.ledgerai.domain.valueobject.AccountId;
@@ -13,9 +14,9 @@ import com.np3.ledgerai.web.dto.PagedResponse;
 import com.np3.ledgerai.web.dto.account.AccountResponse;
 import com.np3.ledgerai.web.dto.account.BalanceResponse;
 import com.np3.ledgerai.web.dto.account.CreateAccountRequest;
-import com.np3.ledgerai.web.dto.account.UpdateAccountCommand;
 import com.np3.ledgerai.web.dto.account.UpdateAccountRequest;
 import com.np3.ledgerai.web.mapper.AccountWebMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +44,13 @@ public class AccountController {
 
 
     @PostMapping
-    public ResponseEntity<AccountResponse> create(@RequestBody CreateAccountRequest request) {
+    public ResponseEntity<AccountResponse> create(@Valid @RequestBody CreateAccountRequest request) {
         var account = createAccountUseCase.execute(AccountWebMapper.toCommand(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(AccountWebMapper.toResponse(account));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountResponse> update(@PathVariable UUID id, @RequestBody UpdateAccountRequest request) {
+    public ResponseEntity<AccountResponse> update(@PathVariable UUID id, @Valid @RequestBody UpdateAccountRequest request) {
         var command = new UpdateAccountCommand(AccountId.of(id), request.name(), request.active());
         var account = updateAccountUseCase.execute(command);
         return ResponseEntity.ok(AccountWebMapper.toResponse(account));

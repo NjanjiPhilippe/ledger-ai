@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -61,5 +62,12 @@ public class JpaAccountRepositoryAdapter implements AccountRepository {
     @Override
     public boolean existsById(TenantId tenantId, AccountId id) {
         return jpaRepository.findByIdAndTenantId(id.value(), tenantId.value()).isPresent();
+    }
+
+    @Override
+    public List<Account> findAllByTenant(TenantId tenantId) {
+        return jpaRepository.findAll(AccountSpecifications.hasTenant(tenantId.value())).stream()
+                .map(AccountMapper::toDomain)
+                .toList();
     }
 }
