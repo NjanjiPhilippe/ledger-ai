@@ -1,7 +1,7 @@
 package com.np3.ledgerai.web.mapper;
 
-import com.np3.ledgerai.application.journalEntry.RecordJournalEntryCommand;
-import com.np3.ledgerai.application.journalEntry.RecordJournalEntryLineCommand;
+import com.np3.ledgerai.application.journalEntry.command.RecordJournalEntryCommand;
+import com.np3.ledgerai.application.journalEntry.command.RecordJournalEntryLineCommand;
 import com.np3.ledgerai.domain.model.JournalEntry;
 import com.np3.ledgerai.domain.valueobject.AccountId;
 import com.np3.ledgerai.domain.valueobject.TransactionLine;

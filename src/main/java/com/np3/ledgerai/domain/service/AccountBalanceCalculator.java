@@ -18,7 +18,7 @@ public final class AccountBalanceCalculator {
                 : credits.subtract(debits);
     }
 
-    private static boolean isDebitNormal(AccountType type) {
+    public static boolean isDebitNormal(AccountType type) {
         return type == AccountType.ASSET || type == AccountType.EXPENSE;
     }
 }

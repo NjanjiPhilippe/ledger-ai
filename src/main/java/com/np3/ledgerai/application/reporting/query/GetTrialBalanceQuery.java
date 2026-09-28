@@ -1,5 +1,6 @@
 package com.np3.ledgerai.application.reporting.query;
 
+
 import com.np3.ledgerai.domain.model.Account;
 import com.np3.ledgerai.domain.port.AccountRepository;
 import com.np3.ledgerai.domain.port.BalanceProjectionRepository;

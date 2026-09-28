@@ -7,6 +7,7 @@ import com.np3.ledgerai.domain.port.criteria.PageResult;
 import com.np3.ledgerai.domain.valueobject.AccountId;
 import com.np3.ledgerai.domain.valueobject.TenantId;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AccountRepository {
@@ -18,4 +19,6 @@ public interface AccountRepository {
     PageResult<Account> search(TenantId tenantId, AccountSearchCriteria criteria, PageRequest pageRequest);
 
     boolean existsById(TenantId tenantId, AccountId id);
+    List<Account> findAllByTenant(TenantId tenantId);
+
 }

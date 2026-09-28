@@ -1,4 +1,8 @@
 package com.np3.ledgerai.web.dto.account;
 
-public record UpdateAccountRequest(String name, boolean active) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UpdateAccountRequest(
+        @NotBlank(message = "Name is required")
+        String name, boolean active) {
 }

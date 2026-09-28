@@ -1,6 +1,6 @@
 package com.np3.ledgerai.web.mapper;
 
-import com.np3.ledgerai.application.account.CreateAccountCommand;
+import com.np3.ledgerai.application.account.command.CreateAccountCommand;
 import com.np3.ledgerai.domain.model.Account;
 import com.np3.ledgerai.web.dto.account.AccountResponse;
 import com.np3.ledgerai.web.dto.account.CreateAccountRequest;

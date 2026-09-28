@@ -7,6 +7,7 @@ import com.np3.ledgerai.domain.exception.UnbalancedEntryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,6 +15,15 @@ import java.time.Instant;
 
 @RestControllerAdvice
 public class DomainExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationApiError> handleValidation(MethodArgumentNotValidException ex) {
+        var errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> new ValidationApiError.FieldError(fe.getField(), fe.getDefaultMessage()))
+                .toList();
+        var body = new ValidationApiError(HttpStatus.BAD_REQUEST.value(), "Validation failed", Instant.now(), errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 
     @ExceptionHandler(UnbalancedEntryException.class)
     public ResponseEntity<ApiError> handleUnbalancedEntry(UnbalancedEntryException ex) {
