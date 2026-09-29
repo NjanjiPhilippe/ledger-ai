@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.Clock;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +31,16 @@ public class GetTrialBalanceQuery {
     private final AccountRepository accountRepository;
     private final BalanceProjectionRepository balanceProjectionRepository;
     private final TenantContext tenantContext;
+    private final Clock clock;
 
     public GetTrialBalanceQuery(AccountRepository accountRepository,
                                 BalanceProjectionRepository balanceProjectionRepository,
-                                TenantContext tenantContext) {
+                                TenantContext tenantContext,
+                                Clock clock) {
         this.accountRepository = accountRepository;
         this.balanceProjectionRepository = balanceProjectionRepository;
         this.tenantContext = tenantContext;
+        this.clock = clock;
     }
 
     @PreAuthorize("hasRole('VIEWER')")
@@ -47,7 +50,7 @@ public class GetTrialBalanceQuery {
         List<Account> accounts = accountRepository.findAllByTenant(tenantId);
         Map<AccountId, DebitCreditTotals> totalsByAccount = balanceProjectionRepository.findAllTotals(tenantId);
 
-        Currency currency = accounts.isEmpty() ? DEFAULT_CURRENCY : accounts.get(0).currency();
+        Currency currency = accounts.isEmpty() ? DEFAULT_CURRENCY : accounts.getFirst().currency();
 
         List<TrialBalanceLine> lines = accounts.stream()
                 .map(account -> toLine(account, totalsByAccount.getOrDefault(account.id(), DebitCreditTotals.zero())))
@@ -61,7 +64,7 @@ public class GetTrialBalanceQuery {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new TrialBalance(
-                Instant.now(),
+                clock.instant(),
                 currency,
                 lines,
                 Money.of(totalDebitsAmount, currency),

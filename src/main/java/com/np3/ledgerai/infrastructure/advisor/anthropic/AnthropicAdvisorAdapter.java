@@ -1,4 +1,4 @@
-package com.np3.ledgerai.infrastructure.advisor.openai;
+package com.np3.ledgerai.infrastructure.advisor.anthropic;
 
 import com.np3.ledgerai.domain.exception.AiAdvisorException;
 import com.np3.ledgerai.domain.port.AiAdvisorPort;
@@ -16,29 +16,30 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@EnableConfigurationProperties(OpenAiAdvisorProperties.class)
-@ConditionalOnProperty(prefix = "ledgerai.advisor", name = "provider", havingValue = "openai")
-public class OpenAiAdvisorAdapter implements AiAdvisorPort {
+@EnableConfigurationProperties(AnthropicAdvisorProperties.class)
+@ConditionalOnProperty(prefix = "ledgerai.advisor", name = "provider", havingValue = "anthropic", matchIfMissing = true)
+public class AnthropicAdvisorAdapter implements AiAdvisorPort {
 
-    private static final String PROVIDER_NAME = "openai";
+    private static final String PROVIDER_NAME = "anthropic";
 
-    private final OpenAiAdvisorProperties properties;
+    private final AnthropicAdvisorProperties properties;
     private final AdvisorPromptBuilder promptBuilder;
     private final RecommendationJsonParser recommendationJsonParser;
     private final RestClient restClient;
     private final Clock clock;
 
-    public OpenAiAdvisorAdapter(OpenAiAdvisorProperties properties,
-                                AdvisorPromptBuilder promptBuilder,
-                                RecommendationJsonParser recommendationJsonParser,
-                                Clock clock) {
+    public AnthropicAdvisorAdapter(AnthropicAdvisorProperties properties,
+                                   AdvisorPromptBuilder promptBuilder,
+                                   RecommendationJsonParser recommendationJsonParser,
+                                   Clock clock) {
         this.clock = clock;
         this.properties = properties;
         this.promptBuilder = promptBuilder;
         this.recommendationJsonParser = recommendationJsonParser;
         this.restClient = RestClient.builder()
                 .baseUrl(properties.baseUrl())
-                .defaultHeader("Authorization", "Bearer " + properties.apiKey())
+                .defaultHeader("x-api-key", properties.apiKey())
+                .defaultHeader("anthropic-version", "2023-06-01")
                 .build();
     }
 
@@ -46,16 +47,16 @@ public class OpenAiAdvisorAdapter implements AiAdvisorPort {
     public AdviceResult analyze(FinancialSnapshot snapshot) {
         Map<String, Object> requestBody = Map.of(
                 "model", properties.model(),
+                "max_tokens", 1024,
+                "system", promptBuilder.systemPrompt(),
                 "messages", List.of(
-                        Map.of("role", "system", "content", promptBuilder.systemPrompt()),
                         Map.of("role", "user", "content", promptBuilder.userPrompt(snapshot))
-                ),
-                "temperature", 0.2
+                )
         );
 
         try {
             Map<String, Object> response = restClient.post()
-                    .uri("/chat/completions")
+                    .uri("/messages")
                     .body(requestBody)
                     .retrieve()
                     .body(Map.class);
@@ -65,20 +66,19 @@ public class OpenAiAdvisorAdapter implements AiAdvisorPort {
         } catch (AiAdvisorException e) {
             throw e;
         } catch (Exception e) {
-            throw new AiAdvisorException("Échec de l'appel à OpenAI", e);
+            throw new AiAdvisorException("Échec de l'appel à Anthropic", e);
         }
     }
 
     @SuppressWarnings("unchecked")
     private String extractContent(Map<String, Object> response) {
         if (response == null) {
-            throw new AiAdvisorException("Réponse vide d'OpenAI");
+            throw new AiAdvisorException("Réponse vide d'Anthropic");
         }
-        List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
-        if (choices == null || choices.isEmpty()) {
-            throw new AiAdvisorException("Aucun choix retourné par OpenAI");
+        List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+        if (content == null || content.isEmpty()) {
+            throw new AiAdvisorException("Aucun contenu retourné par Anthropic");
         }
-        Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-        return (String) message.get("content");
+        return (String) content.get(0).get("text");
     }
 }
