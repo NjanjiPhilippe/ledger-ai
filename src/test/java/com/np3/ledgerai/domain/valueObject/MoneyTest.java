@@ -25,7 +25,9 @@ class MoneyTest {
     @Test
     void ofRejectsAnAmountWithMoreDecimalsThanTheCurrencyAllows() {
         assertThatThrownBy(() -> Money.of(new BigDecimal("100.50"), XAF))
-                .isInstanceOf(ArithmeticException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("100.50")
+                .hasMessageContaining("XAF");
     }
 
     @Test
