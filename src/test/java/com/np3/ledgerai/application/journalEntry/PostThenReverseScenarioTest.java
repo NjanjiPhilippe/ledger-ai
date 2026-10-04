@@ -3,14 +3,18 @@ package com.np3.ledgerai.application.journalEntry;
 import com.np3.ledgerai.application.journalEntry.command.JournalEntryPostedEvent;
 import com.np3.ledgerai.application.journalEntry.command.useCase.PostJournalEntryUseCase;
 import com.np3.ledgerai.application.journalEntry.command.useCase.ReverseJournalEntryUseCase;
+import com.np3.ledgerai.domain.model.Account;
 import com.np3.ledgerai.domain.model.JournalEntry;
 import com.np3.ledgerai.domain.model.JournalEntryStatus;
+import com.np3.ledgerai.domain.port.AccountRepository;
 import com.np3.ledgerai.domain.port.DebitCreditTotals;
 import com.np3.ledgerai.domain.port.JournalEntryRepository;
+import com.np3.ledgerai.domain.port.criteria.AccountSearchCriteria;
 import com.np3.ledgerai.domain.port.criteria.JournalEntrySearchCriteria;
 import com.np3.ledgerai.domain.port.criteria.PageRequest;
 import com.np3.ledgerai.domain.port.criteria.PageResult;
 import com.np3.ledgerai.domain.valueobject.AccountId;
+import com.np3.ledgerai.domain.valueobject.AccountType;
 import com.np3.ledgerai.domain.valueobject.EntryType;
 import com.np3.ledgerai.domain.valueobject.JournalEntryId;
 import com.np3.ledgerai.domain.valueobject.Money;
@@ -48,16 +52,18 @@ class PostThenReverseScenarioTest {
     private final InMemoryJournalEntryRepository repository = new InMemoryJournalEntryRepository();
     private final Map<AccountId, BigDecimal[]> projection = new HashMap<>(); // [debits, credits]
 
+    private final InMemoryAccountRepository accounts = new InMemoryAccountRepository();
+
     private final PostJournalEntryUseCase postUseCase = new PostJournalEntryUseCase(
-            repository, () -> TENANT_ID, CLOCK, event -> applyToProjection((JournalEntryPostedEvent) event));
+            repository, accounts, () -> TENANT_ID, CLOCK, event -> applyToProjection((JournalEntryPostedEvent) event));
     private final ReverseJournalEntryUseCase reverseUseCase = new ReverseJournalEntryUseCase(
             repository, () -> TENANT_ID, () -> USER_ID, CLOCK,
             event -> applyToProjection((JournalEntryPostedEvent) event));
 
     @Test
     void postingThenReversingAnEntryNetsEveryAccountBackToZero() {
-        AccountId cash = AccountId.generate();
-        AccountId revenue = AccountId.generate();
+        AccountId cash = accounts.open("Cash", AccountType.ASSET);
+        AccountId revenue = accounts.open("Sales", AccountType.REVENUE);
         JournalEntry draft = JournalEntry.draft(TENANT_ID, List.of(
                         new TransactionLine(cash, Money.of(BigDecimal.valueOf(100), XAF), EntryType.DEBIT),
                         new TransactionLine(revenue, Money.of(BigDecimal.valueOf(100), XAF), EntryType.CREDIT)),
@@ -140,6 +146,42 @@ class PostThenReverseScenarioTest {
             Map<AccountId, DebitCreditTotals> result = new HashMap<>();
             sums.forEach((id, totals) -> result.put(id, new DebitCreditTotals(totals[0], totals[1])));
             return result;
+        }
+    }
+
+    private static final class InMemoryAccountRepository implements AccountRepository {
+        private final Map<AccountId, Account> store = new HashMap<>();
+
+        AccountId open(String name, AccountType type) {
+            Account account = Account.open(TENANT_ID, name, type, XAF);
+            store.put(account.id(), account);
+            return account.id();
+        }
+
+        @Override
+        public Account save(Account account) {
+            store.put(account.id(), account);
+            return account;
+        }
+
+        @Override
+        public Optional<Account> findById(TenantId tenantId, AccountId id) {
+            return Optional.ofNullable(store.get(id));
+        }
+
+        @Override
+        public PageResult<Account> search(TenantId tenantId, AccountSearchCriteria criteria, PageRequest pageRequest) {
+            return new PageResult<>(new ArrayList<>(store.values()), 0, pageRequest.size(), store.size());
+        }
+
+        @Override
+        public boolean existsById(TenantId tenantId, AccountId id) {
+            return store.containsKey(id);
+        }
+
+        @Override
+        public List<Account> findAllByTenant(TenantId tenantId) {
+            return new ArrayList<>(store.values());
         }
     }
 }

@@ -15,6 +15,7 @@ import com.np3.ledgerai.infrastructure.persistence.repository.JournalEntryJpaRep
 import com.np3.ledgerai.infrastructure.persistence.mappers.JournalEntryMapper;
 import com.np3.ledgerai.infrastructure.persistence.repository.specifications.JournalEntrySpecifications;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,9 @@ import java.util.UUID;
 
 @Component
 public class JpaJournalEntryRepositoryAdapter implements JournalEntryRepository {
+
+    // Newest first; the id breaks ties so that page boundaries are stable.
+    static final Sort DEFAULT_SORT = Sort.by("createdAt").descending().and(Sort.by("id").descending());
 
     private final JournalEntryJpaRepository jpaRepository;
 
@@ -56,7 +60,7 @@ public class JpaJournalEntryRepositoryAdapter implements JournalEntryRepository 
                 .and(JournalEntrySpecifications.createdTo(criteria.createdTo()));
 
         org.springframework.data.domain.PageRequest springPageRequest =
-                org.springframework.data.domain.PageRequest.of(pageRequest.page(), pageRequest.size());
+                org.springframework.data.domain.PageRequest.of(pageRequest.page(), pageRequest.size(), DEFAULT_SORT);
 
         Page<JournalEntryEntity> page = jpaRepository.findAll(spec, springPageRequest);
 
