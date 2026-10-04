@@ -86,6 +86,15 @@
         "attributes": {}
       },
       {
+        "id": "2401bdd0-db26-43d8-8a0e-9086b7ac63a1",
+        "name": "offline_access",
+        "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "d91d554a-c92d-42ab-9be6-5efa91bd8059",
+        "attributes": {}
+      },
+      {
         "id": "31b4c897-ce56-4408-adfd-b5b846017ef9",
         "name": "uma_authorization",
         "description": "${role_uma_authorization}",
@@ -95,9 +104,9 @@
         "attributes": {}
       },
       {
-        "id": "2401bdd0-db26-43d8-8a0e-9086b7ac63a1",
-        "name": "offline_access",
-        "description": "${role_offline-access}",
+        "id": "b3a1c8de-5f0e-4c44-9a6e-2d7f4e1a9c01",
+        "name": "viewer",
+        "description": "Read-only access (reports, ledger, advisor)",
         "composite": false,
         "clientRole": false,
         "containerId": "d91d554a-c92d-42ab-9be6-5efa91bd8059",
@@ -673,6 +682,65 @@
       ]
     },
     {
+      "id": "7c2f0a9e-3b1d-4e8a-9d65-1a4b6c8e2f10",
+      "clientId": "ledgerai-dev",
+      "name": "ledgerai-dev",
+      "description": "LOCAL DEVELOPMENT ONLY: password grant to get tokens from curl/Postman. Remove outside local.",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "client.introspection.response.allow.jwt.claim.enabled": "false",
+        "login_theme": "base",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true",
+        "oidc.ciba.grant.enabled": "false",
+        "client.use.lightweight.access.token.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "client_credentials.use_refresh_token": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "require.pushed.authorization.requests": "false",
+        "acr.loa.map": "{}",
+        "display.on.consent.screen": "false",
+        "token.response.type.bearer.lower-case": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "id": "be16245d-9164-4c2e-a54e-0a3250be2779",
       "clientId": "ledgerai-frontend",
       "name": "ledgerai-frontend",
@@ -695,7 +763,7 @@
       "consentRequired": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
+      "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
       "publicClient": true,
       "frontchannelLogout": true,
@@ -715,7 +783,8 @@
         "require.pushed.authorization.requests": "false",
         "acr.loa.map": "{}",
         "display.on.consent.screen": "false",
-        "token.response.type.bearer.lower-case": "false"
+        "token.response.type.bearer.lower-case": "false",
+        "pkce.code.challenge.method": "S256"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -2342,5 +2411,82 @@
   },
   "clientPolicies": {
     "policies": []
-  }
+  },
+  "users": [
+    {
+      "id": "0b6f6a52-8f0d-4a39-b1f7-7a1d3f9e0001",
+      "username": "viewer",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Viewer",
+      "lastName": "Local",
+      "email": "viewer@ledgerai.local",
+      "attributes": {
+        "tenant_id": [
+          "03ab4406-123e-4491-ae06-5a93a7724555"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "viewer",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-ledgerai",
+        "viewer"
+      ]
+    },
+    {
+      "id": "0b6f6a52-8f0d-4a39-b1f7-7a1d3f9e0002",
+      "username": "accountant",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Accountant",
+      "lastName": "Local",
+      "email": "accountant@ledgerai.local",
+      "attributes": {
+        "tenant_id": [
+          "03ab4406-123e-4491-ae06-5a93a7724555"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "accountant",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-ledgerai",
+        "accountant"
+      ]
+    },
+    {
+      "id": "0b6f6a52-8f0d-4a39-b1f7-7a1d3f9e0003",
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Local",
+      "email": "admin@ledgerai.local",
+      "attributes": {
+        "tenant_id": [
+          "03ab4406-123e-4491-ae06-5a93a7724555"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-ledgerai",
+        "admin"
+      ]
+    }
+  ]
 }

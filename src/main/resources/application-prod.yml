@@ -16,5 +16,5 @@ spring:
 
 logging:
   level:
-    com.ledgerai: INFO
+    com.np3.ledgerai: INFO
     root: WARN
