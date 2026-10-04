@@ -1,7 +1,7 @@
 package com.np3.ledgerai.web.mapper;
 
-import com.np3.ledgerai.application.dto.TrialBalance;
-import com.np3.ledgerai.application.dto.TrialBalanceLine;
+import com.np3.ledgerai.domain.valueobject.TrialBalance;
+import com.np3.ledgerai.domain.valueobject.TrialBalanceLine;
 import com.np3.ledgerai.web.dto.reporting.TrialBalanceLineResponse;
 import com.np3.ledgerai.web.dto.reporting.TrialBalanceResponse;
 
@@ -17,13 +17,12 @@ public final class ReportWebMapper {
                 .map(ReportWebMapper::toLineResponse)
                 .toList();
 
-        String currencyCode = trialBalance.currency() == null ? null : trialBalance.currency().getCurrencyCode();
-
         return new TrialBalanceResponse(
+                trialBalance.generatedAt(),
+                trialBalance.currency().getCurrencyCode(),
                 lines,
-                trialBalance.totalDebits(),
-                trialBalance.totalCredits(),
-                currencyCode,
+                trialBalance.totalDebits().amount(),
+                trialBalance.totalCredits().amount(),
                 trialBalance.balanced());
     }
 
@@ -31,7 +30,9 @@ public final class ReportWebMapper {
         return new TrialBalanceLineResponse(
                 line.accountId().value(),
                 line.accountName(),
-                line.accountType(),
+                line.accountType().name(),
+                line.totalDebits().amount(),
+                line.totalCredits().amount(),
                 line.balance().amount());
     }
 }
