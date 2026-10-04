@@ -8,8 +8,13 @@ import com.np3.ledgerai.infrastructure.persistence.Entity.BalanceProjectionEntit
 import com.np3.ledgerai.infrastructure.persistence.repository.BalanceProjectionJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,11 +35,45 @@ public class JpaBalanceProjectionRepositoryAdapter implements BalanceProjectionR
 
     @Override
     public Map<AccountId, DebitCreditTotals> findAllTotals(TenantId tenantId) {
-        return jpaRepository.findAllByTenantId(tenantId.value()) // adapte si l'accesseur diffère
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> AccountId.of(e.getAccountId()),
-                        e -> new DebitCreditTotals(e.getTotalDebits(), e.getTotalCredits())
-                ));
+        return toTotals(jpaRepository.findAllByTenantId(tenantId.value()));
+    }
+
+    @Override
+    public Map<AccountId, DebitCreditTotals> lockAndFindAllTotals(TenantId tenantId) {
+        return toTotals(jpaRepository.findAllByTenantIdForUpdate(tenantId.value()));
+    }
+
+    @Override
+    public void replaceAll(TenantId tenantId, Map<AccountId, DebitCreditTotals> totals) {
+        // Existing rows are updated in place (and obsolete ones removed) rather than deleted and re-inserted:
+        // Hibernate flushes inserts before deletes, which would collide on the primary key.
+        List<BalanceProjectionEntity> existing = jpaRepository.findAllByTenantId(tenantId.value());
+        Set<UUID> seen = new HashSet<>();
+        List<BalanceProjectionEntity> obsolete = new ArrayList<>();
+        for (BalanceProjectionEntity row : existing) {
+            DebitCreditTotals target = totals.get(AccountId.of(row.getAccountId()));
+            if (target == null) {
+                obsolete.add(row);
+            } else {
+                row.setTotalDebits(target.totalDebits());
+                row.setTotalCredits(target.totalCredits());
+                seen.add(row.getAccountId());
+            }
+        }
+        jpaRepository.deleteAll(obsolete);
+        List<BalanceProjectionEntity> created = new ArrayList<>();
+        totals.forEach((accountId, target) -> {
+            if (!seen.contains(accountId.value())) {
+                created.add(new BalanceProjectionEntity(tenantId.value(), accountId.value(),
+                        target.totalDebits(), target.totalCredits()));
+            }
+        });
+        jpaRepository.saveAll(created);
+    }
+
+    private static Map<AccountId, DebitCreditTotals> toTotals(List<BalanceProjectionEntity> rows) {
+        return rows.stream().collect(Collectors.toMap(
+                e -> AccountId.of(e.getAccountId()),
+                e -> new DebitCreditTotals(e.getTotalDebits(), e.getTotalCredits())));
     }
 }

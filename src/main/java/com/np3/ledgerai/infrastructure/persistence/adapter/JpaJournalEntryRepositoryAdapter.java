@@ -20,8 +20,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class JpaJournalEntryRepositoryAdapter implements JournalEntryRepository {
@@ -83,5 +86,19 @@ public class JpaJournalEntryRepositoryAdapter implements JournalEntryRepository 
             }
         }
         return new DebitCreditTotals(debits, credits);
+    }
+
+    @Override
+    public Map<AccountId, DebitCreditTotals> sumPostedLinesByAccount(TenantId tenantId) {
+        Map<UUID, BigDecimal[]> byAccount = new HashMap<>(); // [debits, credits]
+        for (var row : jpaRepository.sumPostedLinesGroupedByAccountAndEntryType(tenantId.value())) {
+            BigDecimal[] totals = byAccount.computeIfAbsent(row.getAccountId(),
+                    id -> new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO});
+            totals[row.getEntryType() == EntryType.DEBIT ? 0 : 1] = row.getTotal();
+        }
+        Map<AccountId, DebitCreditTotals> result = new HashMap<>();
+        byAccount.forEach((accountId, totals) ->
+                result.put(AccountId.of(accountId), new DebitCreditTotals(totals[0], totals[1])));
+        return result;
     }
 }

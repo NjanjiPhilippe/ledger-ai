@@ -11,8 +11,8 @@ A double-entry accounting ledger with an AI financial advisor, built in public a
 | Area | State | Notes |
 |---|---|---|
 | Accounts (create, rename, activate/deactivate, search) | ✅ | |
-| Journal entries (draft → posted → reversed, balanced-entry invariant) | ✅ | Reversal creates an offsetting entry |
-| Balance projection updated by domain events | ✅ | See [known limitations](#known-limitations) |
+| Journal entries (draft → posted → reversed, balanced-entry invariant) | ✅ | Accounts must exist, be active and match the currency; reversal creates an offsetting entry |
+| Balance projection updated by domain events, atomically with the posting | ✅ | Admin rebuild from the journal detects and repairs drift |
 | Trial balance report | ✅ | `GET /api/v1/reports/trial-balance` |
 | AI advisor (Anthropic or OpenAI behind a port) | ✅ | Works on the trial balance, or on a caller-supplied snapshot |
 | Keycloak resource server, role hierarchy | ✅ | `viewer` < `accountant` < `admin` |
@@ -66,6 +66,10 @@ checked on every build by `HexagonalArchitectureTest`.
 2. `POST /journal-entries/{id}/post` posts it and publishes `JournalEntryPostedEvent`.
 3. `BalanceProjectionUpdater` updates `balance_projection` after the transaction commits.
 4. Reports and the advisor read the projection, never the journal lines.
+
+The projection is updated in the same transaction as the posting (row locks, taken in account order), so an entry
+is posted if and only if the projection is updated. The journal stays the source of truth: an admin can rebuild
+the projection from it, and the rebuild reports how many accounts had drifted.
 
 ## Run it locally
 
@@ -138,6 +142,7 @@ names and balances are sent to the chosen provider.
 | `GET /api/v1/journal-entries`, `/{id}` | viewer |
 | `GET /api/v1/reports/trial-balance` | viewer |
 | `POST /api/v1/advisor/analyze-ledger`, `/analyze` | viewer |
+| `POST /api/v1/admin/projections/balances/rebuild` | admin |
 | `GET /api/v1/me` | authenticated |
 
 Authoritative documentation: the OpenAPI spec served by the application.
@@ -156,16 +161,13 @@ shipped Keycloak realm. Persistence tests use H2; Testcontainers/PostgreSQL is p
 
 Documented rather than hidden, and the source of the next episodes:
 
-- **Projection robustness.** The balance projection is updated after commit with a read-modify-write and no
-  locking. A failure between commit and update, or two concurrent postings on one account, can desynchronise
-  it, and there is no rebuild command yet.
-- **Entries are not validated against accounts.** A journal entry does not yet check that its accounts exist
-  for the tenant, are active, or share the entry's currency.
+- **First posting on a brand-new account.** The balance projection is updated inside the posting transaction
+  with row locks, so postings never lose an update. Two simultaneous *first* postings on an account that has
+  no projection row yet can collide on the primary key: one fails cleanly and can be retried.
 - **Single currency per ledger in reports.** The trial balance takes its currency from the first account.
-- **Amounts** with more decimals than the currency allows are rejected with a 500 instead of a 400.
-- **Pagination** has no sort order, so page boundaries are not guaranteed to be stable.
 - **AI advisor**: no HTTP timeouts or retries, the model computes figures itself, and results are not stored.
-- Persistence tests run on H2 while production uses PostgreSQL.
+- **Tests**: persistence tests (including the concurrency test) run on H2 while production uses PostgreSQL;
+  Testcontainers is planned.
 
 ## Tech stack
 
