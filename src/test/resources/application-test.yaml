@@ -1,0 +1,7 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Never contacted by the tests: the decoder is created lazily on the first token validation.
+          issuer-uri: http://localhost:0/realms/test

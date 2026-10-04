@@ -9,9 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -26,6 +23,9 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final List<String> ALLOWED_ORIGINS = List.of("http://localhost:4200");
+
+    // The JwtDecoder is deliberately not declared here: Spring Boot builds it (lazily) from
+    // spring.security.oauth2.resourceserver.jwt.issuer-uri, which each profile sets.
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -41,14 +41,6 @@ public class SecurityConfig {
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(keycloakJwtAuthenticationConverter())));
 
         return http.build();
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-
-        return JwtDecoders.<NimbusJwtDecoder>fromIssuerLocation(
-                "http://localhost:8180/realms/ledgerai"
-        );
     }
 
     @Bean
