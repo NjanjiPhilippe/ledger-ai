@@ -20,12 +20,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,31 +52,26 @@ class BalanceProjectionUpdaterTest {
         AccountId accountId = AccountId.generate();
         JournalEntryPostedEvent event = eventFor(tenantId, List.of(
                 new TransactionLine(accountId, Money.of(BigDecimal.valueOf(100), XAF), EntryType.DEBIT)));
-
-        var expectedId = new BalanceProjectionEntity.BalanceProjectionId(tenantId.value(), accountId.value());
-        when(repository.findById(expectedId)).thenReturn(Optional.empty());
-        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.findAllForUpdate(eq(tenantId.value()), any())).thenReturn(List.of());
 
         updater.onJournalEntryPosted(event);
 
         ArgumentCaptor<BalanceProjectionEntity> captor = ArgumentCaptor.forClass(BalanceProjectionEntity.class);
         verify(repository).save(captor.capture());
+        assertThat(captor.getValue().getAccountId()).isEqualTo(accountId.value());
         assertThat(captor.getValue().getTotalDebits()).isEqualByComparingTo(BigDecimal.valueOf(100));
         assertThat(captor.getValue().getTotalCredits()).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     @Test
-    void accumulatesOntoAnExistingProjection() {
+    void accumulatesOntoAnExistingLockedProjection() {
         TenantId tenantId = TenantId.of(UUID.randomUUID());
         AccountId accountId = AccountId.generate();
         JournalEntryPostedEvent event = eventFor(tenantId, List.of(
                 new TransactionLine(accountId, Money.of(BigDecimal.valueOf(50), XAF), EntryType.CREDIT)));
-
-        var expectedId = new BalanceProjectionEntity.BalanceProjectionId(tenantId.value(), accountId.value());
         var existing = new BalanceProjectionEntity(tenantId.value(), accountId.value(),
                 BigDecimal.valueOf(300), BigDecimal.valueOf(120));
-        when(repository.findById(expectedId)).thenReturn(Optional.of(existing));
-        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.findAllForUpdate(eq(tenantId.value()), any())).thenReturn(List.of(existing));
 
         updater.onJournalEntryPosted(event);
 
@@ -86,20 +82,40 @@ class BalanceProjectionUpdaterTest {
     }
 
     @Test
-    void updatesOneProjectionPerLineWhenLinesTouchDifferentAccounts() {
+    void locksAllAffectedAccountsInOneQueryAndSavesOneRowPerAccount() {
         TenantId tenantId = TenantId.of(UUID.randomUUID());
         AccountId debitAccount = AccountId.generate();
         AccountId creditAccount = AccountId.generate();
         JournalEntryPostedEvent event = eventFor(tenantId, List.of(
                 new TransactionLine(debitAccount, Money.of(BigDecimal.valueOf(100), XAF), EntryType.DEBIT),
                 new TransactionLine(creditAccount, Money.of(BigDecimal.valueOf(100), XAF), EntryType.CREDIT)));
-
-        when(repository.findById(any())).thenReturn(Optional.empty());
-        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.findAllForUpdate(eq(tenantId.value()), any())).thenReturn(List.of());
 
         updater.onJournalEntryPosted(event);
 
+        ArgumentCaptor<Collection<UUID>> locked = ArgumentCaptor.forClass(Collection.class);
+        verify(repository).findAllForUpdate(eq(tenantId.value()), locked.capture());
+        assertThat(locked.getValue()).containsExactlyInAnyOrder(debitAccount.value(), creditAccount.value());
         verify(repository, times(2)).save(any());
+    }
+
+    @Test
+    void mergesSeveralLinesOnTheSameAccountIntoASingleUpdate() {
+        TenantId tenantId = TenantId.of(UUID.randomUUID());
+        AccountId cash = AccountId.generate();
+        AccountId sales = AccountId.generate();
+        JournalEntryPostedEvent event = eventFor(tenantId, List.of(
+                new TransactionLine(cash, Money.of(BigDecimal.valueOf(60), XAF), EntryType.DEBIT),
+                new TransactionLine(cash, Money.of(BigDecimal.valueOf(40), XAF), EntryType.DEBIT),
+                new TransactionLine(sales, Money.of(BigDecimal.valueOf(100), XAF), EntryType.CREDIT)));
+        when(repository.findAllForUpdate(eq(tenantId.value()), any())).thenReturn(List.of());
+
+        updater.onJournalEntryPosted(event);
+
+        ArgumentCaptor<BalanceProjectionEntity> captor = ArgumentCaptor.forClass(BalanceProjectionEntity.class);
+        verify(repository, times(2)).save(captor.capture());
+        var cashRow = captor.getAllValues().stream().filter(e -> e.getAccountId().equals(cash.value())).findFirst().orElseThrow();
+        assertThat(cashRow.getTotalDebits()).isEqualByComparingTo(BigDecimal.valueOf(100));
     }
 
     private static JournalEntryPostedEvent eventFor(TenantId tenantId, List<TransactionLine> lines) {
