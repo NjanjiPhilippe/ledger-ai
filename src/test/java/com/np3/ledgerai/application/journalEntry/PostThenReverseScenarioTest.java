@@ -4,6 +4,7 @@ import com.np3.ledgerai.application.journalEntry.command.JournalEntryPostedEvent
 import com.np3.ledgerai.application.journalEntry.command.useCase.PostJournalEntryUseCase;
 import com.np3.ledgerai.application.journalEntry.command.useCase.ReverseJournalEntryUseCase;
 import com.np3.ledgerai.domain.model.JournalEntry;
+import com.np3.ledgerai.domain.model.JournalEntryStatus;
 import com.np3.ledgerai.domain.port.DebitCreditTotals;
 import com.np3.ledgerai.domain.port.JournalEntryRepository;
 import com.np3.ledgerai.domain.port.criteria.JournalEntrySearchCriteria;
@@ -75,6 +76,12 @@ class PostThenReverseScenarioTest {
             assertThat(totals.totalDebits()).isEqualByComparingTo("100");
             assertThat(totals.totalCredits()).isEqualByComparingTo("100");
         }
+
+        // The event-fed projection agrees with the journal, which is what a rebuild would produce.
+        Map<AccountId, DebitCreditTotals> fromJournal = repository.sumPostedLinesByAccount(TENANT_ID);
+        for (AccountId account : List.of(cash, revenue)) {
+            assertThat(totalsOf(account).sameAmountsAs(fromJournal.get(account))).isTrue();
+        }
     }
 
     private void applyToProjection(JournalEntryPostedEvent event) {
@@ -113,7 +120,26 @@ class PostThenReverseScenarioTest {
 
         @Override
         public DebitCreditTotals sumPostedLinesForAccount(TenantId tenantId, AccountId accountId) {
-            return DebitCreditTotals.zero();
+            return sumPostedLinesByAccount(tenantId).getOrDefault(accountId, DebitCreditTotals.zero());
+        }
+
+        @Override
+        public Map<AccountId, DebitCreditTotals> sumPostedLinesByAccount(TenantId tenantId) {
+            Map<AccountId, BigDecimal[]> sums = new HashMap<>();
+            for (JournalEntry entry : store.values()) {
+                if (entry.status() == JournalEntryStatus.DRAFT) {
+                    continue; // posted entries, including the ones that were later reversed
+                }
+                for (TransactionLine line : entry.lines()) {
+                    BigDecimal[] totals = sums.computeIfAbsent(line.accountId(),
+                            id -> new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO});
+                    int index = line.isDebit() ? 0 : 1;
+                    totals[index] = totals[index].add(line.amount().amount());
+                }
+            }
+            Map<AccountId, DebitCreditTotals> result = new HashMap<>();
+            sums.forEach((id, totals) -> result.put(id, new DebitCreditTotals(totals[0], totals[1])));
+            return result;
         }
     }
 }

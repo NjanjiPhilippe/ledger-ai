@@ -17,6 +17,11 @@ public interface BalanceProjectionJpaRepository
         extends JpaRepository<BalanceProjectionEntity, BalanceProjectionEntity.BalanceProjectionId> {
     List<BalanceProjectionEntity> findAllByTenantId(UUID tenantId);
 
+    /** SELECT ... FOR UPDATE on every projection row of the tenant. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from BalanceProjectionEntity p where p.tenantId = :tenantId order by p.accountId")
+    List<BalanceProjectionEntity> findAllByTenantIdForUpdate(@Param("tenantId") UUID tenantId);
+
     /**
      * SELECT ... FOR UPDATE on the given accounts, ordered by account id so that concurrent transactions
      * always acquire row locks in the same order (no deadlock between postings touching the same accounts).

@@ -24,11 +24,32 @@ public interface JournalEntryJpaRepository extends JpaRepository<JournalEntryEnt
         FROM JournalEntryEntity e JOIN e.lines l
         WHERE e.tenantId = :tenantId
           AND l.accountId = :accountId
-          AND e.status = com.np3.ledgerai.domain.model.JournalEntryStatus.POSTED
+          AND e.status IN (com.np3.ledgerai.domain.model.JournalEntryStatus.POSTED,
+                           com.np3.ledgerai.domain.model.JournalEntryStatus.REVERSED)
         GROUP BY l.entryType
         """)
     List<EntryTypeTotal> sumPostedLinesGroupedByEntryType(@Param("tenantId") UUID tenantId,
                                                           @Param("accountId") UUID accountId);
+
+    /**
+     * Totals of every line that was ever posted, per account. A reversed entry stays in the sum: its offsetting
+     * reversal entry is posted too, so excluding the original would count the reversal alone.
+     */
+    @Query("""
+        SELECT l.accountId AS accountId, l.entryType AS entryType, COALESCE(SUM(l.amount), 0) AS total
+        FROM JournalEntryEntity e JOIN e.lines l
+        WHERE e.tenantId = :tenantId
+          AND e.status IN (com.np3.ledgerai.domain.model.JournalEntryStatus.POSTED,
+                           com.np3.ledgerai.domain.model.JournalEntryStatus.REVERSED)
+        GROUP BY l.accountId, l.entryType
+        """)
+    List<AccountEntryTypeTotal> sumPostedLinesGroupedByAccountAndEntryType(@Param("tenantId") UUID tenantId);
+
+    interface AccountEntryTypeTotal {
+        UUID getAccountId();
+        EntryType getEntryType();
+        BigDecimal getTotal();
+    }
 
     interface EntryTypeTotal {
         EntryType getEntryType();
