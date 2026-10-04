@@ -11,16 +11,15 @@ spring:
       hibernate:
         format_sql: true
 
-  # FIXED: Moved out of the 'jpa:' block to the root 'spring:' level
   liquibase:
     enabled: true
     change-log: classpath:db/master.yml
 
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health,info
-    endpoint:
-      health:
-        show-details: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

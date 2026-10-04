@@ -16,4 +16,4 @@ spring:
 
 logging:
   level:
-    com.ledgerai: DEBUG
+    com.np3.ledgerai: DEBUG
