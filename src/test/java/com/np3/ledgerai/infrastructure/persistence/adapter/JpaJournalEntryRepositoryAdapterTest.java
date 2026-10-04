@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +84,9 @@ class JpaJournalEntryRepositoryAdapterTest {
     void searchMapsCriteriaToPageableAndWrapsTheResultingPage() {
         JournalEntryEntity entity = JournalEntryMapper.toEntity(draftEntry());
         Page<JournalEntryEntity> page = new PageImpl<>(List.of(entity));
-        when(jpaRepository.findAll(any(Specification.class), any(org.springframework.data.domain.PageRequest.class)))
+        // Matching on the exact Pageable proves the search is sorted (stable pagination).
+        when(jpaRepository.findAll(any(Specification.class),
+                eq(org.springframework.data.domain.PageRequest.of(0, 20, JpaJournalEntryRepositoryAdapter.DEFAULT_SORT))))
                 .thenReturn(page);
 
         var result = adapter.search(TENANT_ID, new JournalEntrySearchCriteria(null, null, null),

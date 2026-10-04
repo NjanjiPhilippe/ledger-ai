@@ -12,6 +12,7 @@ import com.np3.ledgerai.infrastructure.persistence.Entity.AccountEntity;
 import com.np3.ledgerai.infrastructure.persistence.mappers.AccountMapper;
 import com.np3.ledgerai.infrastructure.persistence.repository.specifications.AccountSpecifications;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,9 @@ import java.util.Optional;
 
 @Component
 public class JpaAccountRepositoryAdapter implements AccountRepository {
+
+    // Pagination without an ORDER BY is not stable; the id breaks ties between equal names.
+    static final Sort DEFAULT_SORT = Sort.by("name").ascending().and(Sort.by("id").ascending());
 
     private final AccountJpaRepository jpaRepository;
 
@@ -48,7 +52,7 @@ public class JpaAccountRepositoryAdapter implements AccountRepository {
                 .and(AccountSpecifications.nameContains(criteria.nameContains()));
 
         org.springframework.data.domain.PageRequest springPageRequest =
-                org.springframework.data.domain.PageRequest.of(pageRequest.page(), pageRequest.size());
+                org.springframework.data.domain.PageRequest.of(pageRequest.page(), pageRequest.size(), DEFAULT_SORT);
 
         Page<AccountEntity> page = jpaRepository.findAll(spec, springPageRequest);
 
@@ -66,7 +70,7 @@ public class JpaAccountRepositoryAdapter implements AccountRepository {
 
     @Override
     public List<Account> findAllByTenant(TenantId tenantId) {
-        return jpaRepository.findAll(AccountSpecifications.hasTenant(tenantId.value())).stream()
+        return jpaRepository.findAll(AccountSpecifications.hasTenant(tenantId.value()), DEFAULT_SORT).stream()
                 .map(AccountMapper::toDomain)
                 .toList();
     }
