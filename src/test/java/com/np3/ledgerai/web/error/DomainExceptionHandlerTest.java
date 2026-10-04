@@ -8,6 +8,7 @@ import com.np3.ledgerai.application.journalEntry.command.useCase.ReverseJournalE
 import com.np3.ledgerai.application.journalEntry.query.GetJournalEntryQuery;
 import com.np3.ledgerai.application.journalEntry.query.SearchJournalEntriesQuery;
 import com.np3.ledgerai.domain.exception.AiAdvisorException;
+import com.np3.ledgerai.domain.exception.InvalidAccountReferenceException;
 import com.np3.ledgerai.domain.exception.NoActivityToAnalyzeException;
 import com.np3.ledgerai.web.controller.AdvisorController;
 import com.np3.ledgerai.web.controller.JournalEntryController;
@@ -81,6 +82,20 @@ class DomainExceptionHandlerTest {
     void anInvalidPathIdIsABadRequest() throws Exception {
         mockMvc.perform(get("/api/v1/journal-entries/not-a-uuid"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void anInvalidAccountReferenceIsABadRequestWithItsMessage() throws Exception {
+        when(recordJournalEntryUseCase.execute(org.mockito.ArgumentMatchers.any()))
+                .thenThrow(new InvalidAccountReferenceException("Account is inactive: Old"));
+        String body = """
+                {"description":"x","currencyCode":"XAF","lines":[
+                  {"accountId":"11111111-1111-1111-1111-111111111111","amount":10,"entryType":"DEBIT"},
+                  {"accountId":"22222222-2222-2222-2222-222222222222","amount":10,"entryType":"CREDIT"}]}""";
+
+        mockMvc.perform(post("/api/v1/journal-entries").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Account is inactive: Old"));
     }
 
     @Test

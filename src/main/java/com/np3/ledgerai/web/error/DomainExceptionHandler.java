@@ -2,6 +2,7 @@ package com.np3.ledgerai.web.error;
 
 import com.np3.ledgerai.domain.exception.AccountNotFoundException;
 import com.np3.ledgerai.domain.exception.AiAdvisorException;
+import com.np3.ledgerai.domain.exception.InvalidAccountReferenceException;
 import com.np3.ledgerai.domain.exception.InvalidStateTransitionException;
 import com.np3.ledgerai.domain.exception.JournalEntryNotFoundException;
 import com.np3.ledgerai.domain.exception.NoActivityToAnalyzeException;
@@ -35,6 +36,11 @@ public class DomainExceptionHandler {
 
     @ExceptionHandler(UnbalancedEntryException.class)
     public ResponseEntity<ApiError> handleUnbalancedEntry(UnbalancedEntryException ex) {
+        return build(HttpStatus.BAD_REQUEST, ex);
+    }
+
+    @ExceptionHandler(InvalidAccountReferenceException.class)
+    public ResponseEntity<ApiError> handleInvalidAccountReference(InvalidAccountReferenceException ex) {
         return build(HttpStatus.BAD_REQUEST, ex);
     }
 
