@@ -8,7 +8,9 @@ import com.np3.ledgerai.infrastructure.persistence.Entity.BalanceProjectionEntit
 import com.np3.ledgerai.infrastructure.persistence.repository.BalanceProjectionJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class JpaBalanceProjectionRepositoryAdapter implements BalanceProjectionRepository {
@@ -24,5 +26,15 @@ public class JpaBalanceProjectionRepositoryAdapter implements BalanceProjectionR
         var id = new BalanceProjectionEntity.BalanceProjectionId(tenantId.value(), accountId.value());
         return jpaRepository.findById(id)
                 .map(e -> new DebitCreditTotals(e.getTotalDebits(), e.getTotalCredits()));
+    }
+
+    @Override
+    public Map<AccountId, DebitCreditTotals> findAllTotals(TenantId tenantId) {
+        return jpaRepository.findAllByTenantId(tenantId.value()) // adapte si l'accesseur diffère
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> AccountId.of(e.getAccountId()),
+                        e -> new DebitCreditTotals(e.getTotalDebits(), e.getTotalCredits())
+                ));
     }
 }

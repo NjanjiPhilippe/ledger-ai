@@ -19,7 +19,7 @@ public final class AdvisorWebMapper {
     private AdvisorWebMapper() {
     }
 
-    public static FinancialSnapshot toSnapshot(AnalyzeSnapshotRequest request) {
+    public static FinancialSnapshot toSnapshot(AnalyzeSnapshotRequest request, Instant generatedAt) {
         Currency currency = Currency.getInstance(request.currencyCode());
 
         List<AccountBalanceLine> lines = request.balances().stream()
@@ -27,7 +27,7 @@ public final class AdvisorWebMapper {
                 .toList();
 
         return new FinancialSnapshot(
-                Instant.now(),
+                generatedAt,
                 request.currencyCode(),
                 lines,
                 Money.of(request.totalDebits(), currency),

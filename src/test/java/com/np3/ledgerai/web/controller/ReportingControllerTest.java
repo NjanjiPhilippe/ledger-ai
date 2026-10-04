@@ -1,11 +1,11 @@
 package com.np3.ledgerai.web.controller;
 
-import com.np3.ledgerai.application.dto.TrialBalance;
-import com.np3.ledgerai.application.dto.TrialBalanceLine;
 import com.np3.ledgerai.application.reporting.query.GetTrialBalanceQuery;
 import com.np3.ledgerai.domain.valueobject.AccountId;
 import com.np3.ledgerai.domain.valueobject.AccountType;
 import com.np3.ledgerai.domain.valueobject.Money;
+import com.np3.ledgerai.domain.valueobject.TrialBalance;
+import com.np3.ledgerai.domain.valueobject.TrialBalanceLine;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -14,10 +14,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Currency;
 import java.util.List;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,9 +42,14 @@ class ReportingControllerTest {
     @Test
     void trialBalanceReturns200WithTheReport() throws Exception {
         TrialBalanceLine line = new TrialBalanceLine(AccountId.generate(), "Cash", AccountType.ASSET,
+                Money.of(BigDecimal.valueOf(100), XAF),
+                Money.of(BigDecimal.valueOf(200), XAF),
+                Money.of(BigDecimal.valueOf(100), XAF));
+
+        TrialBalance trialBalance = new TrialBalance(Instant.now(), XAF, List.of(line),
+                Money.of(BigDecimal.valueOf(200), XAF),
                 Money.of(BigDecimal.valueOf(200), XAF));
-        TrialBalance trialBalance = new TrialBalance(List.of(line), BigDecimal.valueOf(200),
-                BigDecimal.valueOf(200), XAF, true);
+
         when(getTrialBalanceQuery.execute()).thenReturn(trialBalance);
 
         mockMvc.perform(get("/api/v1/reports/trial-balance"))
@@ -58,12 +63,18 @@ class ReportingControllerTest {
 
     @Test
     void trialBalanceReturns200WithAnEmptyReportWhenThereAreNoAccountsYet() throws Exception {
-        when(getTrialBalanceQuery.execute())
-                .thenReturn(new TrialBalance(List.of(), BigDecimal.ZERO, BigDecimal.ZERO, null, true));
+        // Mirrors GetTrialBalanceQuery's own behavior: an accountless tenant still gets a
+        // non-null currency (its DEFAULT_CURRENCY fallback), never a null one -- TrialBalance's
+        // compact constructor forbids that outright.
+        TrialBalance emptyTrialBalance = new TrialBalance(Instant.now(), XAF, List.of(),
+                Money.of(BigDecimal.ZERO, XAF),
+                Money.of(BigDecimal.ZERO, XAF));
+
+        when(getTrialBalanceQuery.execute()).thenReturn(emptyTrialBalance);
 
         mockMvc.perform(get("/api/v1/reports/trial-balance"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lines").isEmpty())
-                .andExpect(jsonPath("$.currencyCode").value(nullValue()));
+                .andExpect(jsonPath("$.currencyCode").value("XAF"));
     }
 }
