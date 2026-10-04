@@ -26,6 +26,8 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       # start-dev is fine for local only - never use this image/command in prod.
+      # The imported realm contains local users (viewer / accountant / admin, password = username)
+      # and the "ledgerai-dev" password-grant client. Local development only.
     ports:
       - "8180:8080"
     depends_on:
