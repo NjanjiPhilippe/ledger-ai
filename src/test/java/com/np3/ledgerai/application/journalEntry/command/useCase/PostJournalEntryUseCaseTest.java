@@ -5,7 +5,11 @@ import com.np3.ledgerai.domain.exception.InvalidStateTransitionException;
 import com.np3.ledgerai.domain.exception.JournalEntryNotFoundException;
 import com.np3.ledgerai.domain.model.JournalEntry;
 import com.np3.ledgerai.domain.model.JournalEntryStatus;
+import com.np3.ledgerai.domain.exception.InvalidAccountReferenceException;
+import com.np3.ledgerai.domain.model.Account;
+import com.np3.ledgerai.domain.port.AccountRepository;
 import com.np3.ledgerai.domain.port.JournalEntryRepository;
+import com.np3.ledgerai.domain.valueobject.AccountType;
 import com.np3.ledgerai.domain.port.TenantContext;
 import com.np3.ledgerai.domain.valueobject.AccountId;
 import com.np3.ledgerai.domain.valueobject.EntryType;
@@ -44,11 +48,15 @@ class PostJournalEntryUseCaseTest {
     private static final TenantId TENANT_ID = TenantId.of(UUID.randomUUID());
     private static final UserId USER_ID = UserId.of(UUID.randomUUID());
     private static final Currency XAF = Currency.getInstance("XAF");
+    private static final Account CASH = Account.open(TENANT_ID, "Cash", AccountType.ASSET, XAF);
+    private static final Account SALES = Account.open(TENANT_ID, "Sales", AccountType.REVENUE, XAF);
     private static final Instant CREATED_AT = Instant.parse("2026-01-01T00:00:00Z");
     private static final Instant POSTED_AT = Instant.parse("2026-01-02T00:00:00Z");
 
     @Mock
     private JournalEntryRepository journalEntryRepository;
+    @Mock
+    private AccountRepository accountRepository;
     @Mock
     private TenantContext tenantContext;
     @Mock
@@ -60,13 +68,15 @@ class PostJournalEntryUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new PostJournalEntryUseCase(journalEntryRepository, tenantContext, clock, eventPublisher);
+        useCase = new PostJournalEntryUseCase(journalEntryRepository, accountRepository, tenantContext, clock,
+                eventPublisher);
         when(tenantContext.currentTenantId()).thenReturn(TENANT_ID);
     }
 
     @Test
     void postsADraftEntryAndPublishesAnEvent() {
         JournalEntry draft = draftEntry();
+        stubAccounts(CASH, SALES);
         when(journalEntryRepository.findById(TENANT_ID, draft.id())).thenReturn(Optional.of(draft));
         when(journalEntryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -105,10 +115,31 @@ class PostJournalEntryUseCaseTest {
         verify(eventPublisher, never()).publishEvent(any());
     }
 
+    @Test
+    void refusesToPostWhenAnAccountWasDeactivatedAfterTheDraft() {
+        JournalEntry draft = draftEntry();
+        Account inactiveSales = Account.reconstitute(SALES.id(), TENANT_ID, "Sales", AccountType.REVENUE, XAF, false);
+        stubAccounts(CASH, inactiveSales);
+        when(journalEntryRepository.findById(TENANT_ID, draft.id())).thenReturn(Optional.of(draft));
+
+        assertThatThrownBy(() -> useCase.execute(draft.id()))
+                .isInstanceOf(InvalidAccountReferenceException.class)
+                .hasMessageContaining("inactive");
+
+        verify(journalEntryRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    private void stubAccounts(Account... accounts) {
+        for (Account account : accounts) {
+            when(accountRepository.findById(TENANT_ID, account.id())).thenReturn(Optional.of(account));
+        }
+    }
+
     private static JournalEntry draftEntry() {
         List<TransactionLine> lines = List.of(
-                new TransactionLine(AccountId.generate(), Money.of(BigDecimal.valueOf(100), XAF), EntryType.DEBIT),
-                new TransactionLine(AccountId.generate(), Money.of(BigDecimal.valueOf(100), XAF), EntryType.CREDIT));
+                new TransactionLine(CASH.id(), Money.of(BigDecimal.valueOf(100), XAF), EntryType.DEBIT),
+                new TransactionLine(SALES.id(), Money.of(BigDecimal.valueOf(100), XAF), EntryType.CREDIT));
         return JournalEntry.draft(TENANT_ID, lines, "Office supplies", CREATED_AT, USER_ID);
     }
 }

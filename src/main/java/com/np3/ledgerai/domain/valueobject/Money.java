@@ -21,7 +21,13 @@ public final class Money {
     public static Money of(BigDecimal amount, Currency currency) {
         Objects.requireNonNull(amount, "amount");
         Objects.requireNonNull(currency, "currency");
-        BigDecimal normalized = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
+        BigDecimal normalized;
+        try {
+            normalized = amount.setScale(currency.getDefaultFractionDigits(), RoundingMode.UNNECESSARY);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("Amount " + amount.toPlainString() + " has more decimals than "
+                    + currency.getCurrencyCode() + " allows (" + currency.getDefaultFractionDigits() + ")", e);
+        }
         return new Money(normalized, currency);
     }
 

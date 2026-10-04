@@ -106,7 +106,7 @@ class JpaAccountRepositoryAdapterTest {
         assertThat(result.totalElements()).isEqualTo(page.getTotalElements());
 
         verify(jpaRepository).findAll(any(Specification.class),
-                eq(org.springframework.data.domain.PageRequest.of(0, 20)));
+                eq(org.springframework.data.domain.PageRequest.of(0, 20, JpaAccountRepositoryAdapter.DEFAULT_SORT)));
     }
 
     @Test
@@ -114,7 +114,8 @@ class JpaAccountRepositoryAdapterTest {
         AccountEntity cash = AccountMapper.toEntity(Account.open(TENANT_ID, "Cash", AccountType.ASSET, XAF));
         AccountEntity payable = AccountMapper.toEntity(
                 Account.open(TENANT_ID, "Accounts Payable", AccountType.LIABILITY, XAF));
-        when(jpaRepository.findAll(any(Specification.class))).thenReturn(List.of(cash, payable));
+        when(jpaRepository.findAll(any(Specification.class), eq(JpaAccountRepositoryAdapter.DEFAULT_SORT)))
+                .thenReturn(List.of(cash, payable));
 
         List<Account> result = adapter.findAllByTenant(TENANT_ID);
 

@@ -1,6 +1,7 @@
 package com.np3.ledgerai.application.advisor.useCase;
 
 import com.np3.ledgerai.application.reporting.query.GetTrialBalanceQuery;
+import com.np3.ledgerai.domain.exception.NoActivityToAnalyzeException;
 import com.np3.ledgerai.domain.port.AiAdvisorPort;
 import com.np3.ledgerai.domain.service.FinancialSnapshotComposer;
 import com.np3.ledgerai.domain.valueobject.AdviceResult;
@@ -23,7 +24,7 @@ public class GenerateLedgerAdviceUseCase {
 
         if (snapshot.balances().isEmpty()) {
             // Avoid paying for an LLM call that can only say "there is nothing here".
-            throw new IllegalArgumentException("No posted activity to analyze yet");
+            throw new NoActivityToAnalyzeException();
         }
         return aiAdvisorPort.analyze(snapshot);
     }

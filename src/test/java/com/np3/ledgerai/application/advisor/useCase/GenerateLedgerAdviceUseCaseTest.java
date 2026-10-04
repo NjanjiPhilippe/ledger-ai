@@ -1,5 +1,6 @@
 package com.np3.ledgerai.application.advisor.useCase;
 
+import com.np3.ledgerai.domain.exception.NoActivityToAnalyzeException;
 import com.np3.ledgerai.application.reporting.query.GetTrialBalanceQuery;
 import com.np3.ledgerai.domain.port.AiAdvisorPort;
 import com.np3.ledgerai.domain.valueobject.AccountId;
@@ -43,7 +44,7 @@ class GenerateLedgerAdviceUseCaseTest {
         when(getTrialBalanceQuery.execute()).thenReturn(trialBalance(List.of()));
 
         assertThatThrownBy(() -> new GenerateLedgerAdviceUseCase(getTrialBalanceQuery, aiAdvisorPort).execute())
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoActivityToAnalyzeException.class);
 
         verify(aiAdvisorPort, never()).analyze(any());
     }
