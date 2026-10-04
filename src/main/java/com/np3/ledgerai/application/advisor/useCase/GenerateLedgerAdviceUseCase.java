@@ -11,12 +11,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GenerateLedgerAdviceService implements GenerateLedgerAdviceUseCase {
+public class GenerateLedgerAdviceUseCase {
 
     private final GetTrialBalanceQuery getTrialBalanceQuery;
     private final AiAdvisorPort aiAdvisorPort;
 
-    @Override
     @PreAuthorize("hasRole('VIEWER')")
     public AdviceResult execute() {
         var trialBalance = getTrialBalanceQuery.execute();

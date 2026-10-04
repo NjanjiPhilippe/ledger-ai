@@ -11,11 +11,10 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class GenerateAdviceService implements GenerateAdviceUseCase {
+public class GenerateAdviceUseCase {
 
     private final AiAdvisorPort aiAdvisorPort;
 
-    @Override
     @PreAuthorize("hasRole('VIEWER')")
     public AdviceResult execute(FinancialSnapshot snapshot) {
         Objects.requireNonNull(snapshot, "Snapshot must not be null");
