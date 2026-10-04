@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.context.ApplicationEventPublisher;
+import com.np3.ledgerai.application.journalEntry.command.JournalEntryPostedEvent;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -53,6 +55,8 @@ class ReverseJournalEntryUseCaseTest {
     private TenantContext tenantContext;
     @Mock
     private CurrentUserProvider currentUserProvider;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     private final Clock clock = Clock.fixed(REVERSED_AT, ZoneOffset.UTC);
 
@@ -60,7 +64,7 @@ class ReverseJournalEntryUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new ReverseJournalEntryUseCase(journalEntryRepository, tenantContext, currentUserProvider, clock);
+        useCase = new ReverseJournalEntryUseCase(journalEntryRepository, tenantContext, currentUserProvider, clock, eventPublisher);
         when(tenantContext.currentTenantId()).thenReturn(TENANT_ID);
     }
 
@@ -88,6 +92,23 @@ class ReverseJournalEntryUseCaseTest {
     }
 
     @Test
+    void publishesAPostedEventForTheReversalSoTheProjectionOffsetsTheOriginal() {
+        JournalEntry posted = postedEntry();
+        when(currentUserProvider.currentUserId()).thenReturn(USER_ID);
+        when(journalEntryRepository.findById(TENANT_ID, posted.id())).thenReturn(Optional.of(posted));
+        when(journalEntryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        JournalEntry reversal = useCase.execute(posted.id());
+
+        ArgumentCaptor<JournalEntryPostedEvent> eventCaptor = ArgumentCaptor.forClass(JournalEntryPostedEvent.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        JournalEntryPostedEvent event = eventCaptor.getValue();
+        assertThat(event.tenantId()).isEqualTo(TENANT_ID);
+        assertThat(event.posted().journalEntryId()).isEqualTo(reversal.id());
+        assertThat(event.posted().lines()).isEqualTo(reversal.lines());
+    }
+
+    @Test
     void throwsWhenTheOriginalDoesNotExist() {
         JournalEntryId missingId = JournalEntryId.generate();
         when(journalEntryRepository.findById(TENANT_ID, missingId)).thenReturn(Optional.empty());
@@ -101,19 +122,13 @@ class ReverseJournalEntryUseCaseTest {
     @Test
     void cannotReverseAnEntryThatIsNotPosted() {
         JournalEntry draft = draftEntry();
-        when(currentUserProvider.currentUserId()).thenReturn(USER_ID);
         when(journalEntryRepository.findById(TENANT_ID, draft.id())).thenReturn(Optional.of(draft));
-        when(journalEntryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         assertThatThrownBy(() -> useCase.execute(draft.id()))
                 .isInstanceOf(InvalidStateTransitionException.class);
 
-        // Current implementation persists the offsetting reversal BEFORE calling
-        // original.markReversed() -- so on a non-posted original, an orphaned
-        // reversal entry has already been saved once by the time this throws.
-        // Worth deciding whether that's acceptable or whether markReversed()
-        // should be validated before the reversal is persisted.
-        verify(journalEntryRepository, times(1)).save(any());
+        verify(journalEntryRepository, never()).save(any());
+        verify(eventPublisher, never()).publishEvent(any(Object.class));
     }
 
     private static JournalEntry postedEntry() {
