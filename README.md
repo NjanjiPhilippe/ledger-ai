@@ -1,66 +1,176 @@
 # LedgerAI
 
-LedgerAI is a personal fintech project built as both a portfolio piece and a deep technical exploration of clean architecture principles applied to a real-world accounting domain. It combines a Spring Boot backend with an Angular frontend to deliver core double-entry accounting and financial reporting capabilities, augmented with an AI-powered financial advisor layer.
+A double-entry accounting ledger with an AI financial advisor, built in public as a deep dive into
+**Hexagonal Architecture**, CQRS and event-driven projections on a real accounting domain.
 
-## Overview
+> **Status: work in progress, shipped in small episodes.** The backend core works; the frontend has not
+> been started. This README says what is done, what is being worked on, and what is known to be missing.
 
-The project models the core mechanics of a general ledger system: accounts, journal entries, and the financial reports derived from them. It is designed single-tenant today, but architected with a clear path toward multi-tenancy.
+## Status
 
-The backend is being built as a hands-on exercise to internalize every architectural decision from domain modeling to persistence with each deviation from a "textbook" implementation documented and justified.
+| Area | State | Notes |
+|---|---|---|
+| Accounts (create, rename, activate/deactivate, search) | ✅ | |
+| Journal entries (draft → posted → reversed, balanced-entry invariant) | ✅ | Reversal creates an offsetting entry |
+| Balance projection updated by domain events | ✅ | See [known limitations](#known-limitations) |
+| Trial balance report | ✅ | `GET /api/v1/reports/trial-balance` |
+| AI advisor (Anthropic or OpenAI behind a port) | ✅ | Works on the trial balance, or on a caller-supplied snapshot |
+| Keycloak resource server, role hierarchy | ✅ | `viewer` < `accountant` < `admin` |
+| Liquibase migrations, OpenAPI/Swagger | ✅ | |
+| Architecture rules enforced by tests (ArchUnit) | ✅ | [ADR 0001](docs/adr/0001-hexagonal-conventions.md) |
+| Multi-tenancy | 🚧 | Single tenant by design, **multi-tenant-ready**: every table and repository is tenant-scoped behind a `TenantContext` port |
+| AI advisor hardening | 🚧 | Timeouts, structured output, ratios computed in the domain |
+| Chart of accounts, general ledger (account statement) | 📅 | |
+| Balance sheet, income statement, reports as of a date | 📅 | |
+| Accounting periods and closing, audit trail | 📅 | |
+| CI pipeline, Dockerfile | 📅 | |
+| Angular frontend (Keycloak, Authorization Code + PKCE) | 📅 | |
+
+Legend: ✅ done · 🚧 in progress · 📅 planned
 
 ## Architecture
 
-LedgerAI backend follows **Hexagonal Architecture (Ports & Adapters)** combined with **CQRS** and **event-driven balance projections**:
+Ports & Adapters, with CQRS-style use cases and a balance projection fed by domain events.
 
-- **Domain layer** : value objects, aggregates, and business rules for accounts and journal entries, independent of any framework or infrastructure concern.
-- **Application layer** : use cases and ports (interfaces) that define what the system does, without knowing how.
-- **Infrastructure layer** :JPA-backed adapters implementing the domain ports, tenant-scoped repositories, and database migrations.
-- **CQRS** : command and query responsibilities are separated, with balance projections updated via domain events rather than computed on read.
+```mermaid
+flowchart LR
+    subgraph Web["web (driving adapters)"]
+        C[Controllers + DTOs]
+    end
+    subgraph App["application"]
+        UC[Use cases<br/>commands and queries]
+    end
+    subgraph Domain["domain"]
+        M[Model + value objects<br/>domain services]
+        P[Ports<br/>repositories, AI advisor,<br/>tenant, current user]
+    end
+    subgraph Infra["infrastructure (driven adapters)"]
+        J[JPA adapters]
+        A[Anthropic / OpenAI adapters]
+        S[Security, tenancy, projection updater]
+    end
+    C --> UC --> M
+    UC --> P
+    J -. implements .-> P
+    A -. implements .-> P
+    S -. implements .-> P
+```
 
-### Data model highlights
+Dependencies point inward only. The rules (and the reasoning behind them, such as "interfaces are outbound
+ports only; a use case is a concrete class") are in [ADR 0001](docs/adr/0001-hexagonal-conventions.md) and are
+checked on every build by `HexagonalArchitectureTest`.
 
-- `Account` and `JournalEntry` are modeled as hexagonal, JPA-backed, tenant-scoped aggregates.
-- `JournalEntry` lines are mapped as an `@ElementCollection` / `@Embeddable`, keeping the entry and its lines as a single consistency boundary.
-- A database-level foreign key from `journal_entry_line.account_id` to `account.id` enforces referential integrity at the persistence layer, on top of domain-level invariants.
-- Schema migrations are managed with **Liquibase**.
+**How a posted entry reaches the reports**
 
-## Features
+1. `POST /journal-entries` creates a **draft** (balanced debits and credits are enforced by the aggregate).
+2. `POST /journal-entries/{id}/post` posts it and publishes `JournalEntryPostedEvent`.
+3. `BalanceProjectionUpdater` updates `balance_projection` after the transaction commits.
+4. Reports and the advisor read the projection, never the journal lines.
 
-- **Double-entry accounting core** : accounts and journal entries with enforced balancing rules.
-- **Financial reporting**
-  - Trial balance
-  - Balance sheet
-  - Income statement
-  - Financial snapshot composer for point-in-time reporting
-- **AI Advisor layer** : a pluggable advisory module with swappable AI providers (OpenAI and Anthropic) selected via `@ConditionalOnProperty`, allowing the backend to generate financial insights on top of the ledger data.
+## Run it locally
 
-## Tech Stack
+Requirements: Java 21, Docker.
 
-**Backend**
-- Java 21 / Spring Boot
-- Hexagonal architecture, CQRS, event-driven projections
-- Liquibase (schema migrations)
-- PostgreSQL
+```bash
+docker compose up -d                                              # PostgreSQL + Keycloak (realm imported)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local           # API on http://localhost:8080
+```
 
-**Frontend** (planned)
-- Angular 21
-- Keycloak authentication via Authorization Code + PKCE flow (planned, based on prior experience with `angular-oauth2-oidc`)
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- Health: http://localhost:8080/actuator/health
+- Keycloak admin: http://localhost:8180 (`admin` / `admin`)
 
-## Authentication
+**Local users** (realm `ledgerai`, password = username, local development only):
 
-The frontend will integrate with **Keycloak** using the OAuth2 Authorization Code flow with PKCE. This approach is informed by prior work on an earlier iteration of the project, where `angular-oauth2-oidc`'s default `sessionStorage`-backed implementation resolved an `invalid_nonce_in_state` issue seen with a custom in-memory storage strategy.
+| User | Role | Can |
+|---|---|---|
+| `viewer` | viewer | read accounts, entries, reports, ask the advisor |
+| `accountant` | accountant | + create accounts, record and post entries |
+| `admin` | admin | + rename/deactivate accounts, reverse entries |
 
-## Roadmap
+**Get a token and call the API** (the `ledgerai-dev` client is a local-only shortcut for curl/Postman; the
+frontend client uses Authorization Code + PKCE):
 
-- [ ] Finish the from-scratch backend build (domain → application → infrastructure)
-- [ ] Expand financial reporting use cases
-- [ ] Harden multi-tenancy support
-- [ ] Continue integrating and refining the AI Advisor layer
-- [ ] Build the frontend (Angular 21) and integrate it with the backend
+```bash
+TOKEN=$(curl -s http://localhost:8180/realms/ledgerai/protocol/openid-connect/token \
+  -d grant_type=password -d client_id=ledgerai-dev \
+  -d username=accountant -d password=accountant | jq -r .access_token)
 
-## Project Status
+# create two accounts
+CASH=$(curl -s -X POST localhost:8080/api/v1/accounts -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"name":"Cash","type":"ASSET","currencyCode":"XAF"}' | jq -r .id)
+SALES=$(curl -s -X POST localhost:8080/api/v1/accounts -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' -d '{"name":"Sales","type":"REVENUE","currencyCode":"XAF"}' | jq -r .id)
 
-Early stage / in progress. The backend rebuild is not yet finished, and the frontend has not been started yet. Progress is being documented and shared as part of a "build in public" series.
+# record, then post, a balanced entry
+ENTRY=$(curl -s -X POST localhost:8080/api/v1/journal-entries -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' -d "{\"description\":\"First sale\",\"currencyCode\":\"XAF\",\"lines\":[
+    {\"accountId\":\"$CASH\",\"amount\":100000,\"entryType\":\"DEBIT\"},
+    {\"accountId\":\"$SALES\",\"amount\":100000,\"entryType\":\"CREDIT\"}]}" | jq -r .id)
+curl -s -X POST localhost:8080/api/v1/journal-entries/$ENTRY/post -H "Authorization: Bearer $TOKEN"
+
+curl -s localhost:8080/api/v1/reports/trial-balance -H "Authorization: Bearer $TOKEN" | jq
+```
+
+### Enable the AI advisor
+
+The advisor needs a provider API key (Anthropic is the default provider):
+
+```bash
+export LEDGERAI_ADVISOR_ANTHROPIC_APIKEY=...                       # property: ledgerai.advisor.anthropic.api-key
+# or: LEDGERAI_ADVISOR_PROVIDER=openai LEDGERAI_ADVISOR_OPENAI_APIKEY=...
+curl -s -X POST localhost:8080/api/v1/advisor/analyze-ledger -H "Authorization: Bearer $TOKEN" | jq
+```
+
+Without a key the application starts normally; only the advisor calls fail. Note that the ledger's account
+names and balances are sent to the chosen provider.
+
+## API overview
+
+| Endpoint | Role |
+|---|---|
+| `POST /api/v1/accounts` | accountant |
+| `PUT /api/v1/accounts/{id}` | admin |
+| `GET /api/v1/accounts`, `/{id}`, `/{id}/balance` | viewer |
+| `POST /api/v1/journal-entries` | accountant |
+| `POST /api/v1/journal-entries/{id}/post` | accountant |
+| `POST /api/v1/journal-entries/{id}/reverse` | admin |
+| `GET /api/v1/journal-entries`, `/{id}` | viewer |
+| `GET /api/v1/reports/trial-balance` | viewer |
+| `POST /api/v1/advisor/analyze-ledger`, `/analyze` | viewer |
+| `GET /api/v1/me` | authenticated |
+
+Authoritative documentation: the OpenAPI spec served by the application.
+
+## Tests
+
+```bash
+./mvnw test
+```
+
+Unit tests per layer (domain, use cases, adapters, mappers, controllers), a framework-free scenario test
+(post then reverse nets every account to zero), architecture rules (ArchUnit) and a consistency test for the
+shipped Keycloak realm. Persistence tests use H2; Testcontainers/PostgreSQL is planned.
+
+## Known limitations
+
+Documented rather than hidden, and the source of the next episodes:
+
+- **Projection robustness.** The balance projection is updated after commit with a read-modify-write and no
+  locking. A failure between commit and update, or two concurrent postings on one account, can desynchronise
+  it, and there is no rebuild command yet.
+- **Entries are not validated against accounts.** A journal entry does not yet check that its accounts exist
+  for the tenant, are active, or share the entry's currency.
+- **Single currency per ledger in reports.** The trial balance takes its currency from the first account.
+- **Amounts** with more decimals than the currency allows are rejected with a 500 instead of a 400.
+- **Pagination** has no sort order, so page boundaries are not guaranteed to be stable.
+- **AI advisor**: no HTTP timeouts or retries, the model computes figures itself, and results are not stored.
+- Persistence tests run on H2 while production uses PostgreSQL.
+
+## Tech stack
+
+Java 21 · Spring Boot 4 · Spring Security (OAuth2 resource server) · Spring Data JPA · PostgreSQL ·
+Liquibase · Keycloak · springdoc-openapi · JUnit 5, Mockito, ArchUnit.
 
 ## License
 
