@@ -3,8 +3,8 @@
 A double-entry accounting ledger with an AI financial advisor, built in public as a deep dive into
 **Hexagonal Architecture**, CQRS and event-driven projections on a real accounting domain.
 
-> **Status: work in progress, shipped in small episodes.** The backend core works; the frontend folder is
-> reserved but has not been started. This README says what is done, what is being worked on, and what is known to be missing.
+> **Status: work in progress, shipped in small episodes.** The backend core works; the frontend has its first
+> slice (sign-in, the current user and the accounts list). This README says what is done, what is being worked on, and what is known to be missing.
 
 ## Repository layout
 
@@ -13,7 +13,7 @@ A monorepo: the application code is split by deliverable, the infrastructure sta
 ```
 ledger-ai/
 ├── backend/            Spring Boot API (Java 21, Maven wrapper, tests)
-├── frontend/           Angular app (not started yet)
+├── frontend/           Angular app (sign-in, accounts list; more to come)
 ├── keycloak/           Keycloak realm imported by docker compose (local development)
 ├── docs/adr/           Architecture decision records
 ├── docker-compose.yml  Local infrastructure: PostgreSQL + Keycloak
@@ -41,7 +41,8 @@ Run the backend commands from `backend/`, and `docker compose` from the reposito
 | Balance sheet, income statement, reports as of a date | 📅 | |
 | Accounting periods and closing, audit trail | 📅 | |
 | CI pipeline, Dockerfile | 📅 | |
-| Angular frontend (Keycloak, Authorization Code + PKCE) | 📅 | |
+| Angular frontend: sign-in (PKCE), current user, accounts list, English/French, error toasts | 🚧 | First slice, tested with a simulated identity provider; not yet validated against the real Keycloak. [ADR 0003](docs/adr/0003-frontend-architecture.md) |
+| Frontend: record, post and reverse entries, trial balance, advisor | 📅 | |
 
 Legend: ✅ done · 🚧 in progress · 📅 planned
 
@@ -116,7 +117,7 @@ cd backend
 | API (profile `local`) | 8085 |
 | Keycloak | 8180 |
 | PostgreSQL | 5432 |
-| Angular frontend (CORS allows it) | 4200 |
+| Angular frontend (`ng serve`) | 4200 |
 
 - Swagger UI: http://localhost:8085/swagger-ui.html
 - Health: http://localhost:8085/actuator/health
@@ -153,6 +154,20 @@ curl -s -X POST localhost:8085/api/v1/journal-entries/$ENTRY/post -H "Authorizat
 
 curl -s localhost:8085/api/v1/reports/trial-balance -H "Authorization: Bearer $TOKEN" | jq
 ```
+
+### Run the frontend
+
+Requirements: Node.js 22.22.3+ or 24.15+ (Angular 22), and the API running as above.
+
+```bash
+cd frontend
+npm ci
+npm start            # http://localhost:4200
+```
+
+Sign in with one of the local users (`viewer`, `accountant`, `admin`). The API and Keycloak URLs are read at startup
+from `frontend/public/config.json`. Other commands: `npm test`, `npm run lint`, `npm run build`, and
+`npm run api:generate` to regenerate the API types after the backend contract (`docs/api/openapi.json`) changes.
 
 ### Enable the AI advisor
 
@@ -226,6 +241,9 @@ Documented rather than hidden, and the source of the next episodes:
 
 Java 21 · Spring Boot 4 · Spring Security (OAuth2 resource server) · Spring Data JPA · PostgreSQL ·
 Liquibase · Keycloak · springdoc-openapi · JUnit 5, Mockito, ArchUnit.
+
+Frontend: Angular 22 (standalone components, signals) · Tailwind CSS · Transloco (English/French) ·
+angular-oauth2-oidc · Vitest · ESLint with architecture boundaries.
 
 ## License
 
