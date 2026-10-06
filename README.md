@@ -75,10 +75,22 @@ the projection from it, and the rebuild reports how many accounts had drifted.
 
 Requirements: Java 21, Docker.
 
+Two separate commands. First the infrastructure (PostgreSQL + Keycloak, realm imported):
+
 ```bash
-docker compose up -d                                              # PostgreSQL + Keycloak (realm imported)
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local           # API on http://localhost:8080
+docker compose up -d
 ```
+
+Then the API on http://localhost:8080 with the `local` profile:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+> **Windows PowerShell:** quote the option, otherwise PowerShell splits it at the first dot and Maven fails with
+> `Unknown lifecycle phase ".run.profiles=local"`:
+> `./mvnw spring-boot:run "-Dspring-boot.run.profiles=local"`
+> (or run it from your IDE with the `local` profile active).
 
 - Swagger UI: http://localhost:8080/swagger-ui.html
 - Health: http://localhost:8080/actuator/health
