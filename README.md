@@ -3,8 +3,25 @@
 A double-entry accounting ledger with an AI financial advisor, built in public as a deep dive into
 **Hexagonal Architecture**, CQRS and event-driven projections on a real accounting domain.
 
-> **Status: work in progress, shipped in small episodes.** The backend core works; the frontend has not
-> been started. This README says what is done, what is being worked on, and what is known to be missing.
+> **Status: work in progress, shipped in small episodes.** The backend core works; the frontend folder is
+> reserved but has not been started. This README says what is done, what is being worked on, and what is known to be missing.
+
+## Repository layout
+
+A monorepo: the application code is split by deliverable, the infrastructure stays at the root.
+
+```
+ledger-ai/
+├── backend/            Spring Boot API (Java 21, Maven wrapper, tests)
+├── frontend/           Angular app (not started yet)
+├── keycloak/           Keycloak realm imported by docker compose (local development)
+├── docs/adr/           Architecture decision records
+├── docker-compose.yml  Local infrastructure: PostgreSQL + Keycloak
+└── .github/workflows/  CI
+```
+
+Run the backend commands from `backend/`, and `docker compose` from the repository root. Why it is organised this way:
+[ADR 0002](docs/adr/0002-monorepo-layout.md).
 
 ## Status
 
@@ -81,9 +98,11 @@ Two separate commands. First the infrastructure (PostgreSQL + Keycloak, realm im
 docker compose up -d
 ```
 
-Then the API on http://localhost:8085 with the `local` profile (port 8085 is set in `application-local.yml`):
+Then, from `backend/`, the API on http://localhost:8085 with the `local` profile (port 8085 is set in
+`backend/src/main/resources/application-local.yml`):
 
 ```bash
+cd backend
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
@@ -169,6 +188,7 @@ Authoritative documentation: the OpenAPI spec served by the application.
 ## Tests
 
 ```bash
+cd backend
 ./mvnw test
 ```
 
@@ -178,12 +198,12 @@ shipped Keycloak realm. Persistence tests use H2; Testcontainers/PostgreSQL is p
 
 ## Troubleshooting
 
-- **`release version 21 not supported`**: Maven runs on an older JDK. Check with `./mvnw -v` and point
+- **`release version 21 not supported`**: Maven runs on an older JDK. Check with `./mvnw -v` (from `backend/`) and point
   `JAVA_HOME` to a JDK 21.
 - **`Unknown lifecycle phase ".run.profiles=local"`** (PowerShell): quote the option, see above.
 - **401 with `Signed JWT rejected: ... no matching key(s) found`**: the API is not validating tokens against the
   issuer's keys. Check which `JwtDecoder` is active: start the API with `-Ddebug` and read the *Conditions
-  Evaluation Report*, and check `./mvnw dependency:tree` for an unexpected `oauth2-authorization-server`
+  Evaluation Report*, and check `./mvnw dependency:tree` (from `backend/`) for an unexpected `oauth2-authorization-server`
   starter. `ResourceServerJwtValidationTest` guards this.
 - **After recreating the Keycloak container**: the realm's signing keys are regenerated on every import, so
   restart the API and request a new token.
