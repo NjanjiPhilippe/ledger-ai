@@ -55,6 +55,13 @@ class KeycloakRealmFileTest {
     }
 
     @Test
+    void frontendClientMayReturnToItsOwnPagesAfterLogout() {
+        // "+" means: the valid redirect URIs. Without it Keycloak refuses the post_logout_redirect_uri of the frontend.
+        assertThat(client("ledgerai-frontend").get("attributes").get("post.logout.redirect.uris").asString())
+                .isEqualTo("+");
+    }
+
+    @Test
     void localUsersCoverEachRole() {
         assertThat(names(realm.get("users"), "username")).containsExactlyInAnyOrder("viewer", "accountant", "admin");
     }
