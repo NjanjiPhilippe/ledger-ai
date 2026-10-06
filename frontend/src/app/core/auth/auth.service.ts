@@ -2,6 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { AppConfigService } from '../config/app-config';
+import { LanguageService } from '../i18n/language.service';
 import { decodeJwtPayload, isRole, realmRoles, Role } from './roles';
 
 /**
@@ -13,6 +14,7 @@ export class AuthService {
   private readonly oauth = inject(OAuthService);
   private readonly router = inject(Router);
   private readonly config = inject(AppConfigService);
+  private readonly language = inject(LanguageService);
 
   private readonly accessToken = signal<string | null>(null);
 
@@ -53,8 +55,9 @@ export class AuthService {
     }
   }
 
+  /** The sign-in page of Keycloak opens in the language chosen in the application (OIDC "ui_locales"). */
   login(returnUrl = '/'): void {
-    this.oauth.initCodeFlow(encodeURIComponent(returnUrl));
+    this.oauth.initCodeFlow(encodeURIComponent(returnUrl), { ui_locales: this.language.current() });
   }
 
   logout(): void {

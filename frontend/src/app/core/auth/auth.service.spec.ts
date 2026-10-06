@@ -4,7 +4,9 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { Subject } from 'rxjs';
 import { fakeJwt } from '../../../testing/jwt';
 import { TEST_CONFIG } from '../../../testing/app-config';
+import { translocoTesting } from '../../../testing/transloco';
 import { AppConfigService } from '../config/app-config';
+import { LanguageService } from '../i18n/language.service';
 import { AuthService } from './auth.service';
 
 class FakeOAuthService {
@@ -29,6 +31,7 @@ describe('AuthService', () => {
     oauth = new FakeOAuthService();
     router = { navigateByUrl: vi.fn().mockResolvedValue(true) };
     TestBed.configureTestingModule({
+      imports: [translocoTesting()],
       providers: [
         { provide: OAuthService, useValue: oauth },
         { provide: Router, useValue: router },
@@ -114,7 +117,18 @@ describe('AuthService', () => {
     service.login('/accounts?x=1&y=2');
     service.logout();
 
-    expect(oauth.initCodeFlow).toHaveBeenCalledWith(encodeURIComponent('/accounts?x=1&y=2'));
+    expect(oauth.initCodeFlow).toHaveBeenCalledWith(
+      encodeURIComponent('/accounts?x=1&y=2'),
+      expect.anything(),
+    );
     expect(oauth.logOut).toHaveBeenCalled();
+  });
+
+  it('asks Keycloak to show its sign-in page in the language chosen in the application', () => {
+    TestBed.inject(LanguageService).set('fr');
+
+    service.login();
+
+    expect(oauth.initCodeFlow).toHaveBeenCalledWith(encodeURIComponent('/'), { ui_locales: 'fr' });
   });
 });
