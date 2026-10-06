@@ -1,5 +1,6 @@
 package com.np3.ledgerai.infrastructure.security;
 
+import com.np3.ledgerai.RepositoryRoot;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class KeycloakRealmFileTest {
 
-    private static final Path ROOT = repositoryRoot();
+    private static final Path ROOT = RepositoryRoot.path();
     private static final Path REALM_FILE = ROOT.resolve("keycloak/ledgerai-realm.json");
     private static JsonNode realm;
 
@@ -71,16 +72,5 @@ class KeycloakRealmFileTest {
         List<String> values = new ArrayList<>();
         array.forEach(node -> values.add(node.get(field).asString()));
         return values;
-    }
-
-    /** The tests run from backend/, the infrastructure files live at the repository root. */
-    private static Path repositoryRoot() {
-        Path start = Path.of("").toAbsolutePath();
-        for (Path dir = start; dir != null; dir = dir.getParent()) {
-            if (Files.exists(dir.resolve("docker-compose.yml"))) {
-                return dir;
-            }
-        }
-        throw new IllegalStateException("docker-compose.yml not found in or above " + start);
     }
 }
