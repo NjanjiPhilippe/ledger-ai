@@ -14,7 +14,7 @@ A monorepo: the application code is split by deliverable, the infrastructure sta
 ledger-ai/
 ├── backend/            Spring Boot API (Java 21, Maven wrapper, tests)
 ├── frontend/           Angular app (sign-in, accounts list; more to come)
-├── keycloak/           Keycloak realm imported by docker compose (local development)
+├── keycloak/           Realm imported by docker compose + custom login theme (themes/ledgerai)
 ├── docs/adr/           Architecture decision records
 ├── docker-compose.yml  Local infrastructure: PostgreSQL + Keycloak
 └── .github/workflows/  CI
@@ -168,6 +168,11 @@ npm start            # http://localhost:4200
 Sign in with one of the local users (`viewer`, `accountant`, `admin`). The API and Keycloak URLs are read at startup
 from `frontend/public/config.json`. Other commands: `npm test`, `npm run lint`, `npm run build`, and
 `npm run api:generate` to regenerate the API types after the backend contract (`docs/api/openapi.json`) changes.
+
+The sign-in page is a custom Keycloak theme in `keycloak/themes/ledgerai/login/` (extends the stock `keycloak` theme, so
+all flows keep working; only `css/login.css` and a few messages are ours). It is mounted by docker compose and the theme
+cache is off in `start-dev`, so CSS edits show up on a browser refresh. The realm import must be redone once
+(`docker compose down && docker compose up -d`) to pick up `loginTheme`.
 
 ### Enable the AI advisor
 
