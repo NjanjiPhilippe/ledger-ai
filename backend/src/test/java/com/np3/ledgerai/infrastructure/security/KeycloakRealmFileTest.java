@@ -20,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class KeycloakRealmFileTest {
 
-    private static final Path REALM_FILE = Path.of("keycloak/ledgerai-realm.json");
+    private static final Path ROOT = repositoryRoot();
+    private static final Path REALM_FILE = ROOT.resolve("keycloak/ledgerai-realm.json");
     private static JsonNode realm;
 
     @BeforeAll
@@ -30,11 +31,11 @@ class KeycloakRealmFileTest {
 
     @Test
     void dockerComposeMountsARealmFileThatExists() throws Exception {
-        String compose = Files.readString(Path.of("docker-compose.yml"));
+        String compose = Files.readString(ROOT.resolve("docker-compose.yml"));
         Matcher matcher = Pattern.compile("\\./(\\S+\\.json):/opt/keycloak/data/import/").matcher(compose);
 
         assertThat(matcher.find()).as("compose mounts a realm file").isTrue();
-        assertThat(Path.of(matcher.group(1))).exists();
+        assertThat(ROOT.resolve(matcher.group(1))).exists();
     }
 
     @Test
@@ -70,5 +71,16 @@ class KeycloakRealmFileTest {
         List<String> values = new ArrayList<>();
         array.forEach(node -> values.add(node.get(field).asString()));
         return values;
+    }
+
+    /** The tests run from backend/, the infrastructure files live at the repository root. */
+    private static Path repositoryRoot() {
+        Path start = Path.of("").toAbsolutePath();
+        for (Path dir = start; dir != null; dir = dir.getParent()) {
+            if (Files.exists(dir.resolve("docker-compose.yml"))) {
+                return dir;
+            }
+        }
+        throw new IllegalStateException("docker-compose.yml not found in or above " + start);
     }
 }
