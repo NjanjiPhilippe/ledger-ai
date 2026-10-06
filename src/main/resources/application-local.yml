@@ -19,3 +19,6 @@ logging:
     com.np3.ledgerai: DEBUG
     org.springframework.security: TRACE
     org.springframework.security.oauth2: TRACE
+
+server:
+  port: 8085

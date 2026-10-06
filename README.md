@@ -81,7 +81,7 @@ Two separate commands. First the infrastructure (PostgreSQL + Keycloak, realm im
 docker compose up -d
 ```
 
-Then the API on http://localhost:8080 with the `local` profile:
+Then the API on http://localhost:8085 with the `local` profile (port 8085 is set in `application-local.yml`):
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
@@ -92,8 +92,15 @@ Then the API on http://localhost:8080 with the `local` profile:
 > `./mvnw spring-boot:run "-Dspring-boot.run.profiles=local"`
 > (or run it from your IDE with the `local` profile active).
 
-- Swagger UI: http://localhost:8080/swagger-ui.html
-- Health: http://localhost:8080/actuator/health
+| Service | Port |
+|---|---|
+| API (profile `local`) | 8085 |
+| Keycloak | 8180 |
+| PostgreSQL | 5432 |
+| Angular frontend (CORS allows it) | 4200 |
+
+- Swagger UI: http://localhost:8085/swagger-ui.html
+- Health: http://localhost:8085/actuator/health
 - Keycloak admin: http://localhost:8180 (`admin` / `admin`)
 
 **Local users** (realm `ledgerai`, password = username, local development only):
@@ -113,19 +120,19 @@ TOKEN=$(curl -s http://localhost:8180/realms/ledgerai/protocol/openid-connect/to
   -d username=accountant -d password=accountant | jq -r .access_token)
 
 # create two accounts
-CASH=$(curl -s -X POST localhost:8080/api/v1/accounts -H "Authorization: Bearer $TOKEN" \
+CASH=$(curl -s -X POST localhost:8085/api/v1/accounts -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' -d '{"name":"Cash","type":"ASSET","currencyCode":"XAF"}' | jq -r .id)
-SALES=$(curl -s -X POST localhost:8080/api/v1/accounts -H "Authorization: Bearer $TOKEN" \
+SALES=$(curl -s -X POST localhost:8085/api/v1/accounts -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' -d '{"name":"Sales","type":"REVENUE","currencyCode":"XAF"}' | jq -r .id)
 
 # record, then post, a balanced entry
-ENTRY=$(curl -s -X POST localhost:8080/api/v1/journal-entries -H "Authorization: Bearer $TOKEN" \
+ENTRY=$(curl -s -X POST localhost:8085/api/v1/journal-entries -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' -d "{\"description\":\"First sale\",\"currencyCode\":\"XAF\",\"lines\":[
     {\"accountId\":\"$CASH\",\"amount\":100000,\"entryType\":\"DEBIT\"},
     {\"accountId\":\"$SALES\",\"amount\":100000,\"entryType\":\"CREDIT\"}]}" | jq -r .id)
-curl -s -X POST localhost:8080/api/v1/journal-entries/$ENTRY/post -H "Authorization: Bearer $TOKEN"
+curl -s -X POST localhost:8085/api/v1/journal-entries/$ENTRY/post -H "Authorization: Bearer $TOKEN"
 
-curl -s localhost:8080/api/v1/reports/trial-balance -H "Authorization: Bearer $TOKEN" | jq
+curl -s localhost:8085/api/v1/reports/trial-balance -H "Authorization: Bearer $TOKEN" | jq
 ```
 
 ### Enable the AI advisor
@@ -135,7 +142,7 @@ The advisor needs a provider API key (Anthropic is the default provider):
 ```bash
 export LEDGERAI_ADVISOR_ANTHROPIC_APIKEY=...                       # property: ledgerai.advisor.anthropic.api-key
 # or: LEDGERAI_ADVISOR_PROVIDER=openai LEDGERAI_ADVISOR_OPENAI_APIKEY=...
-curl -s -X POST localhost:8080/api/v1/advisor/analyze-ledger -H "Authorization: Bearer $TOKEN" | jq
+curl -s -X POST localhost:8085/api/v1/advisor/analyze-ledger -H "Authorization: Bearer $TOKEN" | jq
 ```
 
 Without a key the application starts normally; only the advisor calls fail. Note that the ledger's account
@@ -168,6 +175,20 @@ Authoritative documentation: the OpenAPI spec served by the application.
 Unit tests per layer (domain, use cases, adapters, mappers, controllers), a framework-free scenario test
 (post then reverse nets every account to zero), architecture rules (ArchUnit) and a consistency test for the
 shipped Keycloak realm. Persistence tests use H2; Testcontainers/PostgreSQL is planned.
+
+## Troubleshooting
+
+- **`release version 21 not supported`**: Maven runs on an older JDK. Check with `./mvnw -v` and point
+  `JAVA_HOME` to a JDK 21.
+- **`Unknown lifecycle phase ".run.profiles=local"`** (PowerShell): quote the option, see above.
+- **401 with `Signed JWT rejected: ... no matching key(s) found`**: the API is not validating tokens against the
+  issuer's keys. Check which `JwtDecoder` is active: start the API with `-Ddebug` and read the *Conditions
+  Evaluation Report*, and check `./mvnw dependency:tree` for an unexpected `oauth2-authorization-server`
+  starter. `ResourceServerJwtValidationTest` guards this.
+- **After recreating the Keycloak container**: the realm's signing keys are regenerated on every import, so
+  restart the API and request a new token.
+- **Which token to use**: `ledgerai-dev` (password grant) is for curl/Postman only; the frontend uses
+  `ledgerai-frontend` with Authorization Code + PKCE.
 
 ## Known limitations
 
