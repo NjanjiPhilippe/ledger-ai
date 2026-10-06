@@ -1,0 +1,60 @@
+{
+  "app": { "name": "LedgerAI" },
+  "nav": { "home": "Home", "accounts": "Accounts" },
+  "auth": { "signedInAs": "Signed in as {{name}}", "logout": "Sign out" },
+  "roles": { "viewer": "Viewer", "accountant": "Accountant", "admin": "Administrator" },
+  "language": { "label": "Language", "en": "English", "fr": "French" },
+  "toast": { "dismiss": "Dismiss" },
+  "errors": {
+    "network": { "title": "Cannot reach the server" },
+    "unauthorized": { "title": "Your session has expired" },
+    "forbidden": { "title": "You are not allowed to do this" },
+    "notFound": { "title": "Not found" },
+    "validation": { "title": "Some information is invalid" },
+    "conflict": { "title": "This action is not possible right now" },
+    "gateway": { "title": "A service we depend on is unavailable" },
+    "server": { "title": "Something went wrong on our side" },
+    "unknown": { "title": "Something went wrong" }
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}"
+  },
+  "home": {
+    "title": "Welcome, {{name}}",
+    "subtitle": "Your double-entry ledger.",
+    "session": "Your session",
+    "userId": "User ID",
+    "tenantId": "Organisation ID",
+    "roles": "Roles",
+    "noRoles": "No role assigned"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "total": "{{count}} accounts",
+    "empty": "There are no accounts yet.",
+    "loadFailed": "The accounts could not be loaded.",
+    "columns": { "name": "Name", "type": "Type", "currency": "Currency", "status": "Status" },
+    "status": { "active": "Active", "inactive": "Inactive" }
+  },
+  "accountType": {
+    "ASSET": "Asset",
+    "LIABILITY": "Liability",
+    "EQUITY": "Equity",
+    "REVENUE": "Revenue",
+    "EXPENSE": "Expense"
+  },
+  "forbidden": {
+    "title": "Access denied",
+    "message": "Your role does not allow you to open this page.",
+    "back": "Back to home"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "This page does not exist.",
+    "back": "Back to home"
+  }
+}

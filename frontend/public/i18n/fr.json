@@ -1,0 +1,60 @@
+{
+  "app": { "name": "LedgerAI" },
+  "nav": { "home": "Accueil", "accounts": "Comptes" },
+  "auth": { "signedInAs": "Connecté en tant que {{name}}", "logout": "Se déconnecter" },
+  "roles": { "viewer": "Lecteur", "accountant": "Comptable", "admin": "Administrateur" },
+  "language": { "label": "Langue", "en": "Anglais", "fr": "Français" },
+  "toast": { "dismiss": "Fermer" },
+  "errors": {
+    "network": { "title": "Impossible de joindre le serveur" },
+    "unauthorized": { "title": "Votre session a expiré" },
+    "forbidden": { "title": "Vous n'avez pas le droit de faire cela" },
+    "notFound": { "title": "Introuvable" },
+    "validation": { "title": "Certaines informations sont invalides" },
+    "conflict": { "title": "Cette action n'est pas possible pour le moment" },
+    "gateway": { "title": "Un service dont nous dépendons est indisponible" },
+    "server": { "title": "Une erreur est survenue de notre côté" },
+    "unknown": { "title": "Une erreur est survenue" }
+  },
+  "common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {{page}} sur {{total}}"
+  },
+  "home": {
+    "title": "Bienvenue, {{name}}",
+    "subtitle": "Votre grand livre en partie double.",
+    "session": "Votre session",
+    "userId": "Identifiant utilisateur",
+    "tenantId": "Identifiant de l'organisation",
+    "roles": "Rôles",
+    "noRoles": "Aucun rôle attribué"
+  },
+  "accounts": {
+    "title": "Comptes",
+    "total": "{{count}} comptes",
+    "empty": "Il n'y a pas encore de compte.",
+    "loadFailed": "Les comptes n'ont pas pu être chargés.",
+    "columns": { "name": "Nom", "type": "Type", "currency": "Devise", "status": "Statut" },
+    "status": { "active": "Actif", "inactive": "Inactif" }
+  },
+  "accountType": {
+    "ASSET": "Actif",
+    "LIABILITY": "Passif",
+    "EQUITY": "Capitaux propres",
+    "REVENUE": "Produit",
+    "EXPENSE": "Charge"
+  },
+  "forbidden": {
+    "title": "Accès refusé",
+    "message": "Votre rôle ne vous permet pas d'ouvrir cette page.",
+    "back": "Retour à l'accueil"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "message": "Cette page n'existe pas.",
+    "back": "Retour à l'accueil"
+  }
+}

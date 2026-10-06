@@ -1,0 +1,7 @@
+{
+  "apiBaseUrl": "http://localhost:8085",
+  "keycloak": {
+    "issuer": "http://localhost:8180/realms/ledgerai",
+    "clientId": "ledgerai-frontend"
+  }
+}
