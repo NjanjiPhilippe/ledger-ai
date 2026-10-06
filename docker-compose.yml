@@ -22,6 +22,9 @@ services:
     command: start-dev --import-realm
     volumes:
       - ./keycloak/ledgerai-realm.json:/opt/keycloak/data/import/ledgerai-realm.json
+      # Custom login theme (referenced by "loginTheme" in the realm). start-dev disables the theme cache,
+      # so CSS edits show up on a browser refresh without restarting the container.
+      - ./keycloak/themes/ledgerai:/opt/keycloak/themes/ledgerai
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin

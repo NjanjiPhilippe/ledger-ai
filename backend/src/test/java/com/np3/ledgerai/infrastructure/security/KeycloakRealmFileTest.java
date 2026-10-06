@@ -81,6 +81,18 @@ class KeycloakRealmFileTest {
     }
 
     @Test
+    void realmUsesTheCustomLoginThemeThatComposeMounts() throws Exception {
+        String theme = realm.get("loginTheme").asString();
+        String compose = Files.readString(ROOT.resolve("docker-compose.yml"));
+        Matcher matcher = Pattern.compile("\\./(keycloak/themes/\\S+):/opt/keycloak/themes/(\\S+)").matcher(compose);
+
+        assertThat(matcher.find()).as("compose mounts a theme folder").isTrue();
+        assertThat(matcher.group(2)).as("mounted under the name the realm asks for").isEqualTo(theme);
+        assertThat(ROOT.resolve(matcher.group(1)).resolve("login/theme.properties")).exists();
+        assertThat(ROOT.resolve(matcher.group(1)).resolve("login/resources/css/login.css")).exists();
+    }
+
+    @Test
     void localUsersCoverEachRole() {
         assertThat(names(realm.get("users"), "username")).containsExactlyInAnyOrder("viewer", "accountant", "admin");
     }

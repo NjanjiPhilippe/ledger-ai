@@ -2492,5 +2492,6 @@
     }
   ],
   "displayName": "LedgerAI",
+  "loginTheme": "ledgerai",
   "defaultLocale": "en"
 }
