@@ -1,5 +1,6 @@
 package com.np3.ledgerai.web.dto.advisor;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,9 +21,11 @@ public record AnalyzeSnapshotRequest(
         List<AccountBalanceLineRequest> balances,
 
         @NotNull(message = "Total debits is required")
+        @Schema(type = "string", pattern = "^-?\\d+(\\.\\d+)?$", description = "Exact decimal amount, as a string (a JSON number is also accepted)")
         BigDecimal totalDebits,
 
         @NotNull(message = "Total credits is required")
+        @Schema(type = "string", pattern = "^-?\\d+(\\.\\d+)?$", description = "Exact decimal amount, as a string (a JSON number is also accepted)")
         BigDecimal totalCredits
 ) {
 }
