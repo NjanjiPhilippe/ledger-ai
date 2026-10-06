@@ -66,6 +66,16 @@ class OpenApiContractTest {
                 .asString()).isEqualTo("string");
     }
 
+    @Test
+    void everyPropertyIsRequiredAndNullableOnesSaySoInTheirType() throws Exception {
+        var schemas = objectMapper.readTree(canonicalApiDocs()).at("/components/schemas");
+
+        assertThat(schemas.at("/AccountResponse/required").toString()).contains("\"id\"", "\"name\"", "\"active\"");
+        var entry = schemas.at("/JournalEntryResponse");
+        assertThat(entry.get("required").toString()).contains("\"createdAt\"", "\"postedAt\"", "\"reversalOfId\"");
+        assertThat(entry.at("/properties/postedAt/type").toString()).contains("\"null\"");
+    }
+
     /** Stable text: keys sorted, volatile parts removed, so the file only changes when the API does. */
     private String canonicalApiDocs() throws Exception {
         String raw = mockMvc.perform(get("/v3/api-docs"))
