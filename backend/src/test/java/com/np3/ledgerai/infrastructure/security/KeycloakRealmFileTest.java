@@ -62,6 +62,25 @@ class KeycloakRealmFileTest {
     }
 
     @Test
+    void noClientForcesTheUnstyledBaseLoginTheme() {
+        // "base" is only the parent of the real themes: forced on a client it gives a login page with no style at all.
+        for (JsonNode client : realm.get("clients")) {
+            JsonNode theme = client.get("attributes").get("login_theme");
+            assertThat(theme == null ? "" : theme.asString())
+                    .as("login theme of client " + client.get("clientId").asString())
+                    .isNotEqualTo("base");
+        }
+    }
+
+    @Test
+    void loginPageIsBrandedAndOfferedInEnglishAndFrench() {
+        assertThat(realm.get("displayName").asString()).isEqualTo("LedgerAI");
+        assertThat(realm.get("internationalizationEnabled").asBoolean()).isTrue();
+        assertThat(names(realm.get("supportedLocales"))).containsExactly("en", "fr");
+        assertThat(realm.get("defaultLocale").asString()).isEqualTo("en");
+    }
+
+    @Test
     void localUsersCoverEachRole() {
         assertThat(names(realm.get("users"), "username")).containsExactlyInAnyOrder("viewer", "accountant", "admin");
     }
@@ -73,6 +92,12 @@ class KeycloakRealmFileTest {
             }
         }
         throw new AssertionError("client not found: " + clientId);
+    }
+
+    private static List<String> names(JsonNode strings) {
+        List<String> values = new ArrayList<>();
+        strings.forEach(node -> values.add(node.asString()));
+        return values;
     }
 
     private static List<String> names(JsonNode array, String field) {

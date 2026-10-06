@@ -707,7 +707,6 @@
       "protocol": "openid-connect",
       "attributes": {
         "client.introspection.response.allow.jwt.claim.enabled": "false",
-        "login_theme": "base",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
@@ -771,7 +770,6 @@
       "attributes": {
         "client.secret.creation.time": "1788112802",
         "client.introspection.response.allow.jwt.claim.enabled": "false",
-        "login_theme": "base",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
@@ -1747,8 +1745,11 @@
       }
     ]
   },
-  "internationalizationEnabled": false,
-  "supportedLocales": [],
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "en",
+    "fr"
+  ],
   "authenticationFlows": [
     {
       "id": "aa686291-c2bc-4b9f-b805-33d3675f80f0",
@@ -2489,5 +2490,7 @@
         "admin"
       ]
     }
-  ]
+  ],
+  "displayName": "LedgerAI",
+  "defaultLocale": "en"
 }
