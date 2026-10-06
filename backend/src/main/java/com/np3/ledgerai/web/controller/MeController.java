@@ -19,6 +19,6 @@ public class MeController {
 
     @GetMapping("/api/v1/me")
     public MeResponse me() {
-        return new MeResponse(currentUserProvider.currentUserId(), tenantContext.currentTenantId());
+        return new MeResponse(currentUserProvider.currentUserId().value(), tenantContext.currentTenantId().value());
     }
 }

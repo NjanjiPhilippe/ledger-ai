@@ -44,6 +44,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "active", "currencyCode", "id", "name", "type" ],
         "type" : "object"
       },
       "AdviceResponse" : {
@@ -62,6 +63,7 @@
             "type" : "array"
           }
         },
+        "required" : [ "generatedAt", "provider", "recommendations" ],
         "type" : "object"
       },
       "AnalyzeSnapshotRequest" : {
@@ -103,6 +105,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "amount", "currencyCode" ],
         "type" : "object"
       },
       "CreateAccountRequest" : {
@@ -159,6 +162,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "accountId", "amount", "entryType" ],
         "type" : "object"
       },
       "JournalEntryResponse" : {
@@ -181,29 +185,35 @@
             "type" : "array"
           },
           "postedAt" : {
+            "description" : "Null while the entry is a draft",
             "format" : "date-time",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "reversalOfId" : {
+            "description" : "Set when this entry reverses another one",
             "format" : "uuid",
-            "type" : "string"
+            "type" : [ "string", "null" ]
           },
           "status" : {
             "enum" : [ "DRAFT", "POSTED", "REVERSED" ],
             "type" : "string"
           }
         },
+        "required" : [ "createdAt", "description", "id", "lines", "postedAt", "reversalOfId", "status" ],
         "type" : "object"
       },
       "MeResponse" : {
         "properties" : {
           "tenantId" : {
-            "$ref" : "#/components/schemas/TenantId"
+            "format" : "uuid",
+            "type" : "string"
           },
           "userId" : {
-            "$ref" : "#/components/schemas/UserId"
+            "format" : "uuid",
+            "type" : "string"
           }
         },
+        "required" : [ "tenantId", "userId" ],
         "type" : "object"
       },
       "PagedResponseAccountResponse" : {
@@ -231,6 +241,7 @@
             "type" : "integer"
           }
         },
+        "required" : [ "content", "page", "size", "totalElements", "totalPages" ],
         "type" : "object"
       },
       "PagedResponseJournalEntryResponse" : {
@@ -258,6 +269,7 @@
             "type" : "integer"
           }
         },
+        "required" : [ "content", "page", "size", "totalElements", "totalPages" ],
         "type" : "object"
       },
       "RebuildProjectionResponse" : {
@@ -271,6 +283,7 @@
             "type" : "integer"
           }
         },
+        "required" : [ "accountsCorrected", "accountsRebuilt" ],
         "type" : "object"
       },
       "RecommendationResponse" : {
@@ -288,6 +301,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "category", "detail", "severity", "title" ],
         "type" : "object"
       },
       "RecordJournalEntryRequest" : {
@@ -311,15 +325,6 @@
           }
         },
         "required" : [ "currencyCode", "description", "lines" ],
-        "type" : "object"
-      },
-      "TenantId" : {
-        "properties" : {
-          "value" : {
-            "format" : "uuid",
-            "type" : "string"
-          }
-        },
         "type" : "object"
       },
       "TrialBalanceLineResponse" : {
@@ -350,6 +355,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "accountId", "accountName", "accountType", "balance", "totalCredits", "totalDebits" ],
         "type" : "object"
       },
       "TrialBalanceResponse" : {
@@ -381,6 +387,7 @@
             "type" : "string"
           }
         },
+        "required" : [ "balanced", "currencyCode", "generatedAt", "lines", "totalCredits", "totalDebits" ],
         "type" : "object"
       },
       "UpdateAccountRequest" : {
@@ -393,16 +400,7 @@
             "type" : "string"
           }
         },
-        "required" : [ "name" ],
-        "type" : "object"
-      },
-      "UserId" : {
-        "properties" : {
-          "value" : {
-            "format" : "uuid",
-            "type" : "string"
-          }
-        },
+        "required" : [ "active", "name" ],
         "type" : "object"
       }
     },

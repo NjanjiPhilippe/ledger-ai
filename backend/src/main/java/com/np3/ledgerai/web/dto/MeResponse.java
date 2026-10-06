@@ -1,14 +1,10 @@
 package com.np3.ledgerai.web.dto;
 
-import com.np3.ledgerai.domain.valueobject.TenantId;
-import com.np3.ledgerai.domain.valueobject.UserId;
-
-import java.util.List;
+import java.util.UUID;
 
 /**
- * This is the response that the frontend will get when asking for the current user.
- **/
-public record MeResponse(
-       UserId userId, TenantId tenantId
-) {
+ * The response that the frontend gets when asking for the current user.
+ * Plain identifiers, not the domain value objects, so the JSON is { "userId": "…", "tenantId": "…" }.
+ */
+public record MeResponse(UUID userId, UUID tenantId) {
 }
