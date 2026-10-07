@@ -9,6 +9,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
+import { loadingInterceptor } from './core/loading/loading.interceptor';
 import { apiErrorInterceptor } from './core/api/api-error.interceptor';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { AuthService } from './core/auth/auth.service';
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, apiErrorInterceptor])),
+    provideHttpClient(withInterceptors([loadingInterceptor, authInterceptor, apiErrorInterceptor])),
     provideOAuthClient(),
     provideTransloco({
       config: {
@@ -41,7 +42,7 @@ export const appConfig: ApplicationConfig = {
       const auth = inject(AuthService);
 
       await config.load();
-      language.initialize();
+      await language.initialize();
       await auth.initialize();
     }),
   ],

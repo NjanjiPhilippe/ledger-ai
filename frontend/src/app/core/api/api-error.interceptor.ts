@@ -32,7 +32,10 @@ export const apiErrorInterceptor: HttpInterceptorFn = (request, next) => {
         !request.context.get(HANDLE_ERRORS_LOCALLY)
       ) {
         const problem = toApiProblem(error);
-        toasts.error(transloco.translate(`errors.${problem.kind}.title`), detailOf(problem));
+        toasts.error(
+          transloco.translate(`errors.${problem.kind}.title`),
+          detailOf(problem) ?? transloco.translate(`errors.${problem.kind}.message`),
+        );
         if (problem.kind === 'unauthorized') {
           auth.login(router.url);
         }

@@ -3,7 +3,8 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { Subject } from 'rxjs';
+import { TRANSLOCO_LOADER, TranslocoService } from '@jsverse/transloco';
+import { of, Subject } from 'rxjs';
 import { appConfig } from './app.config';
 import { AuthService } from './core/auth/auth.service';
 import { AppConfigService } from './core/config/app-config';
@@ -37,6 +38,7 @@ describe('application initializer', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: OAuthService, useValue: oauth },
+        { provide: TRANSLOCO_LOADER, useValue: { getTranslation: () => of({ hello: 'Hello' }) } },
       ],
     });
   });
@@ -52,6 +54,12 @@ describe('application initializer', () => {
       expect.objectContaining({ issuer: CONFIG.keycloak.issuer, clientId: 'ledgerai-frontend' }),
     );
     expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
+  });
+
+  it('has the dictionary loaded when the application starts, so early error toasts are not raw keys', async () => {
+    await TestBed.inject(ApplicationInitStatus).donePromise;
+
+    expect(TestBed.inject(TranslocoService).translate('hello')).toBe('Hello');
   });
 
   it('fails the startup, instead of running half configured, when config.json is missing', async () => {
