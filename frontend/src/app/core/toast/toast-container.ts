@@ -16,7 +16,7 @@ const LEVEL_CLASSES: Record<ToastLevel, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="pointer-events-none fixed left-4 top-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2"
+      class="pointer-events-none fixed right-4 top-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2"
     >
       @for (toast of toasts.toasts(); track toast.id) {
         <div

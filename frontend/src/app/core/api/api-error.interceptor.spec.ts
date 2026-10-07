@@ -79,14 +79,19 @@ describe('apiErrorInterceptor', () => {
   it('never shows the message of a server error, which can carry internals', () => {
     fail('http://api.test/x', 500, { message: 'NullPointerException at com.np3.ledgerai...' });
 
-    expect(toasts.toasts()[0]).toMatchObject({ title: 'Something went wrong on our side' });
-    expect(toasts.toasts()[0].detail).toBeUndefined();
+    expect(toasts.toasts()[0]).toMatchObject({
+      title: 'Something went wrong on our side',
+      detail: 'Please try again. If the problem continues, contact support.',
+    });
   });
 
   it('says when the server cannot be reached', () => {
     fail('http://api.test/x', 0);
 
-    expect(toasts.toasts()[0].title).toBe('Cannot reach the server');
+    expect(toasts.toasts()[0]).toMatchObject({
+      title: 'Cannot reach the server',
+      detail: 'The server did not respond. Check your connection, then try again.',
+    });
   });
 
   it('shows the toast in the active language', () => {

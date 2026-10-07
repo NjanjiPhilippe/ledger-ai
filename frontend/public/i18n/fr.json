@@ -6,15 +6,33 @@
   "language": { "label": "Langue", "en": "Anglais", "fr": "Français" },
   "toast": { "dismiss": "Fermer" },
   "errors": {
-    "network": { "title": "Impossible de joindre le serveur" },
-    "unauthorized": { "title": "Votre session a expiré" },
-    "forbidden": { "title": "Vous n'avez pas le droit de faire cela" },
-    "notFound": { "title": "Introuvable" },
-    "validation": { "title": "Certaines informations sont invalides" },
-    "conflict": { "title": "Cette action n'est pas possible pour le moment" },
-    "gateway": { "title": "Un service dont nous dépendons est indisponible" },
-    "server": { "title": "Une erreur est survenue de notre côté" },
-    "unknown": { "title": "Une erreur est survenue" }
+    "network": {
+      "title": "Impossible de joindre le serveur",
+      "message": "Le serveur ne répond pas. Vérifiez votre connexion, puis réessayez."
+    },
+    "unauthorized": { "title": "Votre session a expiré", "message": "Veuillez vous reconnecter." },
+    "forbidden": {
+      "title": "Vous n'avez pas le droit de faire cela",
+      "message": "Votre rôle ne permet pas cette action."
+    },
+    "notFound": { "title": "Introuvable", "message": "L'élément demandé n'existe pas." },
+    "validation": {
+      "title": "Certaines informations sont invalides",
+      "message": "Vérifiez les champs puis réessayez."
+    },
+    "conflict": {
+      "title": "Cette action n'est pas possible pour le moment",
+      "message": "Actualisez la page puis réessayez."
+    },
+    "gateway": {
+      "title": "Un service dont nous dépendons est indisponible",
+      "message": "Veuillez réessayer dans quelques minutes."
+    },
+    "server": {
+      "title": "Une erreur est survenue de notre côté",
+      "message": "Veuillez réessayer. Si le problème persiste, contactez le support."
+    },
+    "unknown": { "title": "Une erreur est survenue", "message": "Veuillez réessayer." }
   },
   "common": {
     "loading": "Chargement…",

@@ -6,15 +6,33 @@
   "language": { "label": "Language", "en": "English", "fr": "French" },
   "toast": { "dismiss": "Dismiss" },
   "errors": {
-    "network": { "title": "Cannot reach the server" },
-    "unauthorized": { "title": "Your session has expired" },
-    "forbidden": { "title": "You are not allowed to do this" },
-    "notFound": { "title": "Not found" },
-    "validation": { "title": "Some information is invalid" },
-    "conflict": { "title": "This action is not possible right now" },
-    "gateway": { "title": "A service we depend on is unavailable" },
-    "server": { "title": "Something went wrong on our side" },
-    "unknown": { "title": "Something went wrong" }
+    "network": {
+      "title": "Cannot reach the server",
+      "message": "The server did not respond. Check your connection, then try again."
+    },
+    "unauthorized": { "title": "Your session has expired", "message": "Please sign in again." },
+    "forbidden": {
+      "title": "You are not allowed to do this",
+      "message": "Your role does not allow this action."
+    },
+    "notFound": { "title": "Not found", "message": "The item you asked for does not exist." },
+    "validation": {
+      "title": "Some information is invalid",
+      "message": "Please check the fields and try again."
+    },
+    "conflict": {
+      "title": "This action is not possible right now",
+      "message": "Refresh the page and try again."
+    },
+    "gateway": {
+      "title": "A service we depend on is unavailable",
+      "message": "Please try again in a few minutes."
+    },
+    "server": {
+      "title": "Something went wrong on our side",
+      "message": "Please try again. If the problem continues, contact support."
+    },
+    "unknown": { "title": "Something went wrong", "message": "Please try again." }
   },
   "common": {
     "loading": "Loading…",

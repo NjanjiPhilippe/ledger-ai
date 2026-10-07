@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
+import { firstValueFrom } from 'rxjs';
 
 export const LANGUAGES = ['en', 'fr'] as const;
 export type Language = (typeof LANGUAGES)[number];
@@ -14,8 +15,18 @@ export class LanguageService {
 
   readonly current = this.selected.asReadonly();
 
-  initialize(): void {
-    this.apply(this.stored() ?? this.fromBrowser());
+  /**
+   * Applies the language and waits for its dictionary: an error toast raised during start-up would otherwise
+   * show raw keys such as "errors.network.title".
+   */
+  async initialize(): Promise<void> {
+    const language = this.stored() ?? this.fromBrowser();
+    this.apply(language);
+    try {
+      await firstValueFrom(this.transloco.load(language));
+    } catch {
+      // Dictionary unreachable: start anyway, the keys show instead of the app failing to open.
+    }
   }
 
   set(language: Language): void {
