@@ -10,7 +10,8 @@
     "closeMenu": "Close the menu",
     "newEntry": "New entry",
     "entries": "Journal entries",
-    "balance": "Trial balance"
+    "balance": "Trial balance",
+    "advisor": "AI advisor"
   },
   "auth": {
     "signedInAs": "Signed in as {{name}}",
@@ -286,6 +287,41 @@
         "label": "Net result",
         "hint": "Revenue minus expenses over the period."
       }
+    }
+  },
+  "advisor": {
+    "badge": "AI advisor",
+    "title": "Financial advice on your ledger",
+    "subtitle": "The advisor reads the trial balance and suggests where to look: cash, profitability, risks. It comments figures, it does not change anything.",
+    "analyze": "Analyze the ledger",
+    "analyzeAgain": "Analyze again",
+    "analyzing": "Analyzing…",
+    "analyzingHint": "The advisor is reading your ledger. This can take several seconds.",
+    "generated": "Generated on {{date}} by {{provider}}",
+    "idle": "No analysis yet. Run one to get recommendations drawn from your posted entries.",
+    "privacy": "The figures of the trial balance (account names and totals of posted entries) are sent to the configured AI provider.",
+    "failed": "The analysis could not be completed. Try again in a moment.",
+    "nothing": "The advisor has nothing to report on the current figures.",
+    "filter": "Filter by topic",
+    "all": "All",
+    "disclaimer": "These are automated suggestions based on posted entries only. They are not accounting or legal advice: check them before acting.",
+    "severity": {
+      "CRITICAL": "Critical",
+      "WARNING": "Warning",
+      "INFO": "For information"
+    },
+    "count": {
+      "CRITICAL": "Critical: {{count}}",
+      "WARNING": "Warning: {{count}}",
+      "INFO": "Info: {{count}}"
+    },
+    "category": {
+      "LIQUIDITY": "Liquidity",
+      "PROFITABILITY": "Profitability",
+      "RISK": "Risk",
+      "COMPLIANCE": "Compliance",
+      "GROWTH": "Growth",
+      "GENERAL": "General"
     }
   }
 }

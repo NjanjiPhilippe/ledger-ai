@@ -10,7 +10,8 @@
     "closeMenu": "Fermer le menu",
     "newEntry": "Nouvelle écriture",
     "entries": "Écritures",
-    "balance": "Balance"
+    "balance": "Balance",
+    "advisor": "Conseiller IA"
   },
   "auth": {
     "signedInAs": "Connecté en tant que {{name}}",
@@ -286,6 +287,41 @@
         "label": "Résultat net",
         "hint": "Produits moins charges sur la période."
       }
+    }
+  },
+  "advisor": {
+    "badge": "Conseiller IA",
+    "title": "Conseils financiers sur votre grand livre",
+    "subtitle": "Le conseiller lit la balance et indique où regarder : trésorerie, rentabilité, risques. Il commente les chiffres, il ne modifie rien.",
+    "analyze": "Analyser le grand livre",
+    "analyzeAgain": "Analyser à nouveau",
+    "analyzing": "Analyse en cours…",
+    "analyzingHint": "Le conseiller lit votre grand livre. Cela peut prendre plusieurs secondes.",
+    "generated": "Généré le {{date}} par {{provider}}",
+    "idle": "Aucune analyse pour le moment. Lancez-en une pour obtenir des recommandations tirées de vos écritures comptabilisées.",
+    "privacy": "Les chiffres de la balance (noms des comptes et totaux des écritures comptabilisées) sont envoyés au fournisseur d'IA configuré.",
+    "failed": "L'analyse n'a pas pu aboutir. Réessayez dans un instant.",
+    "nothing": "Le conseiller n'a rien à signaler sur les chiffres actuels.",
+    "filter": "Filtrer par thème",
+    "all": "Toutes",
+    "disclaimer": "Ce sont des suggestions automatiques fondées sur les écritures comptabilisées uniquement. Ce n'est pas un conseil comptable ou juridique : vérifiez avant d'agir.",
+    "severity": {
+      "CRITICAL": "Critique",
+      "WARNING": "Attention",
+      "INFO": "À titre d'information"
+    },
+    "count": {
+      "CRITICAL": "Critique : {{count}}",
+      "WARNING": "Attention : {{count}}",
+      "INFO": "Info : {{count}}"
+    },
+    "category": {
+      "LIQUIDITY": "Trésorerie",
+      "PROFITABILITY": "Rentabilité",
+      "RISK": "Risque",
+      "COMPLIANCE": "Conformité",
+      "GROWTH": "Croissance",
+      "GENERAL": "Général"
     }
   }
 }
