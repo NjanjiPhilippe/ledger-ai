@@ -41,8 +41,17 @@ data-access and core.
 - **Runtime configuration**: `public/config.json` (API URL, Keycloak issuer and client) is read at startup, so the same
   build runs in any environment.
 - **Money is a string.** The API sends amounts as strings with the exact decimals of the currency, because JavaScript
-  numbers are binary floating point. The frontend formats them without converting to a number and does not calculate
-  with them.
+  numbers are binary floating point. The frontend formats them without converting to a number. The one place that has
+  to compare amounts as the person types (is the new entry balanced?) uses exact decimal arithmetic on `BigInt`
+  (`shared/money/decimal.ts`) and sends the amounts back as strings. The backend remains the authority: the screen
+  only drives the interface.
+- **A feature owns its screens and its state, not the other features'.** Screens that need the same fact (the trial
+  balance on the dashboard and on its own page) each call the API through their own data-access, rather than share a
+  service across features. What is truly common (the status pill of an entry, the confirmation dialog, the icons of
+  account types, the money and date pipes) lives in `shared/`.
+- **Names, not identifiers.** Screens show account names; an unknown account reads "Unknown account", never an id.
+- **Failures are local.** Sections of a screen load and fail independently (`Panel`), each with its own retry; the error
+  itself is a translated toast raised once by the HTTP interceptor.
 - **Errors are toasts.** One interceptor turns every failed API call into a translated toast (the problem kind picks
   the title; the backend message is added only where it is meant for users, never for server errors). A caller that
   shows an error itself (a form field) opts out per request.

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountFilters, AccountType } from '../../../core/api/api-types';
 import { AppIcon } from '../../../shared/ui/icon';
@@ -82,6 +89,11 @@ export class AccountsFilters {
 
   protected readonly types = ACCOUNT_TYPES;
   private timer: ReturnType<typeof setTimeout> | undefined;
+
+  constructor() {
+    // A search typed just before leaving the screen must not fire on a screen that is gone.
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.timer));
+  }
 
   /** Waits for a pause in typing so that every keystroke does not trigger a request. */
   protected searchInput(value: string): void {

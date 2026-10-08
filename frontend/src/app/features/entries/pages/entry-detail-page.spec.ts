@@ -14,10 +14,12 @@ describe('EntryDetailPage', () => {
   const api = { get: vi.fn(), accounts: vi.fn(), post: vi.fn(), reverse: vi.fn() };
   const navigate = vi.fn();
 
-  async function open(entry = ENTRY, roles: string[] = ['viewer']) {
+  async function open(entry = ENTRY, roles: string[] = ['viewer'], accountsFail = false) {
     localStorage.clear();
     api.get.mockReset().mockImplementation((id: string) => of(id === entry.id ? entry : ENTRY));
-    api.accounts.mockReset().mockReturnValue(of(ACCOUNTS));
+    api.accounts
+      .mockReset()
+      .mockReturnValue(accountsFail ? throwError(() => new Error('down')) : of(ACCOUNTS));
     api.post.mockReset();
     api.reverse.mockReset();
     navigate.mockReset();
@@ -158,5 +160,13 @@ describe('EntryDetailPage', () => {
     await fixture.whenStable();
 
     expect(q(fixture.nativeElement, 'not-found')).not.toBeNull();
+  });
+
+  it('still shows the entry, with "Unknown account" and plain amounts, when the accounts fail to load', async () => {
+    const { element } = await open(ENTRY, [], true);
+
+    expect(q(element, 'title')).not.toBeNull();
+    expect(text(element, 'line-account')).toBe('Unknown account');
+    expect(text(element, 'total-debits')).toMatch(/2,450,000/);
   });
 });

@@ -14,6 +14,10 @@ export function formatMoney(amount: string, currencyCode: string, locale: string
   if (!isDecimalAmount(amount)) {
     throw new Error(`Not a decimal amount: "${amount}"`);
   }
+  if (!/^[A-Za-z]{3}$/.test(currencyCode)) {
+    // A screen may not know the currency yet (its accounts did not load): show the amount rather than fail.
+    return new Intl.NumberFormat(locale).format(amount as `${number}`);
+  }
   return new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode }).format(
     amount as `${number}`,
   );
