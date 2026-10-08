@@ -1,15 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { ACCOUNT_TYPE_ICONS } from '../../../shared/ui/account-type-icons';
 import { AppIcon, IconName } from '../../../shared/ui/icon';
 import { AccountResponse, AccountType } from '../../../core/api/api-types';
-
-const ICONS: Record<AccountType, IconName> = {
-  ASSET: 'wallet',
-  LIABILITY: 'receipt',
-  EQUITY: 'pie',
-  REVENUE: 'trendingUp',
-  EXPENSE: 'trendingDown',
-};
 
 /** Presentation only: receives accounts, renders them, knows nothing about the API or the state. */
 @Component({
@@ -96,6 +89,6 @@ export class AccountsTable {
   readonly edit = output<AccountResponse>();
 
   protected iconOf(type: AccountType): IconName {
-    return ICONS[type];
+    return ACCOUNT_TYPE_ICONS[type];
   }
 }
