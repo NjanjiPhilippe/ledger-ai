@@ -9,7 +9,8 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "newEntry": "Nouvelle écriture",
-    "entries": "Écritures"
+    "entries": "Écritures",
+    "balance": "Balance"
   },
   "auth": {
     "signedInAs": "Connecté en tant que {{name}}",
@@ -256,5 +257,35 @@
     },
     "postedToast": "Écriture « {{description}} » comptabilisée",
     "reversedToast": "Écriture « {{description}} » extournée"
+  },
+  "balance": {
+    "title": "Balance des comptes",
+    "generatedAt": "Au",
+    "export": "Exporter en CSV",
+    "loadFailed": "La balance n'a pas pu être chargée.",
+    "balanced": "Le grand livre est équilibré",
+    "balancedHint": "Le total des débits égale le total des crédits : le principe de la partie double est respecté pour chaque écriture comptabilisée.",
+    "unbalanced": "Le grand livre est déséquilibré",
+    "unbalancedHint": "Le total des débits et celui des crédits diffèrent. Vérifiez les écritures comptabilisées et reconstruisez les soldes si besoin.",
+    "counts": "{{moved}} comptes mouvementés sur {{total}}",
+    "hideEmpty": "Masquer les comptes sans mouvement",
+    "hidden": "{{count}} masqués",
+    "empty": "Aucun compte à afficher.",
+    "subtotal": "Sous-total",
+    "grandTotal": "Total général",
+    "summary": {
+      "assets": {
+        "label": "Total de l'actif",
+        "hint": "Ce que l'organisation possède."
+      },
+      "liabilitiesAndEquity": {
+        "label": "Dettes et capitaux propres",
+        "hint": "Ce qu'elle doit, et ce que ses propriétaires y ont mis."
+      },
+      "netResult": {
+        "label": "Résultat net",
+        "hint": "Produits moins charges sur la période."
+      }
+    }
   }
 }

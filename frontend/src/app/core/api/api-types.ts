@@ -22,6 +22,13 @@ export interface EntryFilters {
   readonly createdFrom?: string;
   readonly createdTo?: string;
 }
+/** Trial balance lines of one account type, with their subtotals (a view of the report, not an API type). */
+export interface BalanceGroup {
+  readonly type: AccountType;
+  readonly lines: readonly TrialBalanceLine[];
+  readonly totalDebits: string;
+  readonly totalCredits: string;
+}
 export type CreateAccountRequest = components['schemas']['CreateAccountRequest'];
 export type UpdateAccountRequest = components['schemas']['UpdateAccountRequest'];
 export type RecordJournalEntryRequest = components['schemas']['RecordJournalEntryRequest'];

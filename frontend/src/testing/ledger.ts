@@ -96,3 +96,54 @@ export const REVERSAL_ENTRY: JournalEntry = {
     { accountId: CASH.id, amount: '2450000.00', entryType: 'CREDIT' },
   ],
 };
+
+/** A balance with movements on three accounts and none on a fourth, as the API returns it: balances on the normal side. */
+export const FULL_TRIAL_BALANCE: TrialBalance = {
+  balanced: true,
+  currencyCode: 'XAF',
+  generatedAt: '2026-10-08T10:00:00Z',
+  totalDebits: '2450000.00',
+  totalCredits: '2450000.00',
+  lines: [
+    {
+      accountId: 'a1',
+      accountName: 'Cash',
+      accountType: 'ASSET',
+      totalDebits: '1950000.00',
+      totalCredits: '0.00',
+      balance: '1950000.00',
+    },
+    {
+      accountId: 'a2',
+      accountName: 'Share capital',
+      accountType: 'EQUITY',
+      totalDebits: '0.00',
+      totalCredits: '1500000.00',
+      balance: '1500000.00',
+    },
+    {
+      accountId: 'a3',
+      accountName: 'Sales',
+      accountType: 'REVENUE',
+      totalDebits: '0.00',
+      totalCredits: '950000.00',
+      balance: '950000.00',
+    },
+    {
+      accountId: 'a4',
+      accountName: 'Rent',
+      accountType: 'EXPENSE',
+      totalDebits: '500000.00',
+      totalCredits: '0.00',
+      balance: '500000.00',
+    },
+    {
+      accountId: 'a5',
+      accountName: 'Old suspense',
+      accountType: 'LIABILITY',
+      totalDebits: '0.00',
+      totalCredits: '0.00',
+      balance: '0.00',
+    },
+  ],
+};
