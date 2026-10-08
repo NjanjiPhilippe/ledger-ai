@@ -9,7 +9,7 @@ import { Shell } from './shell';
 describe('Shell', () => {
   const logout = vi.fn();
 
-  async function render() {
+  async function render(roles: string[] = ['viewer']) {
     logout.mockReset();
     localStorage.clear();
     TestBed.configureTestingModule({
@@ -20,7 +20,7 @@ describe('Shell', () => {
           provide: AuthService,
           useValue: {
             displayName: signal('Vera Viewer'),
-            appRoles: signal(['viewer']),
+            appRoles: signal(roles),
             logout,
           },
         },
@@ -44,6 +44,19 @@ describe('Shell', () => {
       'Vera Viewer',
     );
     expect(element.querySelector('[data-testid="user-role"]')?.textContent?.trim()).toBe('Viewer');
+  });
+
+  it('offers "New entry" only to an accountant or an administrator', async () => {
+    expect(links((await render(['viewer'])).element)).not.toContain('New entry');
+  });
+
+  it('shows "New entry" to an accountant', async () => {
+    TestBed.resetTestingModule();
+    expect(links((await render(['accountant'])).element)).toEqual([
+      'Dashboard',
+      'Accounts',
+      'New entry',
+    ]);
   });
 
   it('opens and closes the menu on small screens', async () => {
