@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard, roleGuard } from './core/auth/auth.guard';
 import { Shell } from './core/layout/shell';
 
 export const routes: Routes = [
@@ -18,6 +18,12 @@ export const routes: Routes = [
         path: 'accounts',
         loadComponent: () =>
           import('./features/accounts/pages/accounts-page').then((m) => m.AccountsPage),
+      },
+      {
+        path: 'entries/new',
+        canActivate: [roleGuard('accountant')],
+        loadComponent: () =>
+          import('./features/entries/pages/new-entry-page').then((m) => m.NewEntryPage),
       },
       {
         path: 'forbidden',
