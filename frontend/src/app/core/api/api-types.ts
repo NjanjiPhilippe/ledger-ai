@@ -4,7 +4,6 @@ import type { components } from './schema';
 export type AccountResponse = components['schemas']['AccountResponse'];
 export type AccountType = AccountResponse['type'];
 export type PagedAccounts = components['schemas']['PagedResponseAccountResponse'];
-export type MeResponse = components['schemas']['MeResponse'];
 export type JournalEntry = components['schemas']['JournalEntryResponse'];
 export type JournalEntryStatus = JournalEntry['status'];
 export type PagedJournalEntries = components['schemas']['PagedResponseJournalEntryResponse'];

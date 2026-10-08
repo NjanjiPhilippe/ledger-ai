@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { JournalEntry } from '../../../core/api/api-types';
 import { ShortDatePipe } from '../../../shared/date/short-date.pipe';
 import { AppIcon } from '../../../shared/ui/icon';
@@ -15,7 +14,7 @@ interface Row {
 /** Journal entries as rows: description, the accounts debited and credited by name, date and status. */
 @Component({
   selector: 'app-entries-table',
-  imports: [RouterLink, TranslocoPipe, ShortDatePipe, AppIcon, EntryStatus],
+  imports: [RouterLink, ShortDatePipe, AppIcon, EntryStatus],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
   template: `
