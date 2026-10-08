@@ -10,9 +10,9 @@ import { AccountsTable } from '../ui/accounts-table';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-baseline justify-between">
-      <h1 class="text-2xl font-semibold">{{ 'accounts.title' | transloco }}</h1>
+      <h1 class="text-3xl font-bold tracking-tight">{{ 'accounts.title' | transloco }}</h1>
       @if (store.status() === 'loaded') {
-        <p class="text-sm text-slate-600" data-testid="total">
+        <p class="text-sm text-graphite" data-testid="total">
           {{ 'accounts.total' | transloco: { count: store.totalElements() } }}
         </p>
       }
@@ -22,14 +22,14 @@ import { AccountsTable } from '../ui/accounts-table';
       @switch (store.status()) {
         @case ('error') {
           <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-900"
+            class="rounded-2xl bg-negative-soft p-4 text-negative"
             role="alert"
             data-testid="error"
           >
             <p>{{ 'accounts.loadFailed' | transloco }}</p>
             <button
               type="button"
-              class="mt-2 rounded bg-red-700 px-3 py-1 text-sm text-white hover:bg-red-800"
+              class="mt-2 rounded-lg bg-ink px-3 py-1.5 text-sm font-medium text-white hover:bg-ink-soft"
               (click)="store.load()"
             >
               {{ 'common.retry' | transloco }}
@@ -39,7 +39,7 @@ import { AccountsTable } from '../ui/accounts-table';
         @case ('loaded') {
           @if (store.accounts().length === 0) {
             <p
-              class="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-600"
+              class="rounded-2xl border border-dashed border-silver p-8 text-center text-graphite"
               data-testid="empty"
             >
               {{ 'accounts.empty' | transloco }}
@@ -49,7 +49,7 @@ import { AccountsTable } from '../ui/accounts-table';
             <nav class="mt-3 flex items-center justify-between text-sm" aria-label="pagination">
               <button
                 type="button"
-                class="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                class="rounded-lg border border-silver bg-white px-3 py-1.5 font-medium hover:bg-white disabled:opacity-50"
                 [disabled]="!store.hasPrevious()"
                 (click)="store.previous()"
               >
@@ -63,7 +63,7 @@ import { AccountsTable } from '../ui/accounts-table';
               </span>
               <button
                 type="button"
-                class="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                class="rounded-lg border border-silver bg-white px-3 py-1.5 font-medium hover:bg-white disabled:opacity-50"
                 [disabled]="!store.hasNext()"
                 (click)="store.next()"
               >
@@ -73,7 +73,7 @@ import { AccountsTable } from '../ui/accounts-table';
           }
         }
         @default {
-          <p class="text-slate-600" role="status" data-testid="loading">
+          <p class="text-graphite" role="status" data-testid="loading">
             {{ 'common.loading' | transloco }}
           </p>
         }

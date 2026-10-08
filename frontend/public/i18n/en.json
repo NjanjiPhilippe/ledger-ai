@@ -1,21 +1,48 @@
 {
-  "app": { "name": "LedgerAI" },
-  "nav": { "home": "Home", "accounts": "Accounts" },
-  "auth": { "signedInAs": "Signed in as {{name}}", "logout": "Sign out" },
-  "roles": { "viewer": "Viewer", "accountant": "Accountant", "admin": "Administrator" },
-  "language": { "label": "Language", "en": "English", "fr": "French" },
-  "toast": { "dismiss": "Dismiss" },
+  "app": {
+    "name": "LedgerAI"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "accounts": "Accounts",
+    "main": "Main navigation",
+    "openMenu": "Open the menu",
+    "closeMenu": "Close the menu"
+  },
+  "auth": {
+    "signedInAs": "Signed in as {{name}}",
+    "logout": "Sign out"
+  },
+  "roles": {
+    "viewer": "Viewer",
+    "accountant": "Accountant",
+    "admin": "Administrator"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "fr": "French"
+  },
+  "toast": {
+    "dismiss": "Dismiss"
+  },
   "errors": {
     "network": {
       "title": "Cannot reach the server",
       "message": "The server did not respond. Check your connection, then try again."
     },
-    "unauthorized": { "title": "Your session has expired", "message": "Please sign in again." },
+    "unauthorized": {
+      "title": "Your session has expired",
+      "message": "Please sign in again."
+    },
     "forbidden": {
       "title": "You are not allowed to do this",
       "message": "Your role does not allow this action."
     },
-    "notFound": { "title": "Not found", "message": "The item you asked for does not exist." },
+    "notFound": {
+      "title": "Not found",
+      "message": "The item you asked for does not exist."
+    },
     "validation": {
       "title": "Some information is invalid",
       "message": "Please check the fields and try again."
@@ -32,31 +59,34 @@
       "title": "Something went wrong on our side",
       "message": "Please try again. If the problem continues, contact support."
     },
-    "unknown": { "title": "Something went wrong", "message": "Please try again." }
+    "unknown": {
+      "title": "Something went wrong",
+      "message": "Please try again."
+    }
   },
   "common": {
     "loading": "Loading…",
     "retry": "Try again",
     "previous": "Previous",
     "next": "Next",
-    "pageOf": "Page {{page}} of {{total}}"
-  },
-  "home": {
-    "title": "Welcome, {{name}}",
-    "subtitle": "Your double-entry ledger.",
-    "session": "Your session",
-    "userId": "User ID",
-    "tenantId": "Organisation ID",
-    "roles": "Roles",
-    "noRoles": "No role assigned"
+    "pageOf": "Page {{page}} of {{total}}",
+    "unknownAccount": "Unknown account"
   },
   "accounts": {
     "title": "Accounts",
     "total": "{{count}} accounts",
     "empty": "There are no accounts yet.",
     "loadFailed": "The accounts could not be loaded.",
-    "columns": { "name": "Name", "type": "Type", "currency": "Currency", "status": "Status" },
-    "status": { "active": "Active", "inactive": "Inactive" }
+    "columns": {
+      "name": "Name",
+      "type": "Type",
+      "currency": "Currency",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
   },
   "accountType": {
     "ASSET": "Asset",
@@ -74,5 +104,51 @@
     "title": "Page not found",
     "message": "This page does not exist.",
     "back": "Back to home"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}",
+    "subtitle": "Here is where your ledger stands today.",
+    "roles": "Your roles",
+    "noRoles": "No role assigned",
+    "kpi": {
+      "label": "Key figures",
+      "accounts": "Accounts",
+      "accountsHint": "{{active}} active out of {{total}}",
+      "debits": "Total debits",
+      "debitsHint": "Everything recorded as debit",
+      "credits": "Total credits",
+      "creditsHint": "Everything recorded as credit",
+      "ledger": "Ledger",
+      "balanced": "Balanced",
+      "balancedHint": "Debits equal credits",
+      "unbalanced": "Out of balance",
+      "unbalancedHint": "Debits and credits differ"
+    },
+    "trialBalance": {
+      "title": "Trial balance",
+      "empty": "No account has any movement yet.",
+      "total": "Total",
+      "columns": {
+        "account": "Account",
+        "debit": "Debit",
+        "credit": "Credit",
+        "balance": "Balance"
+      }
+    },
+    "types": {
+      "title": "Accounts by type"
+    },
+    "entries": {
+      "title": "Recent journal entries",
+      "empty": "No journal entry has been recorded yet."
+    }
+  },
+  "entryStatus": {
+    "DRAFT": "Draft",
+    "POSTED": "Posted",
+    "REVERSED": "Reversed"
+  },
+  "panel": {
+    "failed": "This section could not be loaded."
   }
 }

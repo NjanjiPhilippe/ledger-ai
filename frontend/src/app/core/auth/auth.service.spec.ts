@@ -63,6 +63,15 @@ describe('AuthService', () => {
     expect(oauth.setupAutomaticSilentRefresh).not.toHaveBeenCalled();
   });
 
+  it('shows the full name when the token has one, the login otherwise', async () => {
+    oauth.token = fakeJwt({ preferred_username: 'admin', name: 'Ada Admin' });
+
+    await service.initialize();
+
+    expect(service.displayName()).toBe('Ada Admin');
+    expect(service.username()).toBe('admin');
+  });
+
   it('exposes the user, the roles and only the application roles once signed in', async () => {
     oauth.token = fakeJwt({
       preferred_username: 'accountant',
@@ -73,6 +82,7 @@ describe('AuthService', () => {
 
     expect(service.isAuthenticated()).toBe(true);
     expect(service.username()).toBe('accountant');
+    expect(service.displayName()).toBe('accountant');
     expect(service.roles()).toContain('offline_access');
     expect(service.appRoles()).toEqual(['accountant']);
     expect(service.getAccessToken()).toBe(oauth.token);

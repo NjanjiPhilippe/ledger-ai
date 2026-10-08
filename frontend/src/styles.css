@@ -1,5 +1,35 @@
 @import 'tailwindcss';
 
+/* Style A of the design system: Inkwell Navy carries everything, Mint Signal is the only accent (focus, active marker). */
+@theme {
+  --color-ink: #1a2b3b;
+  --color-ink-soft: #314352;
+  --color-graphite: #687887;
+  --color-steel: #8995a1;
+  --color-fog: #edf0f2;
+  --color-silver: #caced2;
+  --color-mist: #e1e5e9;
+  --color-mint: #31f2bf;
+  --color-positive: #0f7b5a;
+  --color-positive-soft: #e3f8f0;
+  --color-negative: #b42318;
+  --color-negative-soft: #fdecea;
+  --font-sans:
+    'Untitled Sans', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
+  --font-mono: 'Input Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-lift: 0 6px 8px rgb(12 25 39 / 0.03), 0 18px 22px rgb(12 25 39 / 0.09);
+}
+
+body {
+  background: var(--color-fog);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* Global loading bar: invisible for the first 150 ms so fast calls do not flash it. */
 @keyframes loading-bar-fade-in {
   to {

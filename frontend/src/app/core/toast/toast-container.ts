@@ -4,10 +4,10 @@ import { Toast, ToastLevel, ToastService } from './toast.service';
 
 // Full class names (no string building): Tailwind only generates the classes it can read in the source.
 const LEVEL_CLASSES: Record<ToastLevel, string> = {
-  success: 'border-green-300 bg-green-50 text-green-900',
-  info: 'border-sky-300 bg-sky-50 text-sky-900',
+  success: 'border-positive/30 bg-positive-soft text-positive',
+  info: 'border-silver bg-white text-ink',
   warning: 'border-amber-300 bg-amber-50 text-amber-900',
-  error: 'border-red-300 bg-red-50 text-red-900',
+  error: 'border-negative/30 bg-negative-soft text-negative',
 };
 
 @Component({
@@ -20,7 +20,7 @@ const LEVEL_CLASSES: Record<ToastLevel, string> = {
     >
       @for (toast of toasts.toasts(); track toast.id) {
         <div
-          class="pointer-events-auto flex items-start gap-3 rounded-md border p-3 shadow-md"
+          class="pointer-events-auto flex items-start gap-3 rounded-xl border p-3 shadow-lift"
           [class]="classesOf(toast)"
           [attr.role]="roleOf(toast)"
           data-testid="toast"

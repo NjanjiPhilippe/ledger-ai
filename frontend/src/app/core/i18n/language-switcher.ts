@@ -9,17 +9,17 @@ import { LANGUAGES, Language, LanguageService } from './language.service';
   template: `
     <div
       role="group"
-      class="inline-flex overflow-hidden rounded border border-slate-300 text-xs"
+      class="inline-flex overflow-hidden rounded-lg border border-silver bg-white text-xs font-medium"
       [attr.aria-label]="'language.label' | transloco"
     >
       @for (language of languages; track language) {
         <button
           type="button"
-          class="px-2 py-1 uppercase"
+          class="px-3 py-1.5 uppercase"
           [class]="
             languageService.current() === language
-              ? 'bg-slate-800 text-white'
-              : 'bg-white text-slate-700 hover:bg-slate-100'
+              ? 'bg-ink text-white'
+              : 'bg-white text-graphite hover:bg-fog'
           "
           [attr.aria-pressed]="languageService.current() === language"
           [attr.aria-label]="'language.' + language | transloco"

@@ -16,7 +16,14 @@ describe('Shell', () => {
       imports: [Shell, translocoTesting()],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { username: signal('viewer'), logout } },
+        {
+          provide: AuthService,
+          useValue: {
+            displayName: signal('Vera Viewer'),
+            appRoles: signal(['viewer']),
+            logout,
+          },
+        },
       ],
     });
     TestBed.inject(LanguageService).initialize();
@@ -25,16 +32,36 @@ describe('Shell', () => {
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }
 
-  it('shows the brand, the navigation and who is signed in', async () => {
+  const links = (element: HTMLElement) =>
+    Array.from(element.querySelectorAll('aside nav a')).map((a) => a.textContent?.trim());
+
+  it('shows the brand, the sidebar navigation and who is signed in, by name', async () => {
     const { element } = await render();
 
-    expect(element.querySelector('header a')?.textContent?.trim()).toBe('LedgerAI');
-    expect(Array.from(element.querySelectorAll('nav a')).map((a) => a.textContent?.trim())).toEqual(
-      ['Home', 'Accounts'],
+    expect(element.querySelector('[data-testid="brand"]')?.textContent?.trim()).toBe('LedgerAI');
+    expect(links(element)).toEqual(['Dashboard', 'Accounts']);
+    expect(element.querySelector('[data-testid="user-name"]')?.textContent?.trim()).toBe(
+      'Vera Viewer',
     );
-    expect(element.querySelector('[data-testid="signed-in-as"]')?.textContent?.trim()).toBe(
-      'Signed in as viewer',
-    );
+    expect(element.querySelector('[data-testid="user-role"]')?.textContent?.trim()).toBe('Viewer');
+  });
+
+  it('opens and closes the menu on small screens', async () => {
+    const { fixture, element } = await render();
+    const sidebar = element.querySelector('#sidebar') as HTMLElement;
+    const open = element.querySelector('header button') as HTMLButtonElement;
+
+    expect(sidebar.classList).toContain('-translate-x-full');
+    expect(open.getAttribute('aria-expanded')).toBe('false');
+
+    open.click();
+    await fixture.whenStable();
+    expect(sidebar.classList).not.toContain('-translate-x-full');
+    expect(open.getAttribute('aria-expanded')).toBe('true');
+
+    (element.querySelector('aside nav a') as HTMLAnchorElement).click();
+    await fixture.whenStable();
+    expect(sidebar.classList).toContain('-translate-x-full');
   });
 
   it('signs the user out', async () => {
@@ -54,12 +81,8 @@ describe('Shell', () => {
     (element.querySelector('button[lang="fr"]') as HTMLButtonElement).click();
     await fixture.whenStable();
 
-    expect(Array.from(element.querySelectorAll('nav a')).map((a) => a.textContent?.trim())).toEqual(
-      ['Accueil', 'Comptes'],
-    );
-    expect(element.querySelector('[data-testid="signed-in-as"]')?.textContent?.trim()).toBe(
-      'Connecté en tant que viewer',
-    );
+    expect(links(element)).toEqual(['Tableau de bord', 'Comptes']);
+    expect(element.querySelector('[data-testid="user-role"]')?.textContent?.trim()).toBe('Lecteur');
     expect(element.querySelector('button[lang="fr"]')?.getAttribute('aria-pressed')).toBe('true');
     expect(element.querySelector('button[lang="en"]')?.getAttribute('aria-pressed')).toBe('false');
   });

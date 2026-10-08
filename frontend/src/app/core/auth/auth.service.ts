@@ -26,6 +26,12 @@ export class AuthService {
       .map((role) => role.toLowerCase())
       .filter(isRole),
   );
+  /** The name to show people: their full name when Keycloak has one, otherwise their login. */
+  readonly displayName = computed(() => {
+    const claims = decodeJwtPayload(this.accessToken());
+    const name = claims?.['name'];
+    return typeof name === 'string' && name.trim() !== '' ? name : this.username();
+  });
   readonly username = computed(() => {
     const name = decodeJwtPayload(this.accessToken())?.['preferred_username'];
     return typeof name === 'string' ? name : null;
