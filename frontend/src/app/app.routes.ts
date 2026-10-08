@@ -20,10 +20,21 @@ export const routes: Routes = [
           import('./features/accounts/pages/accounts-page').then((m) => m.AccountsPage),
       },
       {
+        path: 'entries',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/entries/pages/entries-page').then((m) => m.EntriesPage),
+      },
+      {
         path: 'entries/new',
         canActivate: [roleGuard('accountant')],
         loadComponent: () =>
           import('./features/entries/pages/new-entry-page').then((m) => m.NewEntryPage),
+      },
+      {
+        path: 'entries/:id',
+        loadComponent: () =>
+          import('./features/entries/pages/entry-detail-page').then((m) => m.EntryDetailPage),
       },
       {
         path: 'forbidden',
