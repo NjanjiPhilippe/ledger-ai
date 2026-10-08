@@ -26,6 +26,15 @@ describe('formatMoney', () => {
   });
 });
 
+describe('formatMoney without a usable currency', () => {
+  it.each(['', 'X', 'EURO', '123'])(
+    'shows the amount alone for "%s" instead of failing',
+    (currency) => {
+      expect(formatMoney('1234.5', currency, 'en')).toBe('1,234.5');
+    },
+  );
+});
+
 describe('isDecimalAmount', () => {
   it('accepts what the API sends', () => {
     expect(['0', '100', '100.5', '-0.01', '1234567890.50'].every(isDecimalAmount)).toBe(true);

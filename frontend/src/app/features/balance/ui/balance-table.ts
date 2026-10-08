@@ -2,15 +2,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountType, BalanceGroup } from '../../../core/api/api-types';
 import { MoneyPipe } from '../../../shared/money/money.pipe';
+import { ACCOUNT_TYPE_ICONS } from '../../../shared/ui/account-type-icons';
 import { AppIcon, IconName } from '../../../shared/ui/icon';
-
-const ICONS: Record<AccountType, IconName> = {
-  ASSET: 'wallet',
-  LIABILITY: 'receipt',
-  EQUITY: 'pie',
-  REVENUE: 'trendingUp',
-  EXPENSE: 'trendingDown',
-};
 
 /** The balance as a table grouped by account type, with a closing total row. Presentation only. */
 @Component({
@@ -123,6 +116,6 @@ export class BalanceTable {
   readonly balanced = input.required<boolean>();
 
   protected iconOf(type: AccountType): IconName {
-    return ICONS[type];
+    return ACCOUNT_TYPE_ICONS[type];
   }
 }

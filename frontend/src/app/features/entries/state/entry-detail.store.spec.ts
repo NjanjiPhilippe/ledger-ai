@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
+import { JournalEntry } from '../../../core/api/api-types';
 import { ACCOUNTS, DRAFT_ENTRY, ENTRY, REVERSAL_ENTRY } from '../../../../testing/ledger';
 import { EntriesApi } from '../data-access/entries.api';
 import { EntryDetailStore } from './entry-detail.store';
@@ -79,5 +80,35 @@ describe('EntryDetailStore', () => {
 
     expect(api.reverse).toHaveBeenCalledWith(ENTRY.id);
     expect(result).toBe(REVERSAL_ENTRY);
+  });
+
+  it('ignores a slow answer for an entry the person has already left', () => {
+    const slow = new Subject<JournalEntry>();
+    api.get.mockImplementation((id: string) => (id === ENTRY.id ? slow : of(DRAFT_ENTRY)));
+
+    store.load(ENTRY.id);
+    store.load(DRAFT_ENTRY.id);
+    slow.next(ENTRY);
+
+    expect(store.entry()?.id).toBe(DRAFT_ENTRY.id);
+    expect(store.status()).toBe('loaded');
+  });
+
+  it('shows no entry while the next one loads', () => {
+    store.load(ENTRY.id);
+    api.get.mockReturnValue(new Subject<JournalEntry>());
+
+    store.load(DRAFT_ENTRY.id);
+
+    expect(store.entry()).toBeNull();
+    expect(store.status()).toBe('loading');
+  });
+
+  it('still shows amounts, without a currency, when the accounts could not be loaded', () => {
+    api.accounts.mockReturnValue(throwError(() => new Error('down')));
+
+    store.load(ENTRY.id);
+
+    expect(store.currency()).toBe('');
   });
 });

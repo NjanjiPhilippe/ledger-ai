@@ -31,6 +31,8 @@ export class EntryDetailStore {
   /** The entry this one reverses, when it is a reversal. */
   readonly original = signal<JournalEntry | null>(null);
   private readonly accounts = signal<readonly AccountResponse[]>([]);
+  /** Which entry was asked for last: an older, slower answer must not replace it. */
+  private requested = '';
 
   readonly lines = computed<DetailLine[]>(() => {
     const names = new Map(this.accounts().map((a) => [a.id, a.name]));
@@ -64,20 +66,28 @@ export class EntryDetailStore {
   });
 
   load(id: string): void {
+    this.requested = id;
+    this.entry.set(null);
     this.status.set('loading');
     this.api.accounts(ACCOUNTS_LOADED).subscribe({
-      next: (page) => this.accounts.set(page.content),
+      next: (page) => id === this.requested && this.accounts.set(page.content),
       // Names are a nicety: the entry shows with "unknown account" if they cannot be loaded.
       error: () => undefined,
     });
     this.api.get(id).subscribe({
       next: (entry) => {
+        if (id !== this.requested) {
+          return;
+        }
         this.entry.set(entry);
         this.status.set('loaded');
         this.loadOriginal(entry);
       },
-      error: (error: { status?: number }) =>
-        this.status.set(error?.status === 404 ? 'notFound' : 'error'),
+      error: (error: { status?: number }) => {
+        if (id === this.requested) {
+          this.status.set(error?.status === 404 ? 'notFound' : 'error');
+        }
+      },
     });
   }
 
@@ -85,7 +95,7 @@ export class EntryDetailStore {
     this.original.set(null);
     if (entry.reversalOfId) {
       this.api.get(entry.reversalOfId).subscribe({
-        next: (original) => this.original.set(original),
+        next: (original) => entry.id === this.requested && this.original.set(original),
         error: () => undefined,
       });
     }
