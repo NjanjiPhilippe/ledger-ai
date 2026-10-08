@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AppIcon, IconName } from '../../shared/ui/icon';
 import { AuthService } from '../auth/auth.service';
+import { hasRole, Role } from '../auth/roles';
 import { LanguageSwitcher } from '../i18n/language-switcher';
 
 interface NavItem {
@@ -10,6 +11,8 @@ interface NavItem {
   readonly labelKey: string;
   readonly icon: IconName;
   readonly exact: boolean;
+  /** Shown only to this role and above (the backend enforces it anyway). */
+  readonly role?: Role;
 }
 
 /** The frame of every signed-in screen: a sidebar (a drawer on small screens) and the outlet of the current page. */
@@ -88,7 +91,7 @@ interface NavItem {
             </div>
 
             <nav class="space-y-1 text-sm font-medium" aria-label="main">
-              @for (item of items; track item.path) {
+              @for (item of visibleItems(); track item.path) {
                 <a
                   [routerLink]="item.path"
                   routerLinkActive
@@ -165,5 +168,16 @@ export class Shell {
   protected readonly items: readonly NavItem[] = [
     { path: '/', labelKey: 'nav.dashboard', icon: 'dashboard', exact: true },
     { path: '/accounts', labelKey: 'nav.accounts', icon: 'landmark', exact: false },
+    {
+      path: '/entries/new',
+      labelKey: 'nav.newEntry',
+      icon: 'book',
+      exact: false,
+      role: 'accountant',
+    },
   ];
+
+  protected readonly visibleItems = computed(() =>
+    this.items.filter((item) => !item.role || hasRole(this.auth.appRoles(), item.role)),
+  );
 }

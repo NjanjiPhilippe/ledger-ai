@@ -18,3 +18,6 @@ export interface AccountFilters {
 }
 export type CreateAccountRequest = components['schemas']['CreateAccountRequest'];
 export type UpdateAccountRequest = components['schemas']['UpdateAccountRequest'];
+export type RecordJournalEntryRequest = components['schemas']['RecordJournalEntryRequest'];
+export type JournalEntryLineRequest = components['schemas']['JournalEntryLineRequest'];
+export type EntryType = JournalEntryLineRequest['entryType'];
