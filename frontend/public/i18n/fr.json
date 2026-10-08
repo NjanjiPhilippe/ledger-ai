@@ -1,21 +1,48 @@
 {
-  "app": { "name": "LedgerAI" },
-  "nav": { "home": "Accueil", "accounts": "Comptes" },
-  "auth": { "signedInAs": "Connecté en tant que {{name}}", "logout": "Se déconnecter" },
-  "roles": { "viewer": "Lecteur", "accountant": "Comptable", "admin": "Administrateur" },
-  "language": { "label": "Langue", "en": "Anglais", "fr": "Français" },
-  "toast": { "dismiss": "Fermer" },
+  "app": {
+    "name": "LedgerAI"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "accounts": "Comptes",
+    "main": "Navigation principale",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "auth": {
+    "signedInAs": "Connecté en tant que {{name}}",
+    "logout": "Se déconnecter"
+  },
+  "roles": {
+    "viewer": "Lecteur",
+    "accountant": "Comptable",
+    "admin": "Administrateur"
+  },
+  "language": {
+    "label": "Langue",
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "toast": {
+    "dismiss": "Fermer"
+  },
   "errors": {
     "network": {
       "title": "Impossible de joindre le serveur",
       "message": "Le serveur ne répond pas. Vérifiez votre connexion, puis réessayez."
     },
-    "unauthorized": { "title": "Votre session a expiré", "message": "Veuillez vous reconnecter." },
+    "unauthorized": {
+      "title": "Votre session a expiré",
+      "message": "Veuillez vous reconnecter."
+    },
     "forbidden": {
       "title": "Vous n'avez pas le droit de faire cela",
       "message": "Votre rôle ne permet pas cette action."
     },
-    "notFound": { "title": "Introuvable", "message": "L'élément demandé n'existe pas." },
+    "notFound": {
+      "title": "Introuvable",
+      "message": "L'élément demandé n'existe pas."
+    },
     "validation": {
       "title": "Certaines informations sont invalides",
       "message": "Vérifiez les champs puis réessayez."
@@ -32,31 +59,34 @@
       "title": "Une erreur est survenue de notre côté",
       "message": "Veuillez réessayer. Si le problème persiste, contactez le support."
     },
-    "unknown": { "title": "Une erreur est survenue", "message": "Veuillez réessayer." }
+    "unknown": {
+      "title": "Une erreur est survenue",
+      "message": "Veuillez réessayer."
+    }
   },
   "common": {
     "loading": "Chargement…",
     "retry": "Réessayer",
     "previous": "Précédent",
     "next": "Suivant",
-    "pageOf": "Page {{page}} sur {{total}}"
-  },
-  "home": {
-    "title": "Bienvenue, {{name}}",
-    "subtitle": "Votre grand livre en partie double.",
-    "session": "Votre session",
-    "userId": "Identifiant utilisateur",
-    "tenantId": "Identifiant de l'organisation",
-    "roles": "Rôles",
-    "noRoles": "Aucun rôle attribué"
+    "pageOf": "Page {{page}} sur {{total}}",
+    "unknownAccount": "Compte inconnu"
   },
   "accounts": {
     "title": "Comptes",
     "total": "{{count}} comptes",
     "empty": "Il n'y a pas encore de compte.",
     "loadFailed": "Les comptes n'ont pas pu être chargés.",
-    "columns": { "name": "Nom", "type": "Type", "currency": "Devise", "status": "Statut" },
-    "status": { "active": "Actif", "inactive": "Inactif" }
+    "columns": {
+      "name": "Nom",
+      "type": "Type",
+      "currency": "Devise",
+      "status": "Statut"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    }
   },
   "accountType": {
     "ASSET": "Actif",
@@ -74,5 +104,51 @@
     "title": "Page introuvable",
     "message": "Cette page n'existe pas.",
     "back": "Retour à l'accueil"
+  },
+  "dashboard": {
+    "welcome": "Bon retour, {{name}}",
+    "subtitle": "Voici où en est votre grand livre aujourd'hui.",
+    "roles": "Vos rôles",
+    "noRoles": "Aucun rôle attribué",
+    "kpi": {
+      "label": "Chiffres clés",
+      "accounts": "Comptes",
+      "accountsHint": "{{active}} actifs sur {{total}}",
+      "debits": "Total des débits",
+      "debitsHint": "Tout ce qui est enregistré au débit",
+      "credits": "Total des crédits",
+      "creditsHint": "Tout ce qui est enregistré au crédit",
+      "ledger": "Grand livre",
+      "balanced": "Équilibré",
+      "balancedHint": "Les débits égalent les crédits",
+      "unbalanced": "Déséquilibré",
+      "unbalancedHint": "Les débits et les crédits diffèrent"
+    },
+    "trialBalance": {
+      "title": "Balance des comptes",
+      "empty": "Aucun compte n'a encore de mouvement.",
+      "total": "Total",
+      "columns": {
+        "account": "Compte",
+        "debit": "Débit",
+        "credit": "Crédit",
+        "balance": "Solde"
+      }
+    },
+    "types": {
+      "title": "Comptes par type"
+    },
+    "entries": {
+      "title": "Écritures récentes",
+      "empty": "Aucune écriture n'a encore été enregistrée."
+    }
+  },
+  "entryStatus": {
+    "DRAFT": "Brouillon",
+    "POSTED": "Comptabilisée",
+    "REVERSED": "Extournée"
+  },
+  "panel": {
+    "failed": "Cette section n'a pas pu être chargée."
   }
 }

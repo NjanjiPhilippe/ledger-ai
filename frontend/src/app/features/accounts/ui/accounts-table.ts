@@ -1,16 +1,25 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { AccountResponse } from '../../../core/api/api-types';
+import { AppIcon, IconName } from '../../../shared/ui/icon';
+import { AccountResponse, AccountType } from '../../../core/api/api-types';
+
+const ICONS: Record<AccountType, IconName> = {
+  ASSET: 'wallet',
+  LIABILITY: 'receipt',
+  EQUITY: 'pie',
+  REVENUE: 'trendingUp',
+  EXPENSE: 'trendingDown',
+};
 
 /** Presentation only: receives accounts, renders them, knows nothing about the API or the state. */
 @Component({
   selector: 'app-accounts-table',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, AppIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table class="min-w-full divide-y divide-slate-200 text-sm">
-        <thead class="bg-slate-50 text-left text-slate-600">
+    <div class="overflow-x-auto rounded-2xl border border-mist bg-white shadow-card">
+      <table class="min-w-full divide-y divide-mist text-sm">
+        <thead class="text-left text-xs uppercase tracking-wider text-graphite">
           <tr>
             <th scope="col" class="px-4 py-2 font-medium">
               {{ 'accounts.columns.name' | transloco }}
@@ -26,17 +35,26 @@ import { AccountResponse } from '../../../core/api/api-types';
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-mist">
           @for (account of accounts(); track account.id) {
             <tr data-testid="account-row">
-              <td class="px-4 py-2 font-medium">{{ account.name }}</td>
-              <td class="px-4 py-2">{{ 'accountType.' + account.type | transloco }}</td>
-              <td class="px-4 py-2 font-mono">{{ account.currencyCode }}</td>
-              <td class="px-4 py-2">
+              <td class="px-4 py-2.5">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-fog text-graphite"
+                  >
+                    <app-icon [name]="iconOf(account.type)" class="size-4" />
+                  </span>
+                  <span class="font-medium">{{ account.name }}</span>
+                </div>
+              </td>
+              <td class="px-4 py-2.5">{{ 'accountType.' + account.type | transloco }}</td>
+              <td class="px-4 py-2.5 tabular-nums">{{ account.currencyCode }}</td>
+              <td class="px-4 py-2.5">
                 <span
-                  class="rounded px-2 py-0.5 text-xs"
+                  class="rounded-full px-2.5 py-0.5 text-xs font-medium"
                   [class]="
-                    account.active ? 'bg-green-100 text-green-800' : 'bg-slate-200 text-slate-700'
+                    account.active ? 'bg-positive-soft text-positive' : 'bg-fog text-graphite'
                   "
                 >
                   {{
@@ -54,4 +72,8 @@ import { AccountResponse } from '../../../core/api/api-types';
 })
 export class AccountsTable {
   readonly accounts = input.required<readonly AccountResponse[]>();
+
+  protected iconOf(type: AccountType): IconName {
+    return ICONS[type];
+  }
 }
