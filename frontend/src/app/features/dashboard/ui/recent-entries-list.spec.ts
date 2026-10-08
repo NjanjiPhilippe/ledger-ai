@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { translocoTesting } from '../../../../testing/transloco';
 import { ENTRY } from '../../../../testing/ledger';
 import { LanguageService } from '../../../core/i18n/language.service';
@@ -7,7 +8,10 @@ import { RecentEntriesList } from './recent-entries-list';
 describe('RecentEntriesList', () => {
   function render(entries: (typeof ENTRY)[], names: [string, string][]) {
     localStorage.clear();
-    TestBed.configureTestingModule({ imports: [RecentEntriesList, translocoTesting()] });
+    TestBed.configureTestingModule({
+      imports: [RecentEntriesList, translocoTesting()],
+      providers: [provideRouter([])],
+    });
     TestBed.inject(LanguageService).initialize();
     const fixture = TestBed.createComponent(RecentEntriesList);
     fixture.componentRef.setInput('entries', entries);

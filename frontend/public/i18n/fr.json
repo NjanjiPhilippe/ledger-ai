@@ -8,7 +8,8 @@
     "main": "Navigation principale",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
-    "newEntry": "Nouvelle écriture"
+    "newEntry": "Nouvelle écriture",
+    "entries": "Écritures"
   },
   "auth": {
     "signedInAs": "Connecté en tant que {{name}}",
@@ -71,7 +72,8 @@
     "previous": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {{page}} sur {{total}}",
-    "unknownAccount": "Compte inconnu"
+    "unknownAccount": "Compte inconnu",
+    "cancel": "Annuler"
   },
   "accounts": {
     "title": "Comptes",
@@ -169,7 +171,8 @@
     },
     "entries": {
       "title": "Écritures récentes",
-      "empty": "Aucune écriture n'a encore été enregistrée."
+      "empty": "Aucune écriture n'a encore été enregistrée.",
+      "viewAll": "Tout voir"
     }
   },
   "entryStatus": {
@@ -219,5 +222,39 @@
     "postFailed": "« {{description}} » a été enregistrée en brouillon, mais n'a pas pu être comptabilisée.",
     "noAccounts": "Il faut au moins deux comptes actifs avant d'enregistrer une écriture.",
     "accountsFailed": "Les comptes n'ont pas pu être chargés."
+  },
+  "entries": {
+    "title": "Écritures",
+    "total": "{{count}} écritures",
+    "empty": "Aucune écriture n'a encore été enregistrée.",
+    "noMatch": "Aucune écriture ne correspond à ces filtres.",
+    "loadFailed": "Les écritures n'ont pas pu être chargées.",
+    "detailFailed": "Cette écriture n'a pas pu être chargée.",
+    "notFound": "Cette écriture n'existe pas.",
+    "back": "Retour aux écritures",
+    "filters": {
+      "status": "Statut",
+      "allStatuses": "Tous les statuts",
+      "from": "Créée à partir du",
+      "to": "Créée jusqu'au",
+      "clear": "Effacer les filtres"
+    },
+    "created": "Créée le",
+    "posted": "Comptabilisée le",
+    "notPosted": "Pas encore comptabilisée",
+    "reversalOf": "Extourne de",
+    "original": "Écriture d'origine",
+    "post": "Comptabiliser",
+    "reverse": "Extourner",
+    "confirmPost": {
+      "title": "Comptabiliser cette écriture ?",
+      "message": "Une écriture comptabilisée met à jour les soldes et ne peut plus être modifiée. Seul un administrateur peut l'extourner."
+    },
+    "confirmReverse": {
+      "title": "Extourner cette écriture ?",
+      "message": "Une nouvelle écriture aux débits et crédits inversés est comptabilisée, et celle-ci est marquée comme extournée. Cette action est irréversible."
+    },
+    "postedToast": "Écriture « {{description}} » comptabilisée",
+    "reversedToast": "Écriture « {{description}} » extournée"
   }
 }

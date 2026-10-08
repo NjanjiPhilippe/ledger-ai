@@ -168,11 +168,12 @@ export class Shell {
   protected readonly items: readonly NavItem[] = [
     { path: '/', labelKey: 'nav.dashboard', icon: 'dashboard', exact: true },
     { path: '/accounts', labelKey: 'nav.accounts', icon: 'landmark', exact: false },
+    { path: '/entries', labelKey: 'nav.entries', icon: 'book', exact: true },
     {
       path: '/entries/new',
       labelKey: 'nav.newEntry',
-      icon: 'book',
-      exact: false,
+      icon: 'plus',
+      exact: true,
       role: 'accountant',
     },
   ];
