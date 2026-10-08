@@ -7,7 +7,8 @@
     "accounts": "Comptes",
     "main": "Navigation principale",
     "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+    "closeMenu": "Fermer le menu",
+    "newEntry": "Nouvelle écriture"
   },
   "auth": {
     "signedInAs": "Connecté en tant que {{name}}",
@@ -178,5 +179,45 @@
   },
   "panel": {
     "failed": "Cette section n'a pas pu être chargée."
+  },
+  "entry": {
+    "title": "Nouvelle écriture",
+    "subtitle": "Enregistrez une opération. Le total des débits doit égaler le total des crédits.",
+    "details": "Informations",
+    "description": "Libellé",
+    "descriptionPlaceholder": "Par exemple : loyer du bureau d'octobre",
+    "descriptionRequired": "Saisissez un libellé.",
+    "currency": "Devise",
+    "lines": "Lignes",
+    "account": "Compte",
+    "chooseAccount": "Choisir un compte",
+    "side": "Sens",
+    "debit": "Débit",
+    "credit": "Crédit",
+    "amount": "Montant",
+    "line": "ligne {{n}}",
+    "addDebit": "Ajouter une ligne au débit",
+    "addCredit": "Ajouter une ligne au crédit",
+    "removeLine": "Supprimer la ligne {{n}}",
+    "totals": {
+      "debits": "Total des débits",
+      "credits": "Total des crédits",
+      "gap": "Écart",
+      "balanced": "Équilibrée"
+    },
+    "errors": {
+      "account": "Choisissez un compte.",
+      "amount": "Saisissez un montant supérieur à zéro, par exemple 1500000 ou 1250,50.",
+      "sides": "Ajoutez au moins une ligne au débit et une ligne au crédit.",
+      "unbalanced": "Le total des débits et le total des crédits doivent être égaux avant d'enregistrer."
+    },
+    "saveDraft": "Enregistrer en brouillon",
+    "savePost": "Enregistrer et comptabiliser",
+    "cancel": "Annuler",
+    "draftSaved": "Brouillon « {{description}} » enregistré",
+    "posted": "Écriture « {{description}} » comptabilisée",
+    "postFailed": "« {{description}} » a été enregistrée en brouillon, mais n'a pas pu être comptabilisée.",
+    "noAccounts": "Il faut au moins deux comptes actifs avant d'enregistrer une écriture.",
+    "accountsFailed": "Les comptes n'ont pas pu être chargés."
   }
 }

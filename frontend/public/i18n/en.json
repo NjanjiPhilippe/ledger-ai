@@ -7,7 +7,8 @@
     "accounts": "Accounts",
     "main": "Main navigation",
     "openMenu": "Open the menu",
-    "closeMenu": "Close the menu"
+    "closeMenu": "Close the menu",
+    "newEntry": "New entry"
   },
   "auth": {
     "signedInAs": "Signed in as {{name}}",
@@ -178,5 +179,45 @@
   },
   "panel": {
     "failed": "This section could not be loaded."
+  },
+  "entry": {
+    "title": "New journal entry",
+    "subtitle": "Record a transaction. Total debits must equal total credits.",
+    "details": "Details",
+    "description": "Description",
+    "descriptionPlaceholder": "For example: office rent for October",
+    "descriptionRequired": "Enter a description.",
+    "currency": "Currency",
+    "lines": "Lines",
+    "account": "Account",
+    "chooseAccount": "Choose an account",
+    "side": "Side",
+    "debit": "Debit",
+    "credit": "Credit",
+    "amount": "Amount",
+    "line": "line {{n}}",
+    "addDebit": "Add a debit line",
+    "addCredit": "Add a credit line",
+    "removeLine": "Remove line {{n}}",
+    "totals": {
+      "debits": "Total debits",
+      "credits": "Total credits",
+      "gap": "Difference",
+      "balanced": "Balanced"
+    },
+    "errors": {
+      "account": "Choose an account.",
+      "amount": "Enter an amount above zero, such as 1500000 or 1250.50.",
+      "sides": "Add at least one debit line and one credit line.",
+      "unbalanced": "Total debits and total credits must be equal before you save."
+    },
+    "saveDraft": "Save as draft",
+    "savePost": "Save and post",
+    "cancel": "Cancel",
+    "draftSaved": "Draft \"{{description}}\" saved",
+    "posted": "Entry \"{{description}}\" posted",
+    "postFailed": "\"{{description}}\" was saved as a draft, but it could not be posted.",
+    "noAccounts": "You need at least two active accounts before recording an entry.",
+    "accountsFailed": "The accounts could not be loaded."
   }
 }
