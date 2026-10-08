@@ -10,3 +10,11 @@ export type JournalEntryStatus = JournalEntry['status'];
 export type PagedJournalEntries = components['schemas']['PagedResponseJournalEntryResponse'];
 export type TrialBalance = components['schemas']['TrialBalanceResponse'];
 export type TrialBalanceLine = components['schemas']['TrialBalanceLineResponse'];
+/** Optional filters of the accounts search. */
+export interface AccountFilters {
+  readonly name?: string;
+  readonly type?: AccountType;
+  readonly active?: boolean;
+}
+export type CreateAccountRequest = components['schemas']['CreateAccountRequest'];
+export type UpdateAccountRequest = components['schemas']['UpdateAccountRequest'];
