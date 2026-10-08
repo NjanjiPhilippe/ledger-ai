@@ -81,11 +81,39 @@
       "name": "Name",
       "type": "Type",
       "currency": "Currency",
-      "status": "Status"
+      "status": "Status",
+      "actions": "Actions"
     },
     "status": {
       "active": "Active",
       "inactive": "Inactive"
+    },
+    "new": "New account",
+    "noMatch": "No account matches these filters.",
+    "edit": "Edit {{name}}",
+    "editShort": "Edit",
+    "created": "Account \"{{name}}\" created",
+    "updated": "Account \"{{name}}\" updated",
+    "filters": {
+      "search": "Search by name",
+      "type": "Type",
+      "allTypes": "All types",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "clear": "Clear filters"
+    },
+    "form": {
+      "createTitle": "New account",
+      "editTitle": "Edit account",
+      "name": "Name",
+      "type": "Type",
+      "currency": "Currency",
+      "nameRequired": "Enter a name for the account.",
+      "currencyInvalid": "Use a three-letter currency code, such as XAF or EUR.",
+      "active": "Active account",
+      "activeHint": "An inactive account no longer accepts new entries.",
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "accountType": {

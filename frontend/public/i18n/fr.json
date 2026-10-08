@@ -81,11 +81,39 @@
       "name": "Nom",
       "type": "Type",
       "currency": "Devise",
-      "status": "Statut"
+      "status": "Statut",
+      "actions": "Actions"
     },
     "status": {
       "active": "Actif",
       "inactive": "Inactif"
+    },
+    "new": "Nouveau compte",
+    "noMatch": "Aucun compte ne correspond à ces filtres.",
+    "edit": "Modifier {{name}}",
+    "editShort": "Modifier",
+    "created": "Compte « {{name}} » créé",
+    "updated": "Compte « {{name}} » mis à jour",
+    "filters": {
+      "search": "Rechercher par nom",
+      "type": "Type",
+      "allTypes": "Tous les types",
+      "status": "Statut",
+      "allStatuses": "Tous les statuts",
+      "clear": "Effacer les filtres"
+    },
+    "form": {
+      "createTitle": "Nouveau compte",
+      "editTitle": "Modifier le compte",
+      "name": "Nom",
+      "type": "Type",
+      "currency": "Devise",
+      "nameRequired": "Saisissez un nom pour le compte.",
+      "currencyInvalid": "Utilisez un code de devise à trois lettres, par exemple XAF ou EUR.",
+      "active": "Compte actif",
+      "activeHint": "Un compte inactif n'accepte plus de nouvelles écritures.",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
     }
   },
   "accountType": {

@@ -41,7 +41,7 @@ describe('AccountsStore', () => {
     expect(store.status()).toBe('loaded');
     expect(store.accounts()).toEqual([CASH, OLD_SUSPENSE]);
     expect(store.totalElements()).toBe(2);
-    expect(list).toHaveBeenCalledWith(0, 20);
+    expect(list).toHaveBeenCalledWith(0, 20, {});
   });
 
   it('moves between pages and stops at both ends', () => {
@@ -53,7 +53,7 @@ describe('AccountsStore', () => {
 
     const second = pending();
     store.next();
-    expect(list).toHaveBeenLastCalledWith(1, 20);
+    expect(list).toHaveBeenLastCalledWith(1, 20, {});
     second.next(pageOf([OLD_SUSPENSE], { page: 1, totalPages: 2, totalElements: 21 }));
     expect(store.hasNext()).toBe(false);
     expect(store.hasPrevious()).toBe(true);
@@ -64,7 +64,7 @@ describe('AccountsStore', () => {
 
     const back = pending();
     store.previous();
-    expect(list).toHaveBeenLastCalledWith(0, 20);
+    expect(list).toHaveBeenLastCalledWith(0, 20, {});
     back.next(pageOf([CASH], { page: 0, totalPages: 2, totalElements: 21 }));
     store.previous(); // already on the first page
     expect(list).toHaveBeenCalledTimes(3);
@@ -91,7 +91,7 @@ describe('AccountsStore', () => {
 
     const response = pending();
     store.load(); // retry, without naming the page
-    expect(list).toHaveBeenLastCalledWith(2, 20);
+    expect(list).toHaveBeenLastCalledWith(2, 20, {});
     response.next(pageOf([CASH]));
     expect(store.status()).toBe('loaded');
   });

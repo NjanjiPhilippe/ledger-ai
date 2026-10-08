@@ -1,5 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { PagedAccounts } from '../../../core/api/api-types';
+import { Observable, tap } from 'rxjs';
+import {
+  AccountFilters,
+  AccountResponse,
+  CreateAccountRequest,
+  PagedAccounts,
+  UpdateAccountRequest,
+} from '../../../core/api/api-types';
 import { AccountsApi } from '../data-access/accounts.api';
 
 export type LoadStatus = 'idle' | 'loading' | 'loaded' | 'error';
@@ -13,9 +20,14 @@ export class AccountsStore {
 
   private readonly pageState = signal<PagedAccounts | null>(null);
   private readonly statusState = signal<LoadStatus>('idle');
+  private readonly filtersState = signal<AccountFilters>({});
   private requested = 0;
 
   readonly status = this.statusState.asReadonly();
+  readonly filters = this.filtersState.asReadonly();
+  readonly hasFilters = computed(() =>
+    Object.values(this.filtersState()).some((v) => v !== undefined && v !== ''),
+  );
   readonly accounts = computed(() => this.pageState()?.content ?? []);
   /** 0-based, as in the API. */
   readonly pageIndex = computed(() => this.pageState()?.page ?? this.requested);
@@ -27,7 +39,7 @@ export class AccountsStore {
   load(page = this.requested): void {
     this.requested = page;
     this.statusState.set('loading');
-    this.api.list(page, PAGE_SIZE).subscribe({
+    this.api.list(page, PAGE_SIZE, this.filtersState()).subscribe({
       next: (result) => {
         // A slower, older response must not overwrite the page the user asked for last.
         if (page !== this.requested) {
@@ -43,6 +55,31 @@ export class AccountsStore {
         }
       },
     });
+  }
+
+  /** A new search starts from the first page. An empty text or an undefined value means "no filter". */
+  filter(changes: Partial<AccountFilters>): void {
+    const next = { ...this.filtersState(), ...changes };
+    this.filtersState.set({
+      ...(next.name?.trim() ? { name: next.name.trim() } : {}),
+      ...(next.type ? { type: next.type } : {}),
+      ...(next.active !== undefined ? { active: next.active } : {}),
+    });
+    this.load(0);
+  }
+
+  clearFilters(): void {
+    this.filtersState.set({});
+    this.load(0);
+  }
+
+  /** Creates the account, then reloads the current page so that the list is the server's truth. */
+  create(request: CreateAccountRequest): Observable<AccountResponse> {
+    return this.api.create(request).pipe(tap(() => this.load()));
+  }
+
+  update(id: string, request: UpdateAccountRequest): Observable<AccountResponse> {
+    return this.api.update(id, request).pipe(tap(() => this.load()));
   }
 
   next(): void {

@@ -6,6 +6,7 @@ import { RecentEntriesList } from './recent-entries-list';
 
 describe('RecentEntriesList', () => {
   function render(entries: (typeof ENTRY)[], names: [string, string][]) {
+    localStorage.clear();
     TestBed.configureTestingModule({ imports: [RecentEntriesList, translocoTesting()] });
     TestBed.inject(LanguageService).initialize();
     const fixture = TestBed.createComponent(RecentEntriesList);

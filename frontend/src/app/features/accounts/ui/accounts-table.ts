@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AppIcon, IconName } from '../../../shared/ui/icon';
 import { AccountResponse, AccountType } from '../../../core/api/api-types';
@@ -16,6 +16,7 @@ const ICONS: Record<AccountType, IconName> = {
   selector: 'app-accounts-table',
   imports: [TranslocoPipe, AppIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block' },
   template: `
     <div class="overflow-x-auto rounded-2xl border border-mist bg-white shadow-card">
       <table class="min-w-full divide-y divide-mist text-sm">
@@ -33,6 +34,11 @@ const ICONS: Record<AccountType, IconName> = {
             <th scope="col" class="px-4 py-2 font-medium">
               {{ 'accounts.columns.status' | transloco }}
             </th>
+            @if (canEdit()) {
+              <th scope="col" class="px-4 py-2 text-right font-medium">
+                <span class="sr-only">{{ 'accounts.columns.actions' | transloco }}</span>
+              </th>
+            }
           </tr>
         </thead>
         <tbody class="divide-y divide-mist">
@@ -63,6 +69,20 @@ const ICONS: Record<AccountType, IconName> = {
                   }}
                 </span>
               </td>
+              @if (canEdit()) {
+                <td class="px-4 py-2.5 text-right">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-graphite hover:bg-fog hover:text-ink"
+                    [attr.aria-label]="'accounts.edit' | transloco: { name: account.name }"
+                    (click)="edit.emit(account)"
+                    data-testid="edit-account"
+                  >
+                    <app-icon name="pencil" class="size-3.5" />
+                    {{ 'accounts.editShort' | transloco }}
+                  </button>
+                </td>
+              }
             </tr>
           }
         </tbody>
@@ -72,6 +92,8 @@ const ICONS: Record<AccountType, IconName> = {
 })
 export class AccountsTable {
   readonly accounts = input.required<readonly AccountResponse[]>();
+  readonly canEdit = input(false);
+  readonly edit = output<AccountResponse>();
 
   protected iconOf(type: AccountType): IconName {
     return ICONS[type];
