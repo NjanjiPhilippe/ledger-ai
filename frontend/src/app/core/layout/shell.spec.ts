@@ -39,7 +39,7 @@ describe('Shell', () => {
     const { element } = await render();
 
     expect(element.querySelector('[data-testid="brand"]')?.textContent?.trim()).toBe('LedgerAI');
-    expect(links(element)).toEqual(['Dashboard', 'Accounts', 'Journal entries']);
+    expect(links(element)).toEqual(['Dashboard', 'Accounts', 'Journal entries', 'Trial balance']);
     expect(element.querySelector('[data-testid="user-name"]')?.textContent?.trim()).toBe(
       'Vera Viewer',
     );
@@ -56,6 +56,7 @@ describe('Shell', () => {
       'Dashboard',
       'Accounts',
       'Journal entries',
+      'Trial balance',
       'New entry',
     ]);
   });
@@ -95,7 +96,7 @@ describe('Shell', () => {
     (element.querySelector('button[lang="fr"]') as HTMLButtonElement).click();
     await fixture.whenStable();
 
-    expect(links(element)).toEqual(['Tableau de bord', 'Comptes', 'Écritures']);
+    expect(links(element)).toEqual(['Tableau de bord', 'Comptes', 'Écritures', 'Balance']);
     expect(element.querySelector('[data-testid="user-role"]')?.textContent?.trim()).toBe('Lecteur');
     expect(element.querySelector('button[lang="fr"]')?.getAttribute('aria-pressed')).toBe('true');
     expect(element.querySelector('button[lang="en"]')?.getAttribute('aria-pressed')).toBe('false');
