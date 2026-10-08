@@ -147,3 +147,34 @@ export const FULL_TRIAL_BALANCE: TrialBalance = {
     },
   ],
 };
+
+export const ADVICE = {
+  generatedAt: '2026-10-08T10:00:00Z',
+  provider: 'anthropic',
+  recommendations: [
+    {
+      category: 'GROWTH',
+      severity: 'INFO',
+      title: 'Reinvest idle cash',
+      detail: 'Cash has not moved for weeks.',
+    },
+    {
+      category: 'RISK',
+      severity: 'CRITICAL',
+      title: 'Expenses exceed revenue',
+      detail: 'The net result is negative.',
+    },
+    {
+      category: 'LIQUIDITY',
+      severity: 'WARNING',
+      title: 'Low cash cover',
+      detail: 'Cash covers less than one month.\nReview payables.',
+    },
+    {
+      category: 'RISK',
+      severity: 'WARNING',
+      title: 'Unusual rent',
+      detail: 'Rent is twice last month.',
+    },
+  ],
+};
