@@ -102,6 +102,31 @@ class JournalEntryControllerTest {
     }
 
     @Test
+    void recordAcceptsAmountsSentAsStringsAndReturnsThemAsStrings() throws Exception {
+        when(recordJournalEntryUseCase.execute(any())).thenReturn(entry);
+        String body = """
+                {"description":"Office supplies","currencyCode":"XAF","lines":[
+                  {"accountId":"11111111-1111-1111-1111-111111111111","amount":"100","entryType":"DEBIT"},
+                  {"accountId":"22222222-2222-2222-2222-222222222222","amount":"100","entryType":"CREDIT"}]}""";
+
+        mockMvc.perform(post("/api/v1/journal-entries").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.lines[0].amount").isString())
+                .andExpect(jsonPath("$.lines[0].amount").value("100"));
+    }
+
+    @Test
+    void recordRejectsAnAmountThatIsNotANumber() throws Exception {
+        String body = """
+                {"description":"x","currencyCode":"XAF","lines":[
+                  {"accountId":"11111111-1111-1111-1111-111111111111","amount":"abc","entryType":"DEBIT"},
+                  {"accountId":"22222222-2222-2222-2222-222222222222","amount":"100","entryType":"CREDIT"}]}""";
+
+        mockMvc.perform(post("/api/v1/journal-entries").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void recordReturns400WhenFewerThanTwoLinesAreGiven() throws Exception {
         RecordJournalEntryRequest request = new RecordJournalEntryRequest(
                 "Invalid", "XAF",

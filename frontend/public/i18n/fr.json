@@ -1,0 +1,182 @@
+{
+  "app": {
+    "name": "LedgerAI"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "accounts": "Comptes",
+    "main": "Navigation principale",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "auth": {
+    "signedInAs": "Connecté en tant que {{name}}",
+    "logout": "Se déconnecter"
+  },
+  "roles": {
+    "viewer": "Lecteur",
+    "accountant": "Comptable",
+    "admin": "Administrateur"
+  },
+  "language": {
+    "label": "Langue",
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "toast": {
+    "dismiss": "Fermer"
+  },
+  "errors": {
+    "network": {
+      "title": "Impossible de joindre le serveur",
+      "message": "Le serveur ne répond pas. Vérifiez votre connexion, puis réessayez."
+    },
+    "unauthorized": {
+      "title": "Votre session a expiré",
+      "message": "Veuillez vous reconnecter."
+    },
+    "forbidden": {
+      "title": "Vous n'avez pas le droit de faire cela",
+      "message": "Votre rôle ne permet pas cette action."
+    },
+    "notFound": {
+      "title": "Introuvable",
+      "message": "L'élément demandé n'existe pas."
+    },
+    "validation": {
+      "title": "Certaines informations sont invalides",
+      "message": "Vérifiez les champs puis réessayez."
+    },
+    "conflict": {
+      "title": "Cette action n'est pas possible pour le moment",
+      "message": "Actualisez la page puis réessayez."
+    },
+    "gateway": {
+      "title": "Un service dont nous dépendons est indisponible",
+      "message": "Veuillez réessayer dans quelques minutes."
+    },
+    "server": {
+      "title": "Une erreur est survenue de notre côté",
+      "message": "Veuillez réessayer. Si le problème persiste, contactez le support."
+    },
+    "unknown": {
+      "title": "Une erreur est survenue",
+      "message": "Veuillez réessayer."
+    }
+  },
+  "common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {{page}} sur {{total}}",
+    "unknownAccount": "Compte inconnu"
+  },
+  "accounts": {
+    "title": "Comptes",
+    "total": "{{count}} comptes",
+    "empty": "Il n'y a pas encore de compte.",
+    "loadFailed": "Les comptes n'ont pas pu être chargés.",
+    "columns": {
+      "name": "Nom",
+      "type": "Type",
+      "currency": "Devise",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "new": "Nouveau compte",
+    "noMatch": "Aucun compte ne correspond à ces filtres.",
+    "edit": "Modifier {{name}}",
+    "editShort": "Modifier",
+    "created": "Compte « {{name}} » créé",
+    "updated": "Compte « {{name}} » mis à jour",
+    "filters": {
+      "search": "Rechercher par nom",
+      "type": "Type",
+      "allTypes": "Tous les types",
+      "status": "Statut",
+      "allStatuses": "Tous les statuts",
+      "clear": "Effacer les filtres"
+    },
+    "form": {
+      "createTitle": "Nouveau compte",
+      "editTitle": "Modifier le compte",
+      "name": "Nom",
+      "type": "Type",
+      "currency": "Devise",
+      "nameRequired": "Saisissez un nom pour le compte.",
+      "currencyInvalid": "Utilisez un code de devise à trois lettres, par exemple XAF ou EUR.",
+      "active": "Compte actif",
+      "activeHint": "Un compte inactif n'accepte plus de nouvelles écritures.",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    }
+  },
+  "accountType": {
+    "ASSET": "Actif",
+    "LIABILITY": "Passif",
+    "EQUITY": "Capitaux propres",
+    "REVENUE": "Produit",
+    "EXPENSE": "Charge"
+  },
+  "forbidden": {
+    "title": "Accès refusé",
+    "message": "Votre rôle ne vous permet pas d'ouvrir cette page.",
+    "back": "Retour à l'accueil"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "message": "Cette page n'existe pas.",
+    "back": "Retour à l'accueil"
+  },
+  "dashboard": {
+    "welcome": "Bon retour, {{name}}",
+    "subtitle": "Voici où en est votre grand livre aujourd'hui.",
+    "roles": "Vos rôles",
+    "noRoles": "Aucun rôle attribué",
+    "kpi": {
+      "label": "Chiffres clés",
+      "accounts": "Comptes",
+      "accountsHint": "{{active}} actifs sur {{total}}",
+      "debits": "Total des débits",
+      "debitsHint": "Tout ce qui est enregistré au débit",
+      "credits": "Total des crédits",
+      "creditsHint": "Tout ce qui est enregistré au crédit",
+      "ledger": "Grand livre",
+      "balanced": "Équilibré",
+      "balancedHint": "Les débits égalent les crédits",
+      "unbalanced": "Déséquilibré",
+      "unbalancedHint": "Les débits et les crédits diffèrent"
+    },
+    "trialBalance": {
+      "title": "Balance des comptes",
+      "empty": "Aucun compte n'a encore de mouvement.",
+      "total": "Total",
+      "columns": {
+        "account": "Compte",
+        "debit": "Débit",
+        "credit": "Crédit",
+        "balance": "Solde"
+      }
+    },
+    "types": {
+      "title": "Comptes par type"
+    },
+    "entries": {
+      "title": "Écritures récentes",
+      "empty": "Aucune écriture n'a encore été enregistrée."
+    }
+  },
+  "entryStatus": {
+    "DRAFT": "Brouillon",
+    "POSTED": "Comptabilisée",
+    "REVERSED": "Extournée"
+  },
+  "panel": {
+    "failed": "Cette section n'a pas pu être chargée."
+  }
+}

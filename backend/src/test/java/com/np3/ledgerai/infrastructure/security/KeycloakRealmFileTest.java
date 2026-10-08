@@ -1,5 +1,6 @@
 package com.np3.ledgerai.infrastructure.security;
 
+import com.np3.ledgerai.RepositoryRoot;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class KeycloakRealmFileTest {
 
-    private static final Path ROOT = repositoryRoot();
+    private static final Path ROOT = RepositoryRoot.path();
     private static final Path REALM_FILE = ROOT.resolve("keycloak/ledgerai-realm.json");
     private static JsonNode realm;
 
@@ -54,6 +55,44 @@ class KeycloakRealmFileTest {
     }
 
     @Test
+    void frontendClientMayReturnToItsOwnPagesAfterLogout() {
+        // "+" means: the valid redirect URIs. Without it Keycloak refuses the post_logout_redirect_uri of the frontend.
+        assertThat(client("ledgerai-frontend").get("attributes").get("post.logout.redirect.uris").asString())
+                .isEqualTo("+");
+    }
+
+    @Test
+    void noClientForcesTheUnstyledBaseLoginTheme() {
+        // "base" is only the parent of the real themes: forced on a client it gives a login page with no style at all.
+        for (JsonNode client : realm.get("clients")) {
+            JsonNode theme = client.get("attributes").get("login_theme");
+            assertThat(theme == null ? "" : theme.asString())
+                    .as("login theme of client " + client.get("clientId").asString())
+                    .isNotEqualTo("base");
+        }
+    }
+
+    @Test
+    void loginPageIsBrandedAndOfferedInEnglishAndFrench() {
+        assertThat(realm.get("displayName").asString()).isEqualTo("LedgerAI");
+        assertThat(realm.get("internationalizationEnabled").asBoolean()).isTrue();
+        assertThat(names(realm.get("supportedLocales"))).containsExactly("en", "fr");
+        assertThat(realm.get("defaultLocale").asString()).isEqualTo("en");
+    }
+
+    @Test
+    void realmUsesTheCustomLoginThemeThatComposeMounts() throws Exception {
+        String theme = realm.get("loginTheme").asString();
+        String compose = Files.readString(ROOT.resolve("docker-compose.yml"));
+        Matcher matcher = Pattern.compile("\\./(keycloak/themes/\\S+):/opt/keycloak/themes/(\\S+)").matcher(compose);
+
+        assertThat(matcher.find()).as("compose mounts a theme folder").isTrue();
+        assertThat(matcher.group(2)).as("mounted under the name the realm asks for").isEqualTo(theme);
+        assertThat(ROOT.resolve(matcher.group(1)).resolve("login/theme.properties")).exists();
+        assertThat(ROOT.resolve(matcher.group(1)).resolve("login/resources/css/login.css")).exists();
+    }
+
+    @Test
     void localUsersCoverEachRole() {
         assertThat(names(realm.get("users"), "username")).containsExactlyInAnyOrder("viewer", "accountant", "admin");
     }
@@ -67,20 +106,15 @@ class KeycloakRealmFileTest {
         throw new AssertionError("client not found: " + clientId);
     }
 
+    private static List<String> names(JsonNode strings) {
+        List<String> values = new ArrayList<>();
+        strings.forEach(node -> values.add(node.asString()));
+        return values;
+    }
+
     private static List<String> names(JsonNode array, String field) {
         List<String> values = new ArrayList<>();
         array.forEach(node -> values.add(node.get(field).asString()));
         return values;
-    }
-
-    /** The tests run from backend/, the infrastructure files live at the repository root. */
-    private static Path repositoryRoot() {
-        Path start = Path.of("").toAbsolutePath();
-        for (Path dir = start; dir != null; dir = dir.getParent()) {
-            if (Files.exists(dir.resolve("docker-compose.yml"))) {
-                return dir;
-            }
-        }
-        throw new IllegalStateException("docker-compose.yml not found in or above " + start);
     }
 }
