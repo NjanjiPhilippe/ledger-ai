@@ -21,6 +21,8 @@ import java.util.Map;
 public class AnthropicAdvisorAdapter implements AiAdvisorPort {
 
     private static final String PROVIDER_NAME = "anthropic";
+    /** Room for the model's own reasoning as well as the JSON answer: a cap hit mid-answer leaves unreadable JSON. */
+    private static final int MAX_TOKENS = 4096;
 
     private final AnthropicAdvisorProperties properties;
     private final AdvisorPromptBuilder promptBuilder;
@@ -47,7 +49,7 @@ public class AnthropicAdvisorAdapter implements AiAdvisorPort {
     public AdviceResult analyze(FinancialSnapshot snapshot) {
         Map<String, Object> requestBody = Map.of(
                 "model", properties.model(),
-                "max_tokens", 1024,
+                "max_tokens", MAX_TOKENS,
                 "system", promptBuilder.systemPrompt(),
                 "messages", List.of(
                         Map.of("role", "user", "content", promptBuilder.userPrompt(snapshot))
@@ -70,8 +72,12 @@ public class AnthropicAdvisorAdapter implements AiAdvisorPort {
         }
     }
 
+    /**
+     * The text of the answer. Current Claude models may put other blocks (thinking, for instance) before the text,
+     * so the first block is not necessarily the answer: every text block is read, in order.
+     */
     @SuppressWarnings("unchecked")
-    private String extractContent(Map<String, Object> response) {
+    static String extractContent(Map<String, Object> response) {
         if (response == null) {
             throw new AiAdvisorException("Réponse vide d'Anthropic");
         }
@@ -79,6 +85,14 @@ public class AnthropicAdvisorAdapter implements AiAdvisorPort {
         if (content == null || content.isEmpty()) {
             throw new AiAdvisorException("Aucun contenu retourné par Anthropic");
         }
-        return (String) content.get(0).get("text");
+        String text = content.stream()
+                .filter(block -> "text".equals(block.get("type")) && block.get("text") instanceof String)
+                .map(block -> (String) block.get("text"))
+                .reduce("", String::concat);
+        if (text.isBlank()) {
+            throw new AiAdvisorException("Aucun texte dans la réponse d'Anthropic (arrêt : "
+                    + response.get("stop_reason") + ")");
+        }
+        return text;
     }
 }
