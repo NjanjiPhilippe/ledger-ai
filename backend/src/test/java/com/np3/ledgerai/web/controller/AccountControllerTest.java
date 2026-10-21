@@ -145,8 +145,19 @@ class AccountControllerTest {
 
         mockMvc.perform(get("/api/v1/accounts/{id}/balance", account.id().value()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.amount").value(180))
+                .andExpect(jsonPath("$.amount").isString())
+                .andExpect(jsonPath("$.amount").value("180"))
                 .andExpect(jsonPath("$.currencyCode").value("XAF"));
+    }
+
+    @Test
+    void balanceKeepsTheExactDecimalsOfTheCurrencyAsAString() throws Exception {
+        Currency eur = Currency.getInstance("EUR");
+        when(getAccountBalanceQuery.execute(account.id())).thenReturn(Money.of(new BigDecimal("1234567890.50"), eur));
+
+        mockMvc.perform(get("/api/v1/accounts/{id}/balance", account.id().value()))
+                .andExpect(jsonPath("$.amount").isString())
+                .andExpect(jsonPath("$.amount").value("1234567890.50"));
     }
 
     @Test

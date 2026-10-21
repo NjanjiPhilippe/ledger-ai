@@ -1,0 +1,883 @@
+{
+  "components" : {
+    "schemas" : {
+      "AccountBalanceLineRequest" : {
+        "properties" : {
+          "accountId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "accountName" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "accountType" : {
+            "enum" : [ "ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE" ],
+            "type" : "string"
+          },
+          "balance" : {
+            "description" : "Exact decimal amount, as a string (a JSON number is also accepted)",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "accountId", "accountName", "accountType", "balance" ],
+        "type" : "object"
+      },
+      "AccountResponse" : {
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "currencyCode" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "enum" : [ "ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "active", "currencyCode", "id", "name", "type" ],
+        "type" : "object"
+      },
+      "AdviceResponse" : {
+        "properties" : {
+          "generatedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "provider" : {
+            "type" : "string"
+          },
+          "recommendations" : {
+            "items" : {
+              "$ref" : "#/components/schemas/RecommendationResponse"
+            },
+            "type" : "array"
+          }
+        },
+        "required" : [ "generatedAt", "provider", "recommendations" ],
+        "type" : "object"
+      },
+      "AnalyzeSnapshotRequest" : {
+        "properties" : {
+          "balances" : {
+            "items" : {
+              "$ref" : "#/components/schemas/AccountBalanceLineRequest"
+            },
+            "minItems" : 1,
+            "type" : "array"
+          },
+          "currencyCode" : {
+            "minLength" : 1,
+            "pattern" : "[A-Z]{3}",
+            "type" : "string"
+          },
+          "totalCredits" : {
+            "description" : "Exact decimal amount, as a string (a JSON number is also accepted)",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "totalDebits" : {
+            "description" : "Exact decimal amount, as a string (a JSON number is also accepted)",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "balances", "currencyCode", "totalCredits", "totalDebits" ],
+        "type" : "object"
+      },
+      "BalanceResponse" : {
+        "properties" : {
+          "amount" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "currencyCode" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "amount", "currencyCode" ],
+        "type" : "object"
+      },
+      "CreateAccountRequest" : {
+        "properties" : {
+          "currencyCode" : {
+            "minLength" : 1,
+            "pattern" : "^[A-Z]{3}$",
+            "type" : "string"
+          },
+          "name" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "type" : {
+            "enum" : [ "ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "currencyCode", "name", "type" ],
+        "type" : "object"
+      },
+      "JournalEntryLineRequest" : {
+        "properties" : {
+          "accountId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "amount" : {
+            "description" : "Exact decimal amount, as a string (a JSON number is also accepted)",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "entryType" : {
+            "enum" : [ "DEBIT", "CREDIT" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "accountId", "amount", "entryType" ],
+        "type" : "object"
+      },
+      "JournalEntryLineResponse" : {
+        "properties" : {
+          "accountId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "amount" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "entryType" : {
+            "enum" : [ "DEBIT", "CREDIT" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "accountId", "amount", "entryType" ],
+        "type" : "object"
+      },
+      "JournalEntryResponse" : {
+        "properties" : {
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "lines" : {
+            "items" : {
+              "$ref" : "#/components/schemas/JournalEntryLineResponse"
+            },
+            "type" : "array"
+          },
+          "postedAt" : {
+            "description" : "Null while the entry is a draft",
+            "format" : "date-time",
+            "type" : [ "string", "null" ]
+          },
+          "reversalOfId" : {
+            "description" : "Set when this entry reverses another one",
+            "format" : "uuid",
+            "type" : [ "string", "null" ]
+          },
+          "status" : {
+            "enum" : [ "DRAFT", "POSTED", "REVERSED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "createdAt", "description", "id", "lines", "postedAt", "reversalOfId", "status" ],
+        "type" : "object"
+      },
+      "MeResponse" : {
+        "properties" : {
+          "tenantId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "userId" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        },
+        "required" : [ "tenantId", "userId" ],
+        "type" : "object"
+      },
+      "PagedResponseAccountResponse" : {
+        "properties" : {
+          "content" : {
+            "items" : {
+              "$ref" : "#/components/schemas/AccountResponse"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "size" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "totalElements" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "totalPages" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "content", "page", "size", "totalElements", "totalPages" ],
+        "type" : "object"
+      },
+      "PagedResponseJournalEntryResponse" : {
+        "properties" : {
+          "content" : {
+            "items" : {
+              "$ref" : "#/components/schemas/JournalEntryResponse"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "size" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "totalElements" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "totalPages" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "content", "page", "size", "totalElements", "totalPages" ],
+        "type" : "object"
+      },
+      "RebuildProjectionResponse" : {
+        "properties" : {
+          "accountsCorrected" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "accountsRebuilt" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "accountsCorrected", "accountsRebuilt" ],
+        "type" : "object"
+      },
+      "RecommendationResponse" : {
+        "properties" : {
+          "category" : {
+            "type" : "string"
+          },
+          "detail" : {
+            "type" : "string"
+          },
+          "severity" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "category", "detail", "severity", "title" ],
+        "type" : "object"
+      },
+      "RecordJournalEntryRequest" : {
+        "properties" : {
+          "currencyCode" : {
+            "minLength" : 1,
+            "pattern" : "^[A-Z]{3}$",
+            "type" : "string"
+          },
+          "description" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "lines" : {
+            "items" : {
+              "$ref" : "#/components/schemas/JournalEntryLineRequest"
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 2,
+            "type" : "array"
+          }
+        },
+        "required" : [ "currencyCode", "description", "lines" ],
+        "type" : "object"
+      },
+      "TrialBalanceLineResponse" : {
+        "properties" : {
+          "accountId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "accountName" : {
+            "type" : "string"
+          },
+          "accountType" : {
+            "type" : "string"
+          },
+          "balance" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "totalCredits" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "totalDebits" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "accountId", "accountName", "accountType", "balance", "totalCredits", "totalDebits" ],
+        "type" : "object"
+      },
+      "TrialBalanceResponse" : {
+        "properties" : {
+          "balanced" : {
+            "type" : "boolean"
+          },
+          "currencyCode" : {
+            "type" : "string"
+          },
+          "generatedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "lines" : {
+            "items" : {
+              "$ref" : "#/components/schemas/TrialBalanceLineResponse"
+            },
+            "type" : "array"
+          },
+          "totalCredits" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          },
+          "totalDebits" : {
+            "description" : "Exact decimal amount, serialized as a string",
+            "pattern" : "^-?\\d+(\\.\\d+)?$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "balanced", "currencyCode", "generatedAt", "lines", "totalCredits", "totalDebits" ],
+        "type" : "object"
+      },
+      "UpdateAccountRequest" : {
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [ "active", "name" ],
+        "type" : "object"
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "bearerFormat" : "JWT",
+        "scheme" : "bearer",
+        "type" : "http"
+      }
+    }
+  },
+  "info" : {
+    "description" : "Double-entry ledger, balance projection, reports and AI advisor",
+    "title" : "LedgerAI API",
+    "version" : "v1"
+  },
+  "openapi" : "3.1.0",
+  "paths" : {
+    "/api/v1/accounts" : {
+      "get" : {
+        "operationId" : "search_1",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "type",
+          "required" : false,
+          "schema" : {
+            "enum" : [ "ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE" ],
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "active",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "in" : "query",
+          "name" : "name",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "default" : 0,
+            "format" : "int32",
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "default" : 20,
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedResponseAccountResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "account-controller" ]
+      },
+      "post" : {
+        "operationId" : "create",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateAccountRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "account-controller" ]
+      }
+    },
+    "/api/v1/accounts/{id}" : {
+      "get" : {
+        "operationId" : "get",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "account-controller" ]
+      },
+      "put" : {
+        "operationId" : "update",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateAccountRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "account-controller" ]
+      }
+    },
+    "/api/v1/accounts/{id}/balance" : {
+      "get" : {
+        "operationId" : "balance",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BalanceResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "account-controller" ]
+      }
+    },
+    "/api/v1/admin/projections/balances/rebuild" : {
+      "post" : {
+        "description" : "Detects accounts whose projected balance drifted from the posted journal lines, repairs them, and reports how many were corrected.",
+        "operationId" : "rebuildBalances",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RebuildProjectionResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Rebuild the balance projection from the journal",
+        "tags" : [ "Administration" ]
+      }
+    },
+    "/api/v1/advisor/analyze" : {
+      "post" : {
+        "description" : "Useful for what-if analysis: you provide the figures, the advisor comments them.",
+        "operationId" : "analyze",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AnalyzeSnapshotRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AdviceResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Analyze a snapshot supplied by the caller",
+        "tags" : [ "advisor-controller" ]
+      }
+    },
+    "/api/v1/advisor/analyze-ledger" : {
+      "post" : {
+        "description" : "The server composes the snapshot from the trial balance (posted entries only), then asks the advisor.",
+        "operationId" : "analyzeLedger",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AdviceResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Analyze the current state of the ledger",
+        "tags" : [ "advisor-controller" ]
+      }
+    },
+    "/api/v1/journal-entries" : {
+      "get" : {
+        "operationId" : "search",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "status",
+          "required" : false,
+          "schema" : {
+            "enum" : [ "DRAFT", "POSTED", "REVERSED" ],
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "createdFrom",
+          "required" : false,
+          "schema" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "createdTo",
+          "required" : false,
+          "schema" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "default" : 0,
+            "format" : "int32",
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "default" : 20,
+            "format" : "int32",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedResponseJournalEntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "journal-entry-controller" ]
+      },
+      "post" : {
+        "operationId" : "record",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RecordJournalEntryRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JournalEntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "journal-entry-controller" ]
+      }
+    },
+    "/api/v1/journal-entries/{id}" : {
+      "get" : {
+        "operationId" : "get_1",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JournalEntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "journal-entry-controller" ]
+      }
+    },
+    "/api/v1/journal-entries/{id}/post" : {
+      "post" : {
+        "operationId" : "post",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JournalEntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "journal-entry-controller" ]
+      }
+    },
+    "/api/v1/journal-entries/{id}/reverse" : {
+      "post" : {
+        "operationId" : "reverse",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/JournalEntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "journal-entry-controller" ]
+      }
+    },
+    "/api/v1/me" : {
+      "get" : {
+        "operationId" : "me",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MeResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "me-controller" ]
+      }
+    },
+    "/api/v1/reports/trial-balance" : {
+      "get" : {
+        "description" : "Debits, credits and normal-side balance per account. `balanced` must be true if the ledger is consistent.",
+        "operationId" : "trialBalance",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TrialBalanceResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Trial balance",
+        "tags" : [ "Reports" ]
+      }
+    }
+  },
+  "security" : [ {
+    "bearerAuth" : [ ]
+  } ],
+  "tags" : [ {
+    "description" : "Financial reports derived from the balance projection",
+    "name" : "Reports"
+  }, {
+    "description" : "Maintenance operations (admin only)",
+    "name" : "Administration"
+  } ]
+}

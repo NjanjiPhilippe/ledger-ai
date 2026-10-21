@@ -55,8 +55,11 @@ class ReportingControllerTest {
         mockMvc.perform(get("/api/v1/reports/trial-balance"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lines[0].accountName").value("Cash"))
-                .andExpect(jsonPath("$.totalDebits").value(200))
-                .andExpect(jsonPath("$.totalCredits").value(200))
+                .andExpect(jsonPath("$.totalDebits").isString())
+                .andExpect(jsonPath("$.totalDebits").value("200"))
+                .andExpect(jsonPath("$.totalCredits").value("200"))
+                .andExpect(jsonPath("$.lines[0].totalDebits").isString())
+                .andExpect(jsonPath("$.lines[0].balance").value("100"))
                 .andExpect(jsonPath("$.currencyCode").value("XAF"))
                 .andExpect(jsonPath("$.balanced").value(true));
     }

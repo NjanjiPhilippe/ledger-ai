@@ -1,0 +1,402 @@
+/*
+ * LedgerAI login theme.
+ * Design tokens come from the Increase-style design system (variables.css / DESIGN.md).
+ * Rules: no pure black text, Inkwell Navy filled primary button, Mint Signal only as focus edge,
+ * Voltage never used here, no dark mode.
+ */
+:root {
+  --color-inkwell-navy: #1a2b3b;
+  --color-slate-600: #314352;
+  --color-graphite: #687887;
+  --color-steel: #8995a1;
+  --color-fog: #edf0f2;
+  --color-pure-white: #ffffff;
+  --color-silver: #caced2;
+  --color-mist: #e1e5e9;
+  --color-mint-signal: #31f2bf;
+  --color-danger: #b42318;
+  --color-danger-bg: #fdecea;
+
+  --font-untitled-sans: 'Untitled Sans', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-input-mono: 'Input Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --shadow-subtle: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+  --shadow-sm-2: rgba(12, 25, 39, 0.03) 0px 6px 8px 0px, rgba(12, 25, 39, 0.09) 0px 18px 22px 0px;
+}
+
+/* ---- Canvas ---------------------------------------------------------------------------------- */
+html.login-pf,
+.login-pf body {
+  background: var(--color-fog);
+  background-image: none;
+  min-height: 100vh;
+  height: auto;
+}
+
+.login-pf body {
+  font-family: var(--font-untitled-sans);
+  font-size: 16px;
+  line-height: 1.43;
+  letter-spacing: -0.16px;
+  color: var(--color-inkwell-navy);
+  -webkit-font-smoothing: antialiased;
+}
+
+.login-pf-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 16px 48px;
+}
+
+/* ---- Wordmark -------------------------------------------------------------------------------- */
+#kc-header {
+  color: var(--color-inkwell-navy);
+  padding: 0;
+}
+
+#kc-header-wrapper {
+  padding: 0 0 32px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.17;
+  letter-spacing: -0.96px;
+  text-transform: none;
+  text-align: center;
+  color: var(--color-inkwell-navy);
+}
+
+/* ---- Card ------------------------------------------------------------------------------------ */
+.card-pf {
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+  padding: 32px;
+  background: var(--color-pure-white);
+  border: 1px solid var(--color-mist);
+  border-top: 1px solid var(--color-mist);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm-2);
+}
+
+.login-pf-header {
+  margin: 0 0 24px;
+  padding: 0;
+  text-align: left;
+}
+
+h1#kc-page-title {
+  margin: 0;
+  text-align: left;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.17;
+  letter-spacing: -0.96px;
+  color: var(--color-inkwell-navy);
+}
+
+#kc-content-wrapper,
+#kc-form-wrapper {
+  margin-top: 0;
+}
+
+/* Keycloak lays forms out with the Bootstrap-ish grid; collapse it into one clean column. */
+.form-horizontal .form-group {
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.form-horizontal .form-group > [class*='col-'],
+#kc-form-buttons,
+.card-pf [class*='col-xs-'] {
+  float: none;
+  width: 100%;
+  padding: 0;
+}
+
+/* ---- Labels & inputs -------------------------------------------------------------------------- */
+.pf-c-form__label,
+.pf-c-form__label-text,
+.card-pf label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.54;
+  letter-spacing: -0.13px;
+  color: var(--color-graphite);
+}
+
+.card-pf input[type='text'],
+.card-pf input[type='password'],
+.card-pf input[type='email'],
+.card-pf input[type='number'],
+.card-pf select,
+.pf-c-form-control {
+  width: 100%;
+  height: auto;
+  padding: 12px 16px;
+  font-family: var(--font-untitled-sans);
+  font-size: 16px;
+  line-height: 1.43;
+  letter-spacing: -0.16px;
+  color: var(--color-inkwell-navy);
+  background: var(--color-pure-white);
+  border: 1px solid var(--color-silver);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.card-pf input::placeholder {
+  color: var(--color-steel);
+}
+
+.card-pf input:focus,
+.card-pf select:focus,
+.pf-c-form-control:focus {
+  outline: none;
+  border-color: var(--color-mint-signal);
+  box-shadow: 0 0 0 2px var(--color-mint-signal);
+}
+
+.pf-c-form-control[aria-invalid='true'] {
+  border-color: var(--color-danger);
+  background-image: none;
+}
+
+.pf-c-form-control[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 2px var(--color-mint-signal);
+}
+
+/* Password field + show/hide toggle sit in one bordered control */
+.pf-c-input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.pf-c-input-group .pf-c-form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.pf-c-input-group .pf-c-button.pf-m-control {
+  flex: 0 0 auto;
+  padding: 0 16px;
+  color: var(--color-graphite);
+  background: var(--color-pure-white);
+  border: 1px solid var(--color-silver);
+  border-left: 0;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: none;
+}
+
+.pf-c-input-group .pf-c-button.pf-m-control::before,
+.pf-c-input-group .pf-c-button.pf-m-control::after {
+  display: none;
+}
+
+.pf-c-input-group .pf-c-button.pf-m-control:hover {
+  color: var(--color-inkwell-navy);
+}
+
+.pf-c-input-group .pf-c-form-control:focus {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Buttons --------------------------------------------------------------------------------- */
+.pf-c-button.pf-m-primary,
+#kc-login {
+  width: 100%;
+  padding: 10px 20px;
+  font-family: var(--font-untitled-sans);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.16px;
+  color: var(--color-pure-white);
+  background: var(--color-inkwell-navy);
+  border: 1px solid var(--color-inkwell-navy);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-subtle);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.pf-c-button.pf-m-primary:hover,
+#kc-login:hover {
+  background: var(--color-slate-600);
+  border-color: var(--color-slate-600);
+}
+
+.pf-c-button.pf-m-primary:focus-visible,
+#kc-login:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-subtle), 0 0 0 2px var(--color-pure-white), 0 0 0 4px var(--color-mint-signal);
+}
+
+.pf-c-button.pf-m-primary:disabled,
+#kc-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Links, helper rows ---------------------------------------------------------------------- */
+.login-pf a,
+.card-pf a {
+  color: var(--color-inkwell-navy);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--color-silver);
+}
+
+.login-pf a:hover,
+.card-pf a:hover {
+  color: var(--color-slate-600);
+  text-decoration-color: var(--color-slate-600);
+}
+
+#kc-form-options .checkbox,
+#kc-form-options .checkbox label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-graphite);
+}
+
+#kc-form-options span,
+.login-pf-settings {
+  font-size: 13px;
+}
+
+.login-pf-settings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#kc-info {
+  margin: 24px 0 0;
+}
+
+#kc-info-wrapper {
+  padding: 16px 0 0;
+  font-size: 13px;
+  line-height: 1.54;
+  color: var(--color-graphite);
+  background: none;
+  border-top: 1px solid var(--color-mist);
+}
+
+/* ---- Alerts ---------------------------------------------------------------------------------- */
+.pf-c-alert {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-lg);
+  background: var(--color-fog);
+  box-shadow: none;
+}
+
+.pf-c-alert::before {
+  display: none;
+}
+
+.pf-c-alert__title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.54;
+  letter-spacing: -0.13px;
+  color: var(--color-inkwell-navy);
+}
+
+.pf-c-alert.pf-m-danger {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger);
+}
+
+.pf-c-alert.pf-m-danger .pf-c-alert__title,
+.pf-c-alert.pf-m-danger .pf-c-alert__icon {
+  color: var(--color-danger);
+}
+
+.pf-c-form__helper-text.pf-m-error,
+.pf-c-form__helper-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.54;
+  color: var(--color-danger);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+/* ---- Language switch ------------------------------------------------------------------------- */
+#kc-locale {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+#kc-locale-dropdown button {
+  padding: 4px 8px;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#kc-locale-dropdown button,
+#kc-locale-dropdown a {
+  font-family: var(--font-untitled-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-graphite);
+  text-decoration: none;
+}
+
+#kc-locale ul {
+  padding: 4px;
+  background: var(--color-pure-white);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm-2);
+}
+
+#kc-locale ul li a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+#kc-locale ul li a:hover {
+  background: var(--color-fog);
+  color: var(--color-inkwell-navy);
+}
+
+/* ---- Technical values (OTP secret, recovery codes) use the mono face --------------------------- */
+#kc-totp-secret-key,
+.kc-recovery-codes-list {
+  font-family: var(--font-input-mono);
+  font-size: 14px;
+  color: var(--color-inkwell-navy);
+  background: var(--color-fog);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+}
+
+/* ---- Small screens --------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .login-pf-page {
+    padding-top: 40px;
+  }
+  .card-pf {
+    padding: 24px 20px;
+  }
+}
