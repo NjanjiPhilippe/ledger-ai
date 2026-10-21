@@ -8,7 +8,8 @@
     "main": "Main navigation",
     "openMenu": "Open the menu",
     "closeMenu": "Close the menu",
-    "newEntry": "New entry"
+    "newEntry": "New entry",
+    "entries": "Journal entries"
   },
   "auth": {
     "signedInAs": "Signed in as {{name}}",
@@ -71,7 +72,8 @@
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {{page}} of {{total}}",
-    "unknownAccount": "Unknown account"
+    "unknownAccount": "Unknown account",
+    "cancel": "Cancel"
   },
   "accounts": {
     "title": "Accounts",
@@ -169,7 +171,8 @@
     },
     "entries": {
       "title": "Recent journal entries",
-      "empty": "No journal entry has been recorded yet."
+      "empty": "No journal entry has been recorded yet.",
+      "viewAll": "View all"
     }
   },
   "entryStatus": {
@@ -219,5 +222,39 @@
     "postFailed": "\"{{description}}\" was saved as a draft, but it could not be posted.",
     "noAccounts": "You need at least two active accounts before recording an entry.",
     "accountsFailed": "The accounts could not be loaded."
+  },
+  "entries": {
+    "title": "Journal entries",
+    "total": "{{count}} entries",
+    "empty": "No journal entry has been recorded yet.",
+    "noMatch": "No entry matches these filters.",
+    "loadFailed": "The journal entries could not be loaded.",
+    "detailFailed": "This entry could not be loaded.",
+    "notFound": "This entry does not exist.",
+    "back": "Back to the journal entries",
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "from": "Created from",
+      "to": "Created until",
+      "clear": "Clear filters"
+    },
+    "created": "Created",
+    "posted": "Posted",
+    "notPosted": "Not posted yet",
+    "reversalOf": "Reversal of",
+    "original": "Original entry",
+    "post": "Post",
+    "reverse": "Reverse",
+    "confirmPost": {
+      "title": "Post this entry?",
+      "message": "A posted entry updates the balances and can no longer be edited. It can only be reversed by an administrator."
+    },
+    "confirmReverse": {
+      "title": "Reverse this entry?",
+      "message": "A new entry with opposite debits and credits is posted, and this one is marked as reversed. This cannot be undone."
+    },
+    "postedToast": "Entry \"{{description}}\" posted",
+    "reversedToast": "Entry \"{{description}}\" reversed"
   }
 }

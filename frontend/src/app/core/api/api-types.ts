@@ -16,6 +16,12 @@ export interface AccountFilters {
   readonly type?: AccountType;
   readonly active?: boolean;
 }
+/** Optional filters of the journal entries search. Dates are ISO instants. */
+export interface EntryFilters {
+  readonly status?: JournalEntryStatus;
+  readonly createdFrom?: string;
+  readonly createdTo?: string;
+}
 export type CreateAccountRequest = components['schemas']['CreateAccountRequest'];
 export type UpdateAccountRequest = components['schemas']['UpdateAccountRequest'];
 export type RecordJournalEntryRequest = components['schemas']['RecordJournalEntryRequest'];

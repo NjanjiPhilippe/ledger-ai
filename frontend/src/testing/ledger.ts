@@ -78,3 +78,21 @@ export const ENTRIES: PagedJournalEntries = {
   totalElements: 1,
   totalPages: 1,
 };
+
+export const DRAFT_ENTRY: JournalEntry = {
+  ...ENTRY,
+  id: 'draft-1',
+  description: 'October rent',
+  status: 'DRAFT',
+  postedAt: null,
+};
+export const REVERSAL_ENTRY: JournalEntry = {
+  ...ENTRY,
+  id: 'reversal-1',
+  description: 'Reversal of: First sale',
+  reversalOfId: ENTRY.id,
+  lines: [
+    { accountId: SALES.id, amount: '2450000.00', entryType: 'DEBIT' },
+    { accountId: CASH.id, amount: '2450000.00', entryType: 'CREDIT' },
+  ],
+};
