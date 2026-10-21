@@ -37,6 +37,11 @@ export const routes: Routes = [
           import('./features/entries/pages/entry-detail-page').then((m) => m.EntryDetailPage),
       },
       {
+        path: 'balance',
+        loadComponent: () =>
+          import('./features/balance/pages/balance-page').then((m) => m.BalancePage),
+      },
+      {
         path: 'forbidden',
         loadComponent: () => import('./core/pages/forbidden-page').then((m) => m.ForbiddenPage),
       },

@@ -41,7 +41,7 @@ Run the backend commands from `backend/`, and `docker compose` from the reposito
 | Balance sheet, income statement, reports as of a date | 📅 | |
 | Accounting periods and closing, audit trail | 📅 | |
 | CI pipeline, Dockerfile | 📅 | |
-| Angular frontend: sign-in (PKCE), dashboard (key figures, trial balance, recent entries), accounts (search, create, edit), journal entries (list, detail, post, reverse), new journal entry form, sidebar layout, English/French, error toasts, loading bar | 🚧 | First slice, tested with a simulated identity provider; not yet validated against the real Keycloak. [ADR 0003](docs/adr/0003-frontend-architecture.md) |
+| Angular frontend: sign-in (PKCE), dashboard (key figures, trial balance, recent entries), accounts (search, create, edit), journal entries (list, detail, post, reverse), new journal entry form, trial balance (grouped, CSV export), sidebar layout, English/French, error toasts, loading bar | 🚧 | First slice, tested with a simulated identity provider; not yet validated against the real Keycloak. [ADR 0003](docs/adr/0003-frontend-architecture.md) |
 | Frontend: record, post and reverse entries, trial balance, advisor | 📅 | |
 
 Legend: ✅ done · 🚧 in progress · 📅 planned

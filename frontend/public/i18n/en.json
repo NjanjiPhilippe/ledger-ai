@@ -9,7 +9,8 @@
     "openMenu": "Open the menu",
     "closeMenu": "Close the menu",
     "newEntry": "New entry",
-    "entries": "Journal entries"
+    "entries": "Journal entries",
+    "balance": "Trial balance"
   },
   "auth": {
     "signedInAs": "Signed in as {{name}}",
@@ -256,5 +257,35 @@
     },
     "postedToast": "Entry \"{{description}}\" posted",
     "reversedToast": "Entry \"{{description}}\" reversed"
+  },
+  "balance": {
+    "title": "Trial balance",
+    "generatedAt": "As of",
+    "export": "Export CSV",
+    "loadFailed": "The trial balance could not be loaded.",
+    "balanced": "The ledger is balanced",
+    "balancedHint": "Total debits equal total credits: the double-entry principle holds for every posted entry.",
+    "unbalanced": "The ledger is out of balance",
+    "unbalancedHint": "Total debits and total credits differ. Check the posted entries and rebuild the balances if needed.",
+    "counts": "{{moved}} accounts with movements out of {{total}}",
+    "hideEmpty": "Hide accounts without movements",
+    "hidden": "{{count}} hidden",
+    "empty": "No account to show.",
+    "subtotal": "Subtotal",
+    "grandTotal": "Grand total",
+    "summary": {
+      "assets": {
+        "label": "Total assets",
+        "hint": "What the organisation owns."
+      },
+      "liabilitiesAndEquity": {
+        "label": "Liabilities and equity",
+        "hint": "What it owes, and what its owners put in."
+      },
+      "netResult": {
+        "label": "Net result",
+        "hint": "Revenue minus expenses over the period."
+      }
+    }
   }
 }
