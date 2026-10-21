@@ -4,7 +4,6 @@ import type { components } from './schema';
 export type AccountResponse = components['schemas']['AccountResponse'];
 export type AccountType = AccountResponse['type'];
 export type PagedAccounts = components['schemas']['PagedResponseAccountResponse'];
-export type MeResponse = components['schemas']['MeResponse'];
 export type JournalEntry = components['schemas']['JournalEntryResponse'];
 export type JournalEntryStatus = JournalEntry['status'];
 export type PagedJournalEntries = components['schemas']['PagedResponseJournalEntryResponse'];
@@ -29,6 +28,11 @@ export interface BalanceGroup {
   readonly totalDebits: string;
   readonly totalCredits: string;
 }
+export type Advice = components['schemas']['AdviceResponse'];
+export type Recommendation = components['schemas']['RecommendationResponse'];
+export type Severity = 'CRITICAL' | 'WARNING' | 'INFO';
+export type AdviceCategory =
+  'LIQUIDITY' | 'PROFITABILITY' | 'RISK' | 'COMPLIANCE' | 'GROWTH' | 'GENERAL';
 export type CreateAccountRequest = components['schemas']['CreateAccountRequest'];
 export type UpdateAccountRequest = components['schemas']['UpdateAccountRequest'];
 export type RecordJournalEntryRequest = components['schemas']['RecordJournalEntryRequest'];

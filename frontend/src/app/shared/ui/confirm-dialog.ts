@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 /** A yes/no question over the page. The caller decides what yes does: this only asks. */
@@ -28,6 +36,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
         <p id="confirm-message" class="text-graphite">{{ message() }}</p>
         <div class="flex justify-end gap-2 pt-1">
           <button
+            #cancelButton
             type="button"
             class="rounded-full border border-silver bg-white px-4 py-2 text-sm font-medium hover:bg-fog"
             (click)="dismissed.emit()"
@@ -59,4 +68,11 @@ export class ConfirmDialog {
 
   readonly confirmed = output<void>();
   readonly dismissed = output<void>();
+
+  private readonly cancelButton = viewChild<ElementRef<HTMLButtonElement>>('cancelButton');
+
+  constructor() {
+    // Focus starts on the safe answer: Enter must not confirm something that cannot be undone.
+    effect(() => this.cancelButton()?.nativeElement.focus());
+  }
 }

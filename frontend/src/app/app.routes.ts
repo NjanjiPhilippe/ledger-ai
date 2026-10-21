@@ -42,6 +42,11 @@ export const routes: Routes = [
           import('./features/balance/pages/balance-page').then((m) => m.BalancePage),
       },
       {
+        path: 'advisor',
+        loadComponent: () =>
+          import('./features/advisor/pages/advisor-page').then((m) => m.AdvisorPage),
+      },
+      {
         path: 'forbidden',
         loadComponent: () => import('./core/pages/forbidden-page').then((m) => m.ForbiddenPage),
       },
