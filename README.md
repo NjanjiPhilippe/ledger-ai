@@ -154,18 +154,30 @@ curl -s -X POST localhost:8085/api/v1/journal-entries/$ENTRY/post -H "Authorizat
 curl -s localhost:8085/api/v1/reports/trial-balance -H "Authorization: Bearer $TOKEN" | jq
 ```
 
-### Enable the AI advisor
+### The AI advisor: with a provider, or without a key
 
-The advisor needs a provider API key (Anthropic is the default provider):
+The advisor reads the trial balance (posted entries only) and comments it. Pick a provider with
+`LEDGERAI_ADVISOR_PROVIDER`:
 
-```bash
-export LEDGERAI_ADVISOR_ANTHROPIC_APIKEY=...                       # property: ledgerai.advisor.anthropic.api-key
-# or: LEDGERAI_ADVISOR_PROVIDER=openai LEDGERAI_ADVISOR_OPENAI_APIKEY=...
-curl -s -X POST localhost:8085/api/v1/advisor/analyze-ledger -H "Authorization: Bearer $TOKEN" | jq
+| Provider | How | Notes |
+|---|---|---|
+| `anthropic` (default) | `LEDGERAI_ADVISOR_ANTHROPIC_APIKEY=...`, optionally `LEDGERAI_ADVISOR_ANTHROPIC_MODEL=...` | The key comes from the Anthropic API console and needs credit; it is separate from a Claude subscription. |
+| `openai` | `LEDGERAI_ADVISOR_PROVIDER=openai` and `LEDGERAI_ADVISOR_OPENAI_APIKEY=...` | |
+| `stub` | `LEDGERAI_ADVISOR_PROVIDER=stub` | No key, no network. Fixed rules over the balance (negative result, thin margin, debts above assets, one revenue account dominating, accounts against their nature). It is **not an AI**, and says so in its last recommendation. For demos, development and tests. |
+
+```powershell
+# PowerShell, a real provider
+$env:LEDGERAI_ADVISOR_ANTHROPIC_APIKEY="sk-ant-..."
+# PowerShell, no key at all
+$env:LEDGERAI_ADVISOR_PROVIDER="stub"
 ```
 
-Without a key the application starts normally; only the advisor calls fail. Note that the ledger's account
-names and balances are sent to the chosen provider.
+Without a key and without the stub, the application starts normally and only the advisor calls fail (HTTP 502; the
+cause is in the API log). With a real provider, note that the account names and balances of the ledger are sent to it.
+
+```bash
+curl -s -X POST localhost:8085/api/v1/advisor/analyze-ledger -H "Authorization: Bearer $TOKEN" | jq
+```
 
 ## API overview
 
