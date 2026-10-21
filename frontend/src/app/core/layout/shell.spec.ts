@@ -9,7 +9,7 @@ import { Shell } from './shell';
 describe('Shell', () => {
   const logout = vi.fn();
 
-  async function render() {
+  async function render(roles: string[] = ['viewer']) {
     logout.mockReset();
     localStorage.clear();
     TestBed.configureTestingModule({
@@ -20,7 +20,7 @@ describe('Shell', () => {
           provide: AuthService,
           useValue: {
             displayName: signal('Vera Viewer'),
-            appRoles: signal(['viewer']),
+            appRoles: signal(roles),
             logout,
           },
         },
@@ -39,11 +39,33 @@ describe('Shell', () => {
     const { element } = await render();
 
     expect(element.querySelector('[data-testid="brand"]')?.textContent?.trim()).toBe('LedgerAI');
-    expect(links(element)).toEqual(['Dashboard', 'Accounts']);
+    expect(links(element)).toEqual([
+      'Dashboard',
+      'Accounts',
+      'Journal entries',
+      'Trial balance',
+      'AI advisor',
+    ]);
     expect(element.querySelector('[data-testid="user-name"]')?.textContent?.trim()).toBe(
       'Vera Viewer',
     );
     expect(element.querySelector('[data-testid="user-role"]')?.textContent?.trim()).toBe('Viewer');
+  });
+
+  it('offers "New entry" only to an accountant or an administrator', async () => {
+    expect(links((await render(['viewer'])).element)).not.toContain('New entry');
+  });
+
+  it('shows "New entry" to an accountant', async () => {
+    TestBed.resetTestingModule();
+    expect(links((await render(['accountant'])).element)).toEqual([
+      'Dashboard',
+      'Accounts',
+      'Journal entries',
+      'Trial balance',
+      'AI advisor',
+      'New entry',
+    ]);
   });
 
   it('opens and closes the menu on small screens', async () => {
@@ -81,7 +103,13 @@ describe('Shell', () => {
     (element.querySelector('button[lang="fr"]') as HTMLButtonElement).click();
     await fixture.whenStable();
 
-    expect(links(element)).toEqual(['Tableau de bord', 'Comptes']);
+    expect(links(element)).toEqual([
+      'Tableau de bord',
+      'Comptes',
+      'Écritures',
+      'Balance',
+      'Conseiller IA',
+    ]);
     expect(element.querySelector('[data-testid="user-role"]')?.textContent?.trim()).toBe('Lecteur');
     expect(element.querySelector('button[lang="fr"]')?.getAttribute('aria-pressed')).toBe('true');
     expect(element.querySelector('button[lang="en"]')?.getAttribute('aria-pressed')).toBe('false');

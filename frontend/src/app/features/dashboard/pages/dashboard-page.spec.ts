@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { translocoTesting } from '../../../../testing/transloco';
 import { ACCOUNTS, ENTRIES, TRIAL_BALANCE } from '../../../../testing/ledger';
@@ -16,6 +17,7 @@ describe('DashboardPage', () => {
     TestBed.configureTestingModule({
       imports: [DashboardPage, translocoTesting()],
       providers: [
+        provideRouter([]),
         { provide: DashboardApi, useValue: api },
         {
           provide: AuthService,

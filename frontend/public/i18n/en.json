@@ -7,7 +7,11 @@
     "accounts": "Accounts",
     "main": "Main navigation",
     "openMenu": "Open the menu",
-    "closeMenu": "Close the menu"
+    "closeMenu": "Close the menu",
+    "newEntry": "New entry",
+    "entries": "Journal entries",
+    "balance": "Trial balance",
+    "advisor": "AI advisor"
   },
   "auth": {
     "signedInAs": "Signed in as {{name}}",
@@ -70,7 +74,8 @@
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {{page}} of {{total}}",
-    "unknownAccount": "Unknown account"
+    "unknownAccount": "Unknown account",
+    "cancel": "Cancel"
   },
   "accounts": {
     "title": "Accounts",
@@ -168,7 +173,8 @@
     },
     "entries": {
       "title": "Recent journal entries",
-      "empty": "No journal entry has been recorded yet."
+      "empty": "No journal entry has been recorded yet.",
+      "viewAll": "View all"
     }
   },
   "entryStatus": {
@@ -178,5 +184,144 @@
   },
   "panel": {
     "failed": "This section could not be loaded."
+  },
+  "entry": {
+    "title": "New journal entry",
+    "subtitle": "Record a transaction. Total debits must equal total credits.",
+    "details": "Details",
+    "description": "Description",
+    "descriptionPlaceholder": "For example: office rent for October",
+    "descriptionRequired": "Enter a description.",
+    "currency": "Currency",
+    "lines": "Lines",
+    "account": "Account",
+    "chooseAccount": "Choose an account",
+    "side": "Side",
+    "debit": "Debit",
+    "credit": "Credit",
+    "amount": "Amount",
+    "line": "line {{n}}",
+    "addDebit": "Add a debit line",
+    "addCredit": "Add a credit line",
+    "removeLine": "Remove line {{n}}",
+    "totals": {
+      "debits": "Total debits",
+      "credits": "Total credits",
+      "gap": "Difference",
+      "balanced": "Balanced"
+    },
+    "errors": {
+      "account": "Choose an account.",
+      "amount": "Enter an amount above zero, such as 1500000 or 1250.50.",
+      "sides": "Add at least one debit line and one credit line.",
+      "unbalanced": "Total debits and total credits must be equal before you save."
+    },
+    "saveDraft": "Save as draft",
+    "savePost": "Save and post",
+    "cancel": "Cancel",
+    "draftSaved": "Draft \"{{description}}\" saved",
+    "posted": "Entry \"{{description}}\" posted",
+    "postFailed": "\"{{description}}\" was saved as a draft, but it could not be posted.",
+    "noAccounts": "You need at least two active accounts before recording an entry.",
+    "accountsFailed": "The accounts could not be loaded."
+  },
+  "entries": {
+    "title": "Journal entries",
+    "total": "{{count}} entries",
+    "empty": "No journal entry has been recorded yet.",
+    "noMatch": "No entry matches these filters.",
+    "loadFailed": "The journal entries could not be loaded.",
+    "detailFailed": "This entry could not be loaded.",
+    "notFound": "This entry does not exist.",
+    "back": "Back to the journal entries",
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "from": "Created from",
+      "to": "Created until",
+      "clear": "Clear filters"
+    },
+    "created": "Created",
+    "posted": "Posted",
+    "notPosted": "Not posted yet",
+    "reversalOf": "Reversal of",
+    "original": "Original entry",
+    "post": "Post",
+    "reverse": "Reverse",
+    "confirmPost": {
+      "title": "Post this entry?",
+      "message": "A posted entry updates the balances and can no longer be edited. It can only be reversed by an administrator."
+    },
+    "confirmReverse": {
+      "title": "Reverse this entry?",
+      "message": "A new entry with opposite debits and credits is posted, and this one is marked as reversed. This cannot be undone."
+    },
+    "postedToast": "Entry \"{{description}}\" posted",
+    "reversedToast": "Entry \"{{description}}\" reversed"
+  },
+  "balance": {
+    "title": "Trial balance",
+    "generatedAt": "As of",
+    "export": "Export CSV",
+    "loadFailed": "The trial balance could not be loaded.",
+    "balanced": "The ledger is balanced",
+    "balancedHint": "Total debits equal total credits: the double-entry principle holds for every posted entry.",
+    "unbalanced": "The ledger is out of balance",
+    "unbalancedHint": "Total debits and total credits differ. Check the posted entries and rebuild the balances if needed.",
+    "counts": "{{moved}} accounts with movements out of {{total}}",
+    "hideEmpty": "Hide accounts without movements",
+    "hidden": "{{count}} hidden",
+    "empty": "No account to show.",
+    "subtotal": "Subtotal",
+    "grandTotal": "Grand total",
+    "summary": {
+      "assets": {
+        "label": "Total assets",
+        "hint": "What the organisation owns."
+      },
+      "liabilitiesAndEquity": {
+        "label": "Liabilities and equity",
+        "hint": "What it owes, and what its owners put in."
+      },
+      "netResult": {
+        "label": "Net result",
+        "hint": "Revenue minus expenses over the period."
+      }
+    }
+  },
+  "advisor": {
+    "badge": "AI advisor",
+    "title": "Financial advice on your ledger",
+    "subtitle": "The advisor reads the trial balance and suggests where to look: cash, profitability, risks. It comments figures, it does not change anything.",
+    "analyze": "Analyze the ledger",
+    "analyzeAgain": "Analyze again",
+    "analyzing": "Analyzing…",
+    "analyzingHint": "The advisor is reading your ledger. This can take several seconds.",
+    "generated": "Generated on {{date}} by {{provider}}",
+    "idle": "No analysis yet. Run one to get recommendations drawn from your posted entries.",
+    "privacy": "The figures of the trial balance (account names and totals of posted entries) are sent to the configured AI provider.",
+    "failed": "The analysis could not be completed. Try again in a moment.",
+    "nothing": "The advisor has nothing to report on the current figures.",
+    "filter": "Filter by topic",
+    "all": "All",
+    "disclaimer": "These are automated suggestions based on posted entries only. They are not accounting or legal advice: check them before acting.",
+    "severity": {
+      "CRITICAL": "Critical",
+      "WARNING": "Warning",
+      "INFO": "For information"
+    },
+    "count": {
+      "CRITICAL": "Critical: {{count}}",
+      "WARNING": "Warning: {{count}}",
+      "INFO": "Info: {{count}}"
+    },
+    "category": {
+      "LIQUIDITY": "Liquidity",
+      "PROFITABILITY": "Profitability",
+      "RISK": "Risk",
+      "COMPLIANCE": "Compliance",
+      "GROWTH": "Growth",
+      "GENERAL": "General"
+    }
   }
 }

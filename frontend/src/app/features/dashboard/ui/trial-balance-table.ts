@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountType, TrialBalance } from '../../../core/api/api-types';
 import { MoneyPipe } from '../../../shared/money/money.pipe';
+import { ACCOUNT_TYPE_ICONS } from '../../../shared/ui/account-type-icons';
 import { AppIcon } from '../../../shared/ui/icon';
-import { ACCOUNT_TYPE_ICONS } from './account-type-icon';
 
 /** Presentation only: the lines of the trial balance, with account names and a closing total row. */
 @Component({

@@ -7,7 +7,11 @@
     "accounts": "Comptes",
     "main": "Navigation principale",
     "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+    "closeMenu": "Fermer le menu",
+    "newEntry": "Nouvelle écriture",
+    "entries": "Écritures",
+    "balance": "Balance",
+    "advisor": "Conseiller IA"
   },
   "auth": {
     "signedInAs": "Connecté en tant que {{name}}",
@@ -70,7 +74,8 @@
     "previous": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {{page}} sur {{total}}",
-    "unknownAccount": "Compte inconnu"
+    "unknownAccount": "Compte inconnu",
+    "cancel": "Annuler"
   },
   "accounts": {
     "title": "Comptes",
@@ -168,7 +173,8 @@
     },
     "entries": {
       "title": "Écritures récentes",
-      "empty": "Aucune écriture n'a encore été enregistrée."
+      "empty": "Aucune écriture n'a encore été enregistrée.",
+      "viewAll": "Tout voir"
     }
   },
   "entryStatus": {
@@ -178,5 +184,144 @@
   },
   "panel": {
     "failed": "Cette section n'a pas pu être chargée."
+  },
+  "entry": {
+    "title": "Nouvelle écriture",
+    "subtitle": "Enregistrez une opération. Le total des débits doit égaler le total des crédits.",
+    "details": "Informations",
+    "description": "Libellé",
+    "descriptionPlaceholder": "Par exemple : loyer du bureau d'octobre",
+    "descriptionRequired": "Saisissez un libellé.",
+    "currency": "Devise",
+    "lines": "Lignes",
+    "account": "Compte",
+    "chooseAccount": "Choisir un compte",
+    "side": "Sens",
+    "debit": "Débit",
+    "credit": "Crédit",
+    "amount": "Montant",
+    "line": "ligne {{n}}",
+    "addDebit": "Ajouter une ligne au débit",
+    "addCredit": "Ajouter une ligne au crédit",
+    "removeLine": "Supprimer la ligne {{n}}",
+    "totals": {
+      "debits": "Total des débits",
+      "credits": "Total des crédits",
+      "gap": "Écart",
+      "balanced": "Équilibrée"
+    },
+    "errors": {
+      "account": "Choisissez un compte.",
+      "amount": "Saisissez un montant supérieur à zéro, par exemple 1500000 ou 1250,50.",
+      "sides": "Ajoutez au moins une ligne au débit et une ligne au crédit.",
+      "unbalanced": "Le total des débits et le total des crédits doivent être égaux avant d'enregistrer."
+    },
+    "saveDraft": "Enregistrer en brouillon",
+    "savePost": "Enregistrer et comptabiliser",
+    "cancel": "Annuler",
+    "draftSaved": "Brouillon « {{description}} » enregistré",
+    "posted": "Écriture « {{description}} » comptabilisée",
+    "postFailed": "« {{description}} » a été enregistrée en brouillon, mais n'a pas pu être comptabilisée.",
+    "noAccounts": "Il faut au moins deux comptes actifs avant d'enregistrer une écriture.",
+    "accountsFailed": "Les comptes n'ont pas pu être chargés."
+  },
+  "entries": {
+    "title": "Écritures",
+    "total": "{{count}} écritures",
+    "empty": "Aucune écriture n'a encore été enregistrée.",
+    "noMatch": "Aucune écriture ne correspond à ces filtres.",
+    "loadFailed": "Les écritures n'ont pas pu être chargées.",
+    "detailFailed": "Cette écriture n'a pas pu être chargée.",
+    "notFound": "Cette écriture n'existe pas.",
+    "back": "Retour aux écritures",
+    "filters": {
+      "status": "Statut",
+      "allStatuses": "Tous les statuts",
+      "from": "Créée à partir du",
+      "to": "Créée jusqu'au",
+      "clear": "Effacer les filtres"
+    },
+    "created": "Créée le",
+    "posted": "Comptabilisée le",
+    "notPosted": "Pas encore comptabilisée",
+    "reversalOf": "Extourne de",
+    "original": "Écriture d'origine",
+    "post": "Comptabiliser",
+    "reverse": "Extourner",
+    "confirmPost": {
+      "title": "Comptabiliser cette écriture ?",
+      "message": "Une écriture comptabilisée met à jour les soldes et ne peut plus être modifiée. Seul un administrateur peut l'extourner."
+    },
+    "confirmReverse": {
+      "title": "Extourner cette écriture ?",
+      "message": "Une nouvelle écriture aux débits et crédits inversés est comptabilisée, et celle-ci est marquée comme extournée. Cette action est irréversible."
+    },
+    "postedToast": "Écriture « {{description}} » comptabilisée",
+    "reversedToast": "Écriture « {{description}} » extournée"
+  },
+  "balance": {
+    "title": "Balance des comptes",
+    "generatedAt": "Au",
+    "export": "Exporter en CSV",
+    "loadFailed": "La balance n'a pas pu être chargée.",
+    "balanced": "Le grand livre est équilibré",
+    "balancedHint": "Le total des débits égale le total des crédits : le principe de la partie double est respecté pour chaque écriture comptabilisée.",
+    "unbalanced": "Le grand livre est déséquilibré",
+    "unbalancedHint": "Le total des débits et celui des crédits diffèrent. Vérifiez les écritures comptabilisées et reconstruisez les soldes si besoin.",
+    "counts": "{{moved}} comptes mouvementés sur {{total}}",
+    "hideEmpty": "Masquer les comptes sans mouvement",
+    "hidden": "{{count}} masqués",
+    "empty": "Aucun compte à afficher.",
+    "subtotal": "Sous-total",
+    "grandTotal": "Total général",
+    "summary": {
+      "assets": {
+        "label": "Total de l'actif",
+        "hint": "Ce que l'organisation possède."
+      },
+      "liabilitiesAndEquity": {
+        "label": "Dettes et capitaux propres",
+        "hint": "Ce qu'elle doit, et ce que ses propriétaires y ont mis."
+      },
+      "netResult": {
+        "label": "Résultat net",
+        "hint": "Produits moins charges sur la période."
+      }
+    }
+  },
+  "advisor": {
+    "badge": "Conseiller IA",
+    "title": "Conseils financiers sur votre grand livre",
+    "subtitle": "Le conseiller lit la balance et indique où regarder : trésorerie, rentabilité, risques. Il commente les chiffres, il ne modifie rien.",
+    "analyze": "Analyser le grand livre",
+    "analyzeAgain": "Analyser à nouveau",
+    "analyzing": "Analyse en cours…",
+    "analyzingHint": "Le conseiller lit votre grand livre. Cela peut prendre plusieurs secondes.",
+    "generated": "Généré le {{date}} par {{provider}}",
+    "idle": "Aucune analyse pour le moment. Lancez-en une pour obtenir des recommandations tirées de vos écritures comptabilisées.",
+    "privacy": "Les chiffres de la balance (noms des comptes et totaux des écritures comptabilisées) sont envoyés au fournisseur d'IA configuré.",
+    "failed": "L'analyse n'a pas pu aboutir. Réessayez dans un instant.",
+    "nothing": "Le conseiller n'a rien à signaler sur les chiffres actuels.",
+    "filter": "Filtrer par thème",
+    "all": "Toutes",
+    "disclaimer": "Ce sont des suggestions automatiques fondées sur les écritures comptabilisées uniquement. Ce n'est pas un conseil comptable ou juridique : vérifiez avant d'agir.",
+    "severity": {
+      "CRITICAL": "Critique",
+      "WARNING": "Attention",
+      "INFO": "À titre d'information"
+    },
+    "count": {
+      "CRITICAL": "Critique : {{count}}",
+      "WARNING": "Attention : {{count}}",
+      "INFO": "Info : {{count}}"
+    },
+    "category": {
+      "LIQUIDITY": "Trésorerie",
+      "PROFITABILITY": "Rentabilité",
+      "RISK": "Risque",
+      "COMPLIANCE": "Conformité",
+      "GROWTH": "Croissance",
+      "GENERAL": "Général"
+    }
   }
 }

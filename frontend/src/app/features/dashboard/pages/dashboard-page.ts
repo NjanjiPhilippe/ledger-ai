@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ShortDatePipe } from '../../../shared/date/short-date.pipe';
@@ -15,6 +16,7 @@ import { TrialBalanceTable } from '../ui/trial-balance-table';
 @Component({
   selector: 'app-dashboard-page',
   imports: [
+    RouterLink,
     TranslocoPipe,
     ShortDatePipe,
     MoneyPipe,
@@ -131,6 +133,14 @@ import { TrialBalanceTable } from '../ui/trial-balance-table';
         [status]="entriesStatus()"
         (retry)="retryEntries()"
       >
+        <a
+          panel-actions
+          routerLink="/entries"
+          class="rounded-full px-3 py-1.5 text-sm font-medium text-graphite hover:bg-fog hover:text-ink"
+          data-testid="view-all"
+        >
+          {{ 'dashboard.entries.viewAll' | transloco }}
+        </a>
         @if (store.entries().data; as page) {
           <app-recent-entries-list
             [entries]="page.content"

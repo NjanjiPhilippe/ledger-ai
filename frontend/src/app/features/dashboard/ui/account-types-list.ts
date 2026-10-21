@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AccountType } from '../../../core/api/api-types';
+import { ACCOUNT_TYPE_ICONS } from '../../../shared/ui/account-type-icons';
 import { AppIcon } from '../../../shared/ui/icon';
-import { ACCOUNT_TYPE_ICONS } from './account-type-icon';
 
 const ORDER: readonly AccountType[] = ['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE'];
 
